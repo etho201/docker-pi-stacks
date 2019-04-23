@@ -6,7 +6,7 @@ volumes:
 
 services:
   db:
-    image: mariadb:arm32v7-latest
+    image: mariadb
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
     restart: unless-stopped
     volumes:
