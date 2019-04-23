@@ -1,0 +1,69 @@
+---
+version: "2"
+services:
+
+  transmission-vpn:
+    container_name: transmission-vpn
+    image: haugene/transmission-openvpn:latest-armhf
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    restart: unless-stopped
+#    ports:
+#    - "XXXX:9091"
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /home/pi/containers/config/transmission-vpn:/data
+      - /home/pi/containers/config/shared:/shared
+      - /mnt/hdd/Downloads/Torrents/watch:/data/watch
+      - /mnt/hdd/Downloads/Torrents/complete:/data/completed
+      - /mnt/hdd/Downloads/Torrents/incomplete:/data/incomplete
+#      - /home/pi/containers/config/transmission-vpn/openvpn:/etc/openvpn/torguard-custom
+    environment:
+      - OPENVPN_PROVIDER=TORGUARD
+#      - OPENVPN_PROVIDER=TORGUARD-CUSTOM
+      - OPENVPN_USERNAME=***REMOVED***
+      - OPENVPN_PASSWORD=***REMOVED***
+      - OPENVPN_CONFIG=USA-SEATTLE
+#      - OPENVPN_CONFIG=TorGuard.USA.Seattle.STATIC
+      - OPENVPN_OPTS=--inactive 3600 --ping 10 --ping-exit 60
+      - LOCAL_NETWORK=192.168.1.0/24
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
+#      - TRANSMISSION_RPC_HOST_WHITELIST="127.0.0.1,192.168.*.*"
+###      - TRANSMISSION_RPC_PASSWORD=<PASSWORD>
+      - TRANSMISSION_RPC_USERNAME=***REMOVED***
+      - TRANSMISSION_UMASK=002
+      - TRANSMISSION_RATIO_LIMIT=0.8999
+      - TRANSMISSION_RATIO_LIMIT_ENABLED=true
+    networks:
+      - traefik_proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=transmission-vpn"
+      - "traefik.frontend.rule=Host:***REMOVED***.duckdns.org; PathPrefix: /transmission"
+#      - "traefik.frontend.rule=Host:transmission.${DOMAINNAME}"
+      - "traefik.port=9091"
+      - "traefik.docker.network=traefik_proxy"
+      - "traefik.frontend.headers.SSLRedirect=true"
+      - "traefik.frontend.headers.STSSeconds=315360000"
+      - "traefik.frontend.headers.browserXSSFilter=true"
+      - "traefik.frontend.headers.contentTypeNosniff=true"
+      - "traefik.frontend.headers.forceSTSHeader=true"
+      - "traefik.frontend.headers.SSLHost=example.com"
+      - "traefik.frontend.headers.STSIncludeSubdomains=true"
+      - "traefik.frontend.headers.STSPreload=true"
+      - "traefik.frontend.headers.frameDeny=true"
+      
+networks:
+  traefik_proxy:
+    external:
+      name: traefik_proxy
+  default:
+    driver: bridge

@@ -1,0 +1,45 @@
+---
+version: "2"
+services:
+
+  traefik:
+    hostname: traefik
+    image: traefik:latest
+    container_name: traefik
+    restart: always
+    domainname: ***REMOVED***.duckdns.org
+    networks:
+      - default
+      - traefik_proxy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=traefik"
+#      - "traefik.frontend.rule=Host:traefik.${FQDN}"  
+      - "traefik.frontend.rule=Host:***REMOVED***.duckdns.org; PathPrefixStrip: /traefik"
+      - "traefik.port=8080"
+      - "traefik.docker.network=traefik_proxy"
+      - "traefik.frontend.headers.SSLRedirect=true"
+      - "traefik.frontend.headers.STSSeconds=315360000"
+      - "traefik.frontend.headers.browserXSSFilter=true"
+      - "traefik.frontend.headers.contentTypeNosniff=true"
+      - "traefik.frontend.headers.forceSTSHeader=true"
+      - "traefik.frontend.headers.SSLHost=example.com"
+      - "traefik.frontend.headers.STSIncludeSubdomains=true"
+      - "traefik.frontend.headers.STSPreload=true"
+      - "traefik.frontend.headers.frameDeny=true"
+###      - "traefik.frontend.auth.basic.users=***REMOVED***:<HTACCESS-PASSWORD>"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /home/pi/containers/config/traefik:/etc/traefik
+      - /home/pi/containers/config/shared:/shared
+      
+networks:
+  traefik_proxy:
+    external:
+      name: traefik_proxy
+  default:
+    driver: bridge
