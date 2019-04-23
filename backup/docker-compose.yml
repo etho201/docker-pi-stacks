@@ -18,7 +18,7 @@ services:
       - MYSQL_USER=nextcloud
 
   app:
-    image: nextcloud:arm32v7-latest
+    image: nextcloud
     ports:
       - 8080:80
     links:
