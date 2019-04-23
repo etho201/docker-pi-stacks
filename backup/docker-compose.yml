@@ -11,6 +11,7 @@ services:
     restart: unless-stopped
     volumes:
       - db:/var/lib/mysql
+    driver: local
     environment:
       - MYSQL_ROOT_PASSWORD=Xn3TiSBn+hBN
       - MYSQL_PASSWORD=UruweH&z#&eq
@@ -25,6 +26,7 @@ services:
       - db
     volumes:
       - nextcloud:/var/www/html
+    driver: local
     restart: unless-stopped
     networks:
       - traefik_proxy
