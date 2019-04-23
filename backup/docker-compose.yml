@@ -11,7 +11,6 @@ services:
     restart: unless-stopped
     volumes:
       - db:/var/lib/mysql
-      - driver: local
     environment:
       - MYSQL_ROOT_PASSWORD=Xn3TiSBn+hBN
       - MYSQL_PASSWORD=UruweH&z#&eq
@@ -26,7 +25,6 @@ services:
       - db
     volumes:
       - nextcloud:/var/www/html
-      - driver: local
     restart: unless-stopped
     networks:
       - traefik_proxy
@@ -45,6 +43,12 @@ services:
       - "traefik.frontend.headers.STSIncludeSubdomains=true"
       - "traefik.frontend.headers.STSPreload=true"
       - "traefik.frontend.headers.frameDeny=true"
+
+volumes:
+  db:
+    driver: local
+  nextcloud:
+    driver: local
 
 networks:
   traefik_proxy:
