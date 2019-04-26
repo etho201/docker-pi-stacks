@@ -2,7 +2,7 @@
 version: "2"
 
 volumes:
-  portainer_data2:
+  data:
     driver: local
 
 services:
@@ -12,8 +12,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
-#    ports:
-#        - "XXXX:9000"
+    ports:
+        - "9001:9000"
     restart: unless-stopped
     networks:
       - traefik_proxy
@@ -33,3 +33,8 @@ services:
       - "traefik.frontend.headers.STSIncludeSubdomains=true"
       - "traefik.frontend.headers.STSPreload=true"
       - "traefik.frontend.headers.frameDeny=true"
+
+networks:
+  traefik_proxy:
+    external:
+      name: traefik_proxy
