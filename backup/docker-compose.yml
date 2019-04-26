@@ -1,37 +1,70 @@
+---
 version: '2'
 
 volumes:
-  nextcloud:
   db:
+    driver: local
+  nextcloud:
+    driver: local
 
 services:
+#  db:
+#    container_name: MariaDB
+#    image: mariadb:latest
+#    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+#    restart: unless-stopped
+#    volumes:
+#      - db:/var/lib/mysql
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=Xn3TiSBn+hBN
+#      - MYSQL_PASSWORD=UruweH&z#&eq
+#      - MYSQL_DATABASE=nextcloud
+#      - MYSQL_USER=nextcloud
+
   db:
-    image: mariadb
-    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    image: postgres
+    container_name: PostgreSQL
     restart: unless-stopped
     volumes:
-      - db:/var/lib/mysql
+      - db:/var/lib/postgresql/data
     environment:
-      - MYSQL_ROOT_PASSWORD=Xn3TiSBn+hBN
-      - MYSQL_PASSWORD=UruweH&z#&eq
-      - MYSQL_DATABASE=nextcloud
-      - MYSQL_USER=nextcloud
+      - POSTGRES_DB=whatever
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=UruweH&z#&eq
+    networks:
+      - default
 
-  app:
-    image: nextcloud
+  Nextcloud:
+    image: nextcloud:latest
+    container_name: Nextcloud
     ports:
-      - 8080:80
+      - 8081:80
     links:
       - db
     volumes:
       - nextcloud:/var/www/html
+      - /home/pi/containers/config/nextcloud:/var/www/html/data:rw #config directory
+      - /mnt/hdd/docker/nextcloud:/mnt/hdd/storage #external storage
+      # Make check_data_directory_permissions => false and enable external storage support (https://github.com/nextcloud/docker/issues/236)
     restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=UruweH&z#&eq
+      - POSTGRES_HOST=db
+      - NEXTCLOUD_ADMIN_USER=***REMOVED***
+      - NEXTCLOUD_ADMIN_PASSWORD=***REMOVED***
+      - NEXTCLOUD_TRUSTED_DOMAINS=***REMOVED***.duckdns.org 192.168.1.*
+    domainname: ***REMOVED***.duckdns.org
     networks:
+      - default
       - traefik_proxy
     labels:
       - "traefik.enable=true"
       - "traefik.backend=nextcloud"
-      - "traefik.frontend.rule=Host:***REMOVED***.duckdns.org; PathPrefix: /nextcloud"
+      - "traefik.frontend.rule=Host:***REMOVED***.duckdns.org; PathPrefix: /nextcloud" #You can add 'overwritewebroot' => '/nextcloud', to the config.php inside the Nextcloud container (~/docker/nextcloud/www/nextcloud/config/config.php). I was just able to get my setup running behind Traefik as a subdirectory.
       - "traefik.port=80"
       - "traefik.docker.network=traefik_proxy"
       - "traefik.frontend.headers.SSLRedirect=true"
@@ -44,11 +77,37 @@ services:
       - "traefik.frontend.headers.STSPreload=true"
       - "traefik.frontend.headers.frameDeny=true"
 
-volumes:
-  db:
-    driver: local
-  nextcloud:
-    driver: local
+  duplicati:
+    image: linuxserver/duplicati
+    container_name: duplicati
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - /home/pi/containers/config/duplicati:/config
+      - /mnt/hdd/docker/backups:/backups
+      - /home/pi/containers:/source
+    ports:
+      - 8200:8200
+    restart: unless-stopped
+    networks:
+      - traefik_proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=duplicati"
+      - "traefik.frontend.rule=Host:***REMOVED***.duckdns.org; PathPrefix: /duplicati"
+      - "traefik.port=8200"
+      - "traefik.docker.network=traefik_proxy"
+      - "traefik.frontend.headers.SSLRedirect=true"
+      - "traefik.frontend.headers.STSSeconds=315360000"
+      - "traefik.frontend.headers.browserXSSFilter=true"
+      - "traefik.frontend.headers.contentTypeNosniff=true"
+      - "traefik.frontend.headers.forceSTSHeader=true"
+      - "traefik.frontend.headers.SSLHost=example.com"
+      - "traefik.frontend.headers.STSIncludeSubdomains=true"
+      - "traefik.frontend.headers.STSPreload=true"
+      - "traefik.frontend.headers.frameDeny=true"
 
 networks:
   traefik_proxy:
