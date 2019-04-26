@@ -1,11 +1,11 @@
 ---
 version: "2"
-services:
 
 volumes:
   portainer_data2:
     driver: local
 
+services:
   portainer2:
     image: portainer/portainer
     container_name: portainer2
