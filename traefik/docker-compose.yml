@@ -2,6 +2,20 @@
 version: "2"
 services:
 
+  duckdns:
+    image: linuxserver/duckdns
+    container_name: duckdns
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - SUBDOMAINS=***REMOVED***,***REMOVED***
+      - TOKEN=***REMOVED***
+      - LOG_FILE=true #optional
+    #volumes:
+      #- /home/pi/containers/config/duckdns:/config #optional
+    restart: unless-stopped
+
   traefik:
     hostname: traefik
     image: traefik:latest
