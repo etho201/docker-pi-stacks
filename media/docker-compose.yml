@@ -1,0 +1,42 @@
+---
+version: "2"
+services:
+
+  plex:
+    image: linuxserver/plex
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - VERSION=docker
+    volumes:
+      - /mnt/hdd/Plex/Config:/config
+      - /mnt/hdd/Media/TV:/data/tvshows
+      - /mnt/hdd/Media/Movies:/data/movies
+      - /mnt/hdd/Media/Other:/data/other
+      - /mnt/hdd/Plex/Transcode:/transcode
+    restart: unless-stopped
+    #networks:
+      #- traefik_proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=plex"
+      - "traefik.frontend.rule=Host:***REMOVED***.duckdns.org; PathPrefix: /plex"
+      #- "traefik.frontend.rule=Host:sonarr.${DOMAINNAME}"
+      - "traefik.port=32400"
+      - "traefik.docker.network=traefik_proxy"
+      - "traefik.frontend.headers.SSLRedirect=true"
+      - "traefik.frontend.headers.STSSeconds=315360000"
+      - "traefik.frontend.headers.browserXSSFilter=true"
+      - "traefik.frontend.headers.contentTypeNosniff=true"
+      - "traefik.frontend.headers.forceSTSHeader=true"
+      - "traefik.frontend.headers.SSLHost=example.com"
+      - "traefik.frontend.headers.STSIncludeSubdomains=true"
+      - "traefik.frontend.headers.STSPreload=true"
+      - "traefik.frontend.headers.frameDeny=true"
+
+#networks:
+#  traefik_proxy:
+#    external:
+#      name: traefik_proxy

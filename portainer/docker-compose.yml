@@ -1,26 +1,24 @@
 ---
 version: "2"
 
-volumes:
-  data:
-    driver: local
-
 services:
-  portainer2:
+  portainer:
     image: portainer/portainer
-    container_name: portainer2
+    container_name: portainer
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data:/data
+      - /home/pi/containers/config/portainer:/data
+    environment:
+      - TZ=America/Los_Angeles
     ports:
-        - "9001:9000"
+        - "9000:9000"
     restart: unless-stopped
     networks:
       - traefik_proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=portainer2"
-      - "traefik.frontend.rule=Host:***REMOVED***.duckdns.org; PathPrefix: /portainer2"
+      - "traefik.backend=portainer"
+      - "traefik.frontend.rule=Host:***REMOVED***.duckdns.org; PathPrefix: /portainer"
 #      - "traefik.frontend.rule=Host:sonarr.${DOMAINNAME}"
       - "traefik.port=9000"
       - "traefik.docker.network=traefik_proxy"
