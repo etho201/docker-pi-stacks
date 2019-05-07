@@ -23,7 +23,7 @@ services:
       - "traefik.enable=true"
       - "traefik.backend=plex"
       - "traefik.frontend.rule=Host:***REMOVED***.duckdns.org; PathPrefix: /plex"
-      #- "traefik.frontend.rule=Host:sonarr.${DOMAINNAME}"
+      #- "traefik.frontend.rule=Host:plex.${DOMAINNAME}"
       - "traefik.port=32400"
       - "traefik.docker.network=traefik_proxy"
       - "traefik.frontend.headers.SSLRedirect=true"
@@ -36,7 +36,39 @@ services:
       - "traefik.frontend.headers.STSPreload=true"
       - "traefik.frontend.headers.frameDeny=true"
 
-#networks:
-#  traefik_proxy:
-#    external:
-#      name: traefik_proxy
+  tautulli:
+    image: linuxserver/tautulli
+    container_name: tautulli
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - /mnt/hdd/Plex/tautulli:/config
+      - /mnt/hdd/Plex/Config/Library/Application Support/Plex Media Server/Logs:/logs:ro # Map this to Plex log directory - recommended RO.
+    ports:
+      - 8181:8181
+    restart: unless-stopped
+    networks:
+      - traefik_proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=tautulli"
+      - "traefik.frontend.rule=Host:***REMOVED***.duckdns.org; PathPrefix: /tautulli"
+      #- "traefik.frontend.rule=Host:tautulli.${DOMAINNAME}"
+      - "traefik.port=8181"
+      - "traefik.docker.network=traefik_proxy"
+      - "traefik.frontend.headers.SSLRedirect=true"
+      - "traefik.frontend.headers.STSSeconds=315360000"
+      - "traefik.frontend.headers.browserXSSFilter=true"
+      - "traefik.frontend.headers.contentTypeNosniff=true"
+      - "traefik.frontend.headers.forceSTSHeader=true"
+      - "traefik.frontend.headers.SSLHost=example.com"
+      - "traefik.frontend.headers.STSIncludeSubdomains=true"
+      - "traefik.frontend.headers.STSPreload=true"
+      - "traefik.frontend.headers.frameDeny=true"
+
+networks:
+  traefik_proxy:
+    external:
+      name: traefik_proxy

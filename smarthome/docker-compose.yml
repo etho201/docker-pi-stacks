@@ -1,0 +1,48 @@
+---
+version: "2"
+services:
+
+  homeassistant:
+    container_name: home-assistant
+    image: homeassistant/raspberrypi3-homeassistant
+    volumes:
+      - /home/pi/containers/config/home-assistant:/config
+      - /etc/localtime:/etc/localtime:ro
+    #devices:
+      #- /dev/ttyUSB0:/dev/ttyUSB0
+      #- /dev/ttyUSB1:/dev/ttyUSB1
+      #- /dev/ttyACM0:/dev/ttyACM0
+    restart: unless-stopped
+    ports:
+      - "8123:8123"
+    privileged: true
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    networks:
+      - traefik_proxy
+      - default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=homeassistant"
+      - "traefik.frontend.rule=Host:***REMOVED***.duckdns.org; PathPrefix: /hass"
+      #- "traefik.frontend.rule=Host:hass.${DOMAINNAME}"
+      - "traefik.port=8123"
+      - "traefik.docker.network=traefik_proxy"
+      - "traefik.frontend.headers.SSLRedirect=true"
+      - "traefik.frontend.headers.STSSeconds=315360000"
+      - "traefik.frontend.headers.browserXSSFilter=true"
+      - "traefik.frontend.headers.contentTypeNosniff=true"
+      - "traefik.frontend.headers.forceSTSHeader=true"
+      - "traefik.frontend.headers.SSLHost=example.com"
+      - "traefik.frontend.headers.STSIncludeSubdomains=true"
+      - "traefik.frontend.headers.STSPreload=true"
+      - "traefik.frontend.headers.frameDeny=true"
+
+networks:
+  traefik_proxy:
+    external:
+      name: traefik_proxy
+  default:
+    driver: bridge
