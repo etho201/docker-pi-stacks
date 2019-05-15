@@ -14,7 +14,7 @@ git commit -m "commit message"
 git push origin NEWBRANCH
 ```
 
-### If you already have the repo clones, and branch already exists.
+### If you already have the repo cloned, and branch already exists.
 ```bash
 git checkout master
 git pull
