@@ -1,4 +1,5 @@
 logLevel = "WARN" #DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+# InsecureSkipVerify = true
 defaultEntryPoints = ["http", "https"]
 
 # WEB interface of Traefik - it will show web page with overview of frontend and backend configurations 
@@ -16,11 +17,12 @@ defaultEntryPoints = ["http", "https"]
   [entryPoints.https]
   address = ":443"
     [entryPoints.https.tls]
-      [entryPoints.https.tls.defaultCertificate]
+#      [entryPoints.https.tls.defaultCertificate]
 
+# File configuration backends
 [file]
-  watch = true
   filename = "/etc/traefik/rules.toml"
+  watch = true
 
 # Let's encrypt configuration
 [acme]

@@ -1,0 +1,16 @@
+loglevel = "ERROR"
+
+[backends]
+  [backends.backend-cockpit]
+    [backends.backend-cockpit.servers]
+      [backends.backend-cockpit.servers.server-cockpit-ext]
+        url = "http://192.168.1.15:9090"
+        weight = 0
+
+[frontends]
+  [frontends.frontend-cockpit]
+    backend = "backend-cockpit"
+    passHostHeader = true
+    [frontends.frontend-cockpit.routes]
+        [frontends.frontend-cockpit.routes.route-cockpit-ext]
+            rule = "Host:***REMOVED***.duckdns.org; PathPrefixStrip: /cockpit"
