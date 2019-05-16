@@ -13,4 +13,4 @@ loglevel = "ERROR"
     passHostHeader = true
     [frontends.frontend-cockpit.routes]
         [frontends.frontend-cockpit.routes.route-cockpit-ext]
-            rule = "Host:***REMOVED***.duckdns.org; PathPrefixStrip: /cockpit"
+            rule = "Host:***REMOVED***.duckdns.org; PathPrefixStrip: /cockpit-pi"
