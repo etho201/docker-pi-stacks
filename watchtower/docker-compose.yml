@@ -1,0 +1,13 @@
+---
+version: "2"
+services:
+
+  watchtower: # https://hub.docker.com/r/v2tec/watchtower
+    container_name: watchtower
+    restart: always
+    image: v2tec/watchtower:armhf-latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    # Cron Expression of 6 fields: <second> <minute> <hour> <day-of-month> <month> <day-of-week>
+    # Check for new container images everyday at 3am
+    command: --schedule "0 0 3 * * *" --cleanup
