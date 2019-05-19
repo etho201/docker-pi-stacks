@@ -2,12 +2,21 @@
 version: "2"
 services:
 
-  watchtower: # https://hub.docker.com/r/v2tec/watchtower
+  watchtower: # https://github.com/containrrr/watchtower
     container_name: watchtower
     restart: always
-    image: v2tec/watchtower:armhf-latest
+    image: containrrr/watchtower:armhf-latest
+    environment:
+      #- WATCHTOWER_NOTIFICATIONS=email
+      #- WATCHTOWER_NOTIFICATION_EMAIL_FROM=fromaddress@gmail.com
+      #- WATCHTOWER_NOTIFICATION_EMAIL_TO=toaddress@gmail.com
+      #- WATCHTOWER_NOTIFICATION_EMAIL_SERVER=smtp.gmail.com
+      #- WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER=fromaddress@gmail.com
+      #- WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD=app_password
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     # Cron Expression of 6 fields: <second> <minute> <hour> <day-of-month> <month> <day-of-week>
-    # Check for new container images everyday at 3am
-    command: --schedule "0 0 3 * * *" --cleanup
+    command: --schedule "0 30 3 * * *" --cleanup
+    # Checks for new container images everyday at 3:30am
+
+# As an alternative to Watchtower, look at Ouroboros - https://github.com/pyouroboros/ouroboros
