@@ -23,11 +23,13 @@ services:
     #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
     cap_add:
       - NET_ADMIN
+    networks:
+      - traefik_proxy
     environment:
-      #- ServerIP=${SERVER_IP}
+      - ServerIP=192.168.1.15
       - PROXY_LOCATION=pihole
-      #- VIRTUAL_HOST=pihole.${DOMAINNAME}
-      #- VIRTUAL_PORT=80
+      - VIRTUAL_HOST=***REMOVED***.duckdns.org/pihole
+      - VIRTUAL_PORT=80
       - TZ=America/Los_Angeles
       #- WEBPASSWORD=RandomWhenCommentedOut
       - DNS1=127.0.0.1
@@ -50,3 +52,10 @@ services:
       - traefik.frontend.headers.STSIncludeSubdomains=true
       - traefik.frontend.headers.STSPreload=true
       - traefik.frontend.headers.frameDeny=true
+      
+networks:
+  traefik_proxy:
+    external:
+      name: traefik_proxy
+  default:
+    driver: bridge
