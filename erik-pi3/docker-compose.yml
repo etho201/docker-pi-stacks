@@ -491,12 +491,6 @@ services:
 # https://hub.docker.com/r/linuxserver/duplicati
 ########################################################################################
 
-volumes:
-  db:
-    driver: local
-  nextcloud:
-    driver: local
-
 #  db:
 #    container_name: MariaDB
 #    image: mariadb:latest
@@ -600,6 +594,11 @@ volumes:
       - "traefik.frontend.headers.STSPreload=true"
       - "traefik.frontend.headers.frameDeny=true"
 
+volumes:
+  db:
+    driver: local
+  nextcloud:
+    driver: local
 
 networks:
   traefik_proxy:
