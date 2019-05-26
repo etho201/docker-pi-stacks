@@ -18,8 +18,8 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=portainer"
-      - "traefik.frontend.rule=Host:***REMOVED***.duckdns.org; PathPrefix: /portainer"
-#      - "traefik.frontend.rule=Host:sonarr.${DOMAINNAME}"
+      #- "traefik.frontend.rule=Host:***REMOVED***.duckdns.org; PathPrefix: /portainer"
+      - "traefik.frontend.rule=Host:portainer.***REMOVED***.duckdns.org"
       - "traefik.port=9000"
       - "traefik.docker.network=traefik_proxy"
       - "traefik.frontend.headers.SSLRedirect=true"
