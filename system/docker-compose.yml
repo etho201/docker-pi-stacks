@@ -1,5 +1,5 @@
 #https://hub.docker.com/r/netdata/netdata
-version: '2'
+version: '3.7'
 services:
   netdata:
     image: netdata/netdata
