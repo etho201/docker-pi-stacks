@@ -497,7 +497,6 @@ volumes:
   nextcloud:
     driver: local
 
-services:
 #  db:
 #    container_name: MariaDB
 #    image: mariadb:latest
