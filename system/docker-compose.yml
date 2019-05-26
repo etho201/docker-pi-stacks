@@ -4,10 +4,10 @@ services:
   netdata:
     image: netdata/netdata
     container_name: netdata
-    hostname: ***REMOVED***.duckdns.org # set to fqdn of host
+    hostname: ${FQDN} # set to fqdn of host
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=${PUID}
+      - PGID=${PGID}
       - PGID=996
     #ports:
       #- 19999:19999
@@ -25,7 +25,7 @@ services:
       - "traefik.enable=true"
       - "traefik.backend=netdata"
       #- "traefik.frontend.rule=Host:erikpi3-netdata.duckdns.org; PathPrefixStrip: /netdata"
-      - "traefik.frontend.rule=Host:netdata.***REMOVED***.duckdns.org"
+      - "traefik.frontend.rule=Host:netdata.${FQDN}"
       - "traefik.port=19999"
       #- "traefik.protocol=https"
       - "traefik.docker.network=traefik_proxy"
@@ -38,7 +38,7 @@ services:
       - "traefik.frontend.headers.STSIncludeSubdomains=true"
       - "traefik.frontend.headers.STSPreload=true"
       - "traefik.frontend.headers.frameDeny=true"
-      - "traefik.frontend.auth.basic.users=***REMOVED***:$$apr1$$UNjtB1lq$$5hLoTdGN.M9RXlEMbkwZf0"
+      - "traefik.frontend.auth.basic.users=${HTTP_USERNAME}:${HTTP_PASSWORD}"
 
 networks:
   traefik_proxy:
