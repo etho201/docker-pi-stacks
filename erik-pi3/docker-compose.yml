@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+---
+=======
 #https://hub.docker.com/r/netdata/netdata
+>>>>>>> 05020d58731f67d9ec34433fbdd1cfe0a5b4aac1
 version: '3.7'
 services:
 
