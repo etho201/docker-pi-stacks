@@ -144,8 +144,8 @@ services:
     devices:
       - /dev/net/tun
     restart: unless-stopped
-#    ports:
-#    - "XXXX:9091"
+    #ports:
+    #- "XXXX:9091"
     dns:
       - 1.1.1.1
       - 1.0.0.1
@@ -212,8 +212,8 @@ services:
       - /mnt/hdd/Media/TV:/tv
       - /mnt/hdd/Downloads:/downloads
       - "/etc/localtime:/etc/localtime:ro"
-#    ports:
-#        - 8989:8989
+    #ports:
+      #- 8989:8989
     restart: unless-stopped
     networks:
       - traefik_proxy
@@ -221,7 +221,7 @@ services:
       - "traefik.enable=true"
       - "traefik.backend=sonarr"
       - "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /sonarr"
-#      - "traefik.frontend.rule=Host:sonarr.${FQDN}"
+      #- "traefik.frontend.rule=Host:sonarr.${FQDN}"
       - "traefik.port=8989"
       - "traefik.docker.network=traefik_proxy"
       - "traefik.frontend.headers.SSLRedirect=true"
@@ -246,8 +246,8 @@ services:
       - /mnt/hdd/Downloads:/downloads
       - /mnt/hdd/Media/Movies:/movies
       - "/etc/localtime:/etc/localtime:ro"
-#    ports:
-#      - 7878:7878
+    #ports:
+      #- 7878:7878
     restart: unless-stopped
     networks:
       - traefik_proxy
@@ -255,7 +255,7 @@ services:
       - "traefik.enable=true"
       - "traefik.backend=radarr"
       - "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /radarr"
-#      - "traefik.frontend.rule=Host:radarr.${FQDN}"
+      #- "traefik.frontend.rule=Host:radarr.${FQDN}"
       - "traefik.port=7878"
       - "traefik.docker.network=traefik_proxy"
       - "traefik.frontend.headers.SSLRedirect=true"
@@ -287,7 +287,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=jackett"
-#      - "traefik.frontend.rule=Host:jackett.${FQDN}"
+      #- "traefik.frontend.rule=Host:jackett.${FQDN}"
       - "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /jackett"
       - "traefik.port=9117"
       - "traefik.docker.network=traefik_proxy"
