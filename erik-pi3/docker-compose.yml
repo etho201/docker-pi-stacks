@@ -169,10 +169,13 @@ services:
       - TZ=${TZ}
       - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
       #- TRANSMISSION_RPC_HOST_WHITELIST="127.0.0.1,192.168.*.*"
+      - TRANSMISSION_RPC_USERNAME=${TRANSMISSION_USERNAME}
+      - TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_PASSWORD}
       - TRANSMISSION_UMASK=002
       - TRANSMISSION_RATIO_LIMIT=0.4999
       - TRANSMISSION_RATIO_LIMIT_ENABLED=true
       - TRANSMISSION_WEB_UI=combustion
+
     networks:
       - traefik_proxy
     labels:
@@ -191,7 +194,6 @@ services:
       - "traefik.frontend.headers.STSIncludeSubdomains=true"
       - "traefik.frontend.headers.STSPreload=true"
       - "traefik.frontend.headers.frameDeny=true"
-      - "traefik.frontend.auth.basic.users=${HTTP_USERNAME}:${HTTP_PASSWORD}"
 
 ########################################################################################
 # Indexers
@@ -506,7 +508,6 @@ services:
 #      - MYSQL_USER=nextcloud
 
   db:
-    env_file: /home/pi/containers/config/variables.env
     image: postgres
     container_name: PostgreSQL
     restart: unless-stopped
@@ -520,11 +521,10 @@ services:
       - default
 
   Nextcloud:
-    env_file: /home/pi/containers/config/variables.env
     image: nextcloud:latest
     container_name: Nextcloud
-    ports:
-      - 8081:80
+    #ports:
+      #- 8081:80
     links:
       - db
     volumes:
