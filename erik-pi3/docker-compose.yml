@@ -439,7 +439,7 @@ services:
       - "traefik.port=80"
       - "traefik.docker.network=traefik_proxy"
       #- "traefik.frontend.rule=HostRegexp:pihole.${FQDN},{catchall:.*}"
-      - "traefik.frontend.rule=Host:${FQDN}"
+      - "traefik.frontend.rule=Host:pihole.${FQDN}"
       - "traefik.frontend.priority=1"
       - traefik.frontend.headers.SSLRedirect=true
       - traefik.frontend.headers.STSSeconds=315360000
