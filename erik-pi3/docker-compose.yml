@@ -281,8 +281,8 @@ services:
       - ${DOCKER_DIR}/jackett:/config
       - /mnt/hdd/Jackett:/downloads
       - "/etc/localtime:/etc/localtime:ro"
-    ports:
-      - 9117:9117
+    #ports:
+      #- 9117:9117
     restart: unless-stopped
     networks:
       - traefik_proxy
@@ -335,8 +335,8 @@ services:
     volumes:
       - /mnt/hdd/Plex/tautulli:/config
       - /mnt/hdd/Plex/Config/Library/Application Support/Plex Media Server/Logs:/logs:ro #Map this to Plex log directory - recommended RO.
-    ports:
-      - 8181:8181
+    #ports:
+      #- 8181:8181
     restart: unless-stopped
     networks:
       - traefik_proxy
@@ -464,8 +464,8 @@ services:
       - ${DOCKER_DIR}/portainer:/data
     environment:
       - TZ=${TZ}
-    ports:
-        - "9000:9000"
+    #ports:
+      #- 9000:9000
     restart: unless-stopped
     networks:
       - traefik_proxy
