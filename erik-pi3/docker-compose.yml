@@ -158,7 +158,8 @@ services:
       - /mnt/hdd/Downloads/Torrents/incomplete:/data/incomplete
       - ${DOCKER_DIR}/transmission-vpn/openvpn:/etc/openvpn/torguard-custom
     environment:
-      - OPENVPN_PROVIDER=TORGUARD-CUSTOM
+      - OPENVPN_PROVIDER=TORGUARD
+      #- OPENVPN_PROVIDER=TORGUARD-CUSTOM
       - OPENVPN_USERNAME=${OPENVPN_USERNAME}
       - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
       - OPENVPN_CONFIG=USA-SEATTLE
