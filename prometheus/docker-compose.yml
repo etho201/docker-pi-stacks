@@ -9,6 +9,7 @@ version: '3.7'
 # Prometheus
 # https://prometheus.io/
 # https://quay.io/repository/prometheus/prometheus
+# https://github.com/vegasbrianc/prometheus
 ########################################################################################
 
 services:
@@ -36,8 +37,8 @@ services:
       - alertmanager:alertmanager
     #depends_on:
       #- cadvisor
-    #networks:
-      #- traefik_proxy
+    networks:
+      - traefik_proxy
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
