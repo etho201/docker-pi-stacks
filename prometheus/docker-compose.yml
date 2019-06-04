@@ -25,24 +25,25 @@ services:
       - ${VOLUME_DIR}/prometheus:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.listen-address=:9010'
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
     ports:
-      - 9090:9090
+      - 9010:9010
     links:
       #- cadvisor:cadvisor
       - alertmanager:alertmanager
     #depends_on:
       #- cadvisor
-    networks:
-      - traefik_proxy
+    #networks:
+      #- traefik_proxy
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
       - "traefik.backend=prometheus"
       - "traefik.frontend.rule=Host:prometheus.${FQDN}"
-      - "traefik.port=9090"
+      - "traefik.port=9010"
       - "traefik.docker.network=traefik_proxy"
       - "traefik.frontend.headers.SSLRedirect=true"
       - "traefik.frontend.headers.STSSeconds=315360000"
