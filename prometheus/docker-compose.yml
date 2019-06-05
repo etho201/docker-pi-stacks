@@ -1,15 +1,18 @@
 ---
 version: '3.7'
 
-#volumes:
-    #prometheus_data: {}
-    #grafana_data: {}
+volumes:
+    prometheus_data: {}
+    grafana_data: {}
+
+networks:
+  front-tier:
+  back-tier:
 
 ########################################################################################
 # Prometheus
 # https://prometheus.io/
 # https://quay.io/repository/prometheus/prometheus
-# https://github.com/vegasbrianc/prometheus
 ########################################################################################
 
 services:
@@ -23,7 +26,7 @@ services:
       - TZ=${TZ}
     volumes:
       - ${DOCKER_DIR}/prometheus:/etc/prometheus
-      - ${VOLUME_DIR}/prometheus:/prometheus
+      - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--web.listen-address=:9010'
@@ -35,26 +38,11 @@ services:
     links:
       #- cadvisor:cadvisor
       - alertmanager:alertmanager
-    #depends_on:
-      #- cadvisor
+    depends_on:
+      - cadvisor
     networks:
-      - traefik_proxy
+      - back-tier
     restart: unless-stopped
-    labels:
-      - "traefik.enable=true"
-      - "traefik.backend=prometheus"
-      - "traefik.frontend.rule=Host:prometheus.${FQDN}"
-      - "traefik.port=9010"
-      - "traefik.docker.network=traefik_proxy"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=example.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=true"
 
   node-exporter:
     image: quay.io/prometheus/node-exporter:latest
@@ -74,11 +62,11 @@ services:
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
     ports:
       - 9100:9100
-    #networks:
-      #- back-tier
+    networks:
+      - back-tier
     restart: always
-    deploy:
-      mode: global
+    #deploy:
+      #mode: global
 
   alertmanager:
     image: quay.io/prometheus/alertmanager:latest
@@ -91,8 +79,8 @@ services:
       - 9093:9093
     volumes:
       - ${DOCKER_DIR}/alertmanager/:/etc/alertmanager/
-    #networks:
-      #- back-tier
+    networks:
+      - back-tier
     restart: always
     command:
       - '--config.file=/etc/alertmanager/config.yml'
@@ -101,21 +89,6 @@ services:
 #      placement:
 #        constraints:
 #          - node.hostname == ${HOSTNAME}
-
-  #cadvisor:
-    #image: google/cadvisor
-    #volumes:
-      #- /:/rootfs:ro
-      #- /var/run:/var/run:rw
-      #- /sys:/sys:ro
-      #- /var/lib/docker/:/var/lib/docker:ro
-    #ports:
-      #- 8080:8080
-    #networks:
-      #- back-tier
-    #restart: always
-    #deploy:
-      #mode: global
 
   grafana:
     image: grafana/grafana
@@ -127,36 +100,14 @@ services:
     user: "104"
     depends_on:
       - prometheus
-    #ports:
-      #- 3000:3000
+    ports:
+      - 3000:3000
     volumes:
-      - ${VOLUME_DIR}/grafana:/var/lib/grafana
+      - grafana_data:/var/lib/grafana
       - ${DOCKER_DIR}/grafana/provisioning/:/etc/grafana/provisioning/
     env_file:
       - ./grafana/config.monitoring
     networks:
-      - traefik_proxy
+      - back-tier
+      - front-tier
     restart: always
-    labels:
-      - "traefik.enable=true"
-      - "traefik.backend=grafana"
-      - "traefik.frontend.rule=Host:grafana.${FQDN}"
-      #- "traefik.frontend.rule=Host:radarr.${FQDN}"
-      - "traefik.port=3000"
-      - "traefik.docker.network=traefik_proxy"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=example.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=true"
-
-networks:
-  traefik_proxy:
-    external:
-      name: traefik_proxy
-  default:
-    driver: bridge

@@ -1,0 +1,62 @@
+---
+version: '3.7'
+
+services:
+
+  vpn:
+    container_name: vpn
+    hostname: vpn
+    build: .
+    #image: alpine:latest
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    restart: unless-stopped
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    networks:
+      - frontend
+      - backend
+    tty: true
+    environment:
+      - 'PS1=\\h:\\w\\$$ '
+
+  host1:
+    container_name: host1
+    hostname: host1
+    image: alpine:latest
+    restart: unless-stopped
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    networks:
+      - backend
+    tty: true
+    environment:
+      - 'PS1=\\h:\\w\\$$ '
+
+  host2:
+    container_name: host2
+    hostname: host2
+    image: alpine:latest
+    restart: unless-stopped
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    networks:
+      - backend
+    tty: true
+    environment:
+      - 'PS1=\\h:\\w\\$$ '
+
+networks:
+  frontend:
+    name: frontend
+    #external:
+  backend:
+    name: backend
+    internal: true
+    attachable: true
+    #external:
