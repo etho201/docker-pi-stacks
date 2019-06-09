@@ -1,0 +1,32 @@
+########################################################################################
+# Mosquitto
+# https://hub.docker.com/_/eclipse-mosquitto
+# https://github.com/owntracks/docker-recorder
+########################################################################################
+---
+version: '3.7'
+
+services:
+
+  mosquitto:
+    image: eclipse-mosquitto
+    ports:
+      - 1883:1883
+      - 8883:8883
+    volumes:
+      - ${VOLUME_DIR}/mosquitto/data:/mosquitto/data
+      - ${VOLUME_DIR}/mosquitto/logs:/mosquitto/logs
+      - ${DOCKER_DIR}/mosquitto:/mosquitto/config
+    restart: unless-stopped
+    networks:
+      - frontend
+      #- traefik_proxy
+
+networks:
+  #traefik_proxy:
+    #external:
+      #name: traefik_proxy
+  frontend:
+    external:
+      name: frontend
+    #driver: bridge

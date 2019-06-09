@@ -10,8 +10,8 @@ services:
     #image: alpine:latest
     cap_add:
       - NET_ADMIN
-    devices:
-      - /dev/net/tun
+    #devices:
+      #- /dev/net/tun
     restart: unless-stopped
     dns:
       - 1.1.1.1
@@ -19,6 +19,7 @@ services:
     networks:
       - frontend
       - backend
+      - remote
     tty: true
     environment:
       - 'PS1=\\h:\\w\\$$ '
@@ -27,6 +28,8 @@ services:
     container_name: host1
     hostname: host1
     image: alpine:latest
+    cap_add:
+      - NET_ADMIN
     restart: unless-stopped
     dns:
       - 1.1.1.1
@@ -36,17 +39,21 @@ services:
     tty: true
     environment:
       - 'PS1=\\h:\\w\\$$ '
+    command:
+      - ''
 
-  host2:
-    container_name: host2
-    hostname: host2
+  remote1:
+    container_name: remote1
+    hostname: remote1
     image: alpine:latest
+    cap_add:
+      - NET_ADMIN
     restart: unless-stopped
     dns:
       - 1.1.1.1
       - 1.0.0.1
     networks:
-      - backend
+      - remote
     tty: true
     environment:
       - 'PS1=\\h:\\w\\$$ '
@@ -54,9 +61,11 @@ services:
 networks:
   frontend:
     name: frontend
-    #external:
+    #driver_opts:
+      #com.docker.network.bridge.enable_ip_masquerade: 'true'
   backend:
     name: backend
-    internal: true
-    attachable: true
-    #external:
+    #internal: true
+    #attachable: true
+  remote:
+    name: remote

@@ -1,0 +1,81 @@
+########################################################################################
+# Apache Guacamole
+# https://guacamole.apache.org/
+# https://hub.docker.com/r/guacamole/guacamole
+# https://hub.docker.com/r/guacamole/guacd/
+# https://github.com/apache/guacamole-server
+# https://github.com/boschkundendienst/guacamole-docker-compose
+########################################################################################
+---
+version: '3.7'
+
+services:
+
+  postgres:
+    image: postgres
+    container_name: PostgreSQL
+    hostname: postgres
+    restart: unless-stopped
+    volumes:
+      - guacamole_db:/var/lib/postgresql/data
+      - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql:ro
+    environment:
+      - POSTGRES_DB=guacamole_db
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    networks:
+      - backend
+    #ports:
+      #- 5432:5432
+
+  guacd:
+    image: guacamole/guacd
+    container_name: guacd
+    hostname: guacd
+    restart: unless-stopped
+    networks:
+      - backend
+    volumes:
+    - guacamole_drive:/drive:rw
+    - guacamole_record:/record:rw
+    #ports:
+      #- 4822:4822
+
+  guacamole:
+    image: guacamole/guacamole
+    container_name: Guacamole
+    depends_on:
+      - guacd
+      - postgres
+    restart: unless-stopped
+    volumes:
+      - guacamole_db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_HOSTNAME=postgres
+      - GUACD_HOSTNAME=guacd
+      - POSTGRES_DATABASE=guacamole_db
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    networks:
+      - backend
+      - frontend
+    ports:
+      - 8080:8080
+      - 8443:443
+
+volumes:
+  guacamole_db:
+    name: guacamole_db
+    driver: local
+  guacamole_drive:
+    name: guacamole_drive
+    driver: local
+  guacamole_record:
+    name: guacamole_record
+    driver: local
+
+networks:
+  frontend:
+    name: frontend
+  backend:
+    name: backend
