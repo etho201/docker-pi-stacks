@@ -21,7 +21,7 @@ services:
     volumes:
       - ${VOLUME_DIR}/mosquitto/data:/mosquitto/data
       - ${VOLUME_DIR}/mosquitto/logs:/mosquitto/logs
-      #- ${DOCKER_DIR}/mosquitto:/mosquitto/config
+      - ${DOCKER_DIR}/mosquitto:/mosquitto/config
     restart: unless-stopped
     networks:
       - frontend
