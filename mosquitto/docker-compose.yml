@@ -9,19 +9,22 @@ version: '3.7'
 services:
 
   mosquitto:
-    image: eclipse-mosquitto
+    build: .
+    #image: eclipse-mosquitto
     container_name: mosquitto
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
+      - MOSQUITTO_USERNAME=${MOSQUITTO_USERNAME}
+      - MOSQUITTO_PASSWORD=${MOSQUITTO_PASSWORD}
     ports:
       - 1883:1883
       - 8883:8883
     volumes:
       - ${VOLUME_DIR}/mosquitto/data:/mosquitto/data
       - ${VOLUME_DIR}/mosquitto/logs:/mosquitto/logs
-      - ${DOCKER_DIR}/mosquitto:/mosquitto/config
+      #- ${DOCKER_DIR}/mosquitto:/mosquitto/config
     restart: unless-stopped
     networks:
       - frontend
