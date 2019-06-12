@@ -224,8 +224,8 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=sonarr"
-      - "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /sonarr"
-      #- "traefik.frontend.rule=Host:sonarr.${FQDN}"
+      #- "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /sonarr"
+      - "traefik.frontend.rule=Host:sonarr.${FQDN}"
       - "traefik.port=8989"
       - "traefik.docker.network=traefik_proxy"
       - "traefik.frontend.headers.SSLRedirect=true"
@@ -258,8 +258,8 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=radarr"
-      - "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /radarr"
-      #- "traefik.frontend.rule=Host:radarr.${FQDN}"
+      #- "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /radarr"
+      - "traefik.frontend.rule=Host:radarr.${FQDN}"
       - "traefik.port=7878"
       - "traefik.docker.network=traefik_proxy"
       - "traefik.frontend.headers.SSLRedirect=true"
