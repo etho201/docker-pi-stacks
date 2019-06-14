@@ -93,12 +93,12 @@ services:
 ########################################################################################
 
   netdata:
-    image: netdata/netdata
+    image: netdata/netdata:latest
     container_name: netdata
     hostname: ${FQDN} # set to fqdn of host
     environment:
       - PUID=${PUID}
-      - PGID=${PGID}
+      #- PGID=${PGID}
       - PGID=996
     #ports:
       #- 19999:19999
