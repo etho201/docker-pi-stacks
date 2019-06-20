@@ -63,7 +63,7 @@ services:
       - "-cookie-secure=true"
       - "-email-domain=*"
       - "-github-org=${GITHUB_ORG}"
-      - "-http-address=127.0.0.1:4180"
+      - "-http-address=0.0.0.0:4180"
       - "-pass-access-token"
       - "-provider=github"
       - "-redirect-url=https://${FQDN}/oauth2/callback"
@@ -75,6 +75,8 @@ services:
       - "OAUTH2_PROXY_COOKIE_SECRET=${OAUTH2_PROXY_COOKIE_SECRET}"
     expose:
       - "4180"
+    #ports:
+      #- 4180:4180
     labels:
       - "traefik.enable=true"
       - "traefik.backend=oauth2"
@@ -93,7 +95,6 @@ services:
     networks:
       - traefik_proxy
     restart: unless-stopped
-
 
 ########################################################################################
 # Traefik
@@ -132,6 +133,7 @@ services:
       - "traefik.frontend.headers.STSPreload=true"
       - "traefik.frontend.headers.frameDeny=true"
       #- "traefik.frontend.auth.basic.users=${HTTP_USERNAME}:${HTTP_PASSWORD}"
+      # Require oauth2 for authentication
       - "traefik.frontend.auth.forward.address=https://${FQDN}/oauth2/auth"
       - "traefik.frontend.auth.forward.trustForwardHeader=true"
       - "traefik.frontend.auth.forward.authResponseHeaders=X-Auth-Request-User,X-Auth-Request-Email,Authorization,Set-Cookie"
@@ -227,13 +229,12 @@ services:
       - TZ=${TZ}
       - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
       #- TRANSMISSION_RPC_HOST_WHITELIST="127.0.0.1,192.168.*.*"
-      - TRANSMISSION_RPC_USERNAME=${TRANSMISSION_USERNAME}
-      - TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_PASSWORD}
+      #- TRANSMISSION_RPC_USERNAME=${TRANSMISSION_USERNAME}
+      #- TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_PASSWORD}
       - TRANSMISSION_UMASK=002
       - TRANSMISSION_RATIO_LIMIT=0.4999
       - TRANSMISSION_RATIO_LIMIT_ENABLED=true
       - TRANSMISSION_WEB_UI=combustion
-
     networks:
       - traefik_proxy
     labels:
@@ -252,6 +253,13 @@ services:
       - "traefik.frontend.headers.STSIncludeSubdomains=true"
       - "traefik.frontend.headers.STSPreload=true"
       - "traefik.frontend.headers.frameDeny=true"
+      # Require oauth2 for authentication
+      - "traefik.frontend.auth.forward.address=https://${FQDN}/oauth2/auth"
+      - "traefik.frontend.auth.forward.trustForwardHeader=true"
+      - "traefik.frontend.auth.forward.authResponseHeaders=X-Auth-Request-User,X-Auth-Request-Email,Authorization,Set-Cookie"
+      - "traefik.frontend.errors.401.backend=oauth2"
+      - "traefik.frontend.errors.401.status=401"
+      - "traefik.frontend.errors.401.query=/oauth2/sign_in"
 
 ########################################################################################
 # Indexers
