@@ -46,6 +46,43 @@ services:
     restart: unless-stopped
 
 ########################################################################################
+# oauth2
+# https://quay.io/repository/pusher/oauth2_proxy
+# https://github.com/pusher/oauth2_proxy
+# https://github.com/pusher/oauth2_proxy/issues/46
+########################################################################################
+
+  oauth2:
+    command:
+      # - -client-id
+      # - -client-secret # environment
+      # - -cookie-secret # environment
+      - "-cookie-domain=${FQDN}"
+      - "-cookie-secure=true"
+      - "-email-domain=*"
+      - "-github-org=${GITHUB_ORG}"
+      - "-http-address=0.0.0.0:4180"
+      - "-pass-access-token"
+      - "-provider=github"
+      - "-redirect-url=https://${FQDN}/oauth2/callback"
+      - "-set-authorization-header"
+      - "-set-xauthrequest"
+    environment:
+      - "OAUTH2_PROXY_CLIENT_ID=${GITHUB_OAUTH_CLIENT_ID}"
+      - "OAUTH2_PROXY_CLIENT_SECRET=${GITHUB_OAUTH_CLIENT_SECRET}"
+      - "OAUTH2_PROXY_COOKIE_SECRET=${OAUTH2_PROXY_COOKIE_SECRET}"
+    expose:
+      - "4180"
+    image: quay.io/pusher/oauth2_proxy:latest
+    labels:
+      - "traefik.backend=oauth2" # necessary for custom error pages
+      - "traefik.frontend.rule=Host:${FQDN};PathPrefix:/oauth2"
+    networks:
+      - traefik_proxy
+    restart: unless-stopped
+
+
+########################################################################################
 # Traefik
 # https://hub.docker.com/_/traefik
 ########################################################################################
@@ -81,7 +118,13 @@ services:
       - "traefik.frontend.headers.STSIncludeSubdomains=true"
       - "traefik.frontend.headers.STSPreload=true"
       - "traefik.frontend.headers.frameDeny=true"
-      - "traefik.frontend.auth.basic.users=${HTTP_USERNAME}:${HTTP_PASSWORD}"
+      #- "traefik.frontend.auth.basic.users=${HTTP_USERNAME}:${HTTP_PASSWORD}"
+      - "traefik.frontend.auth.forward.address=https://${FQDN}/oauth2/auth"
+      - "traefik.frontend.auth.forward.trustForwardHeader=true"
+      - "traefik.frontend.auth.forward.authResponseHeaders=X-Auth-Request-User,X-Auth-Request-Email,Authorization,Set-Cookie"
+      - "traefik.frontend.errors.401.backend=oauth2"
+      - "traefik.frontend.errors.401.status=401"
+      - "traefik.frontend.errors.401.query=/oauth2/sign_in"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${DOCKER_DIR}/traefik:/etc/traefik
@@ -98,7 +141,7 @@ services:
     hostname: ${FQDN} # set to fqdn of host
     environment:
       - PUID=${PUID}
-      #- PGID=${PGID}
+      - PGID=${PGID}
       - PGID=996
     #ports:
       #- 19999:19999
