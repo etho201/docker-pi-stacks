@@ -1,0 +1,44 @@
+########################################################################################
+# FreeIPA
+# https://hub.docker.com/r/freeipa/freeipa-server
+# https://www.freeipa.org/page/Docker
+########################################################################################
+---
+version: '3.7'
+
+services:
+
+  freeipa:
+    image: freeipa/freeipa-server
+    container_name: freeipa
+    hostname: freeipa.com
+    restart: unless-stopped
+    volumes:
+      - /home/erik/containers/config/freeipa:/data
+    environment: 
+      - password=test1 # The-directory-server-password
+      - admin-password=test1 # The-admin-password
+      #- IPA_SERVER_IP=10.12.0.98
+    network_mode: host
+    #networks:
+      #- backend
+    #ports:
+      #- 53:53/udp
+      #- 53:53
+      #- 80:80
+      #- 443:443
+      #- 389:389
+      #- 636:636
+      #- 88:88
+      #- 464:464
+      #- 88:88/udp
+      #- 464:464/udp
+      #- 123:123/udp
+      #- 7389:7389
+      #- 9443:9443
+      #- 9444:9444
+      #- 9445:9445
+
+#networks:
+  #backend:
+    #name: backend

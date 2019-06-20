@@ -1,0 +1,44 @@
+version: '3.7'
+services:
+##################################################################
+# SERVER
+# https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/5/html/configuring_identity_management/using-the-ui
+##################################################################
+  FreeIPAServer:
+    image: freeipa/freeipa-server
+    container_name: freeipa
+    restart: always
+    hostname: freeipa
+    domainname: ***REMOVED***.duckdns.org
+    privileged: true
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /home/erik/containers/config/freeipa/freeipa.home.lan/data:/data:Z
+    ports:
+      - "8097:80" # HTTP
+      - "9444:443" # HTTPS
+      - "389:389" # LDAP
+      - "636:636" # LDAPS
+      - "88:88" # Kerberos
+      - "464:464" # Kerberos
+      - "88:88/udp" # Kerberos
+      - "464:464/udp" # Kerberos
+      - "123:123/udp" # ntp
+    environment:
+      - IPA_SERVER_HOSTNAME=ipa.***REMOVED***.duckdns.org
+      - IPA_SERVER_INSTALL_OPTS=-U -r ETHO201.DUCKDNS.ORG
+      - IPA_SERVER_IP=192.168.1.54
+      - PASSWORD=password # at least 8 characters
+      - VIRTUAL_PROTO=https
+      - VIRTUAL_HOST=ipa.***REMOVED***.duckdns.org
+      - VIRTUAL_PORT=443
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
+    networks:
+      - backend
+    cap_add:
+      - NET_ADMIN
+
+networks:
+  backend:
+    name: backend

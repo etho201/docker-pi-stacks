@@ -1,0 +1,101 @@
+  [1/3]: configuring TLS for DS instance
+,  [2/3]: adding CA certificate entry
+,  [3/3]: restarting directory server
+,Done configuring directory server (dirsrv).
+,Configuring ipa-otpd
+,  [1/2]: starting ipa-otpd 
+,  [2/2]: configuring ipa-otpd to start on boot
+,Done configuring ipa-otpd.
+,Configuring the web interface (httpd)
+,  [1/21]: stopping httpd
+,  [2/21]: backing up ssl.conf
+,  [3/21]: disabling nss.conf
+,  [4/21]: configuring mod_ssl certificate paths
+,  [5/21]: setting mod_ssl protocol list to TLSv1.0 - TLSv1.2
+,  [6/21]: configuring mod_ssl log directory
+,  [7/21]: disabling mod_ssl OCSP
+,  [8/21]: adding URL rewriting rules
+,  [9/21]: configuring httpd
+,Nothing to do for configure_httpd_wsgi_conf
+,  [10/21]: setting up httpd keytab
+,  [11/21]: configuring Gssproxy
+,  [12/21]: setting up ssl
+,  [13/21]: configure certmonger for renewals
+,  [14/21]: publish CA cert
+,  [15/21]: clean up any existing httpd ccaches
+,  [16/21]: configuring SELinux for httpd
+,  [17/21]: create KDC proxy config
+,  [18/21]: enable KDC proxy
+,  [19/21]: starting httpd
+,  [20/21]: configuring httpd to start on boot
+,  [21/21]: enabling oddjobd
+,Done configuring the web interface (httpd).
+,Configuring Kerberos KDC (krb5kdc)
+,  [1/1]: installing X509 Certificate for PKINIT
+,Done configuring Kerberos KDC (krb5kdc).
+,Applying LDAP updates
+,Upgrading IPA:. Estimated time: 1 minute 30 seconds
+,  [1/10]: stopping directory server
+,  [2/10]: saving configuration
+,  [3/10]: disabling listeners
+,  [4/10]: enabling DS global lock
+,  [5/10]: disabling Schema Compat
+,  [6/10]: starting directory server
+,  [7/10]: upgrading server
+,  [8/10]: stopping directory server
+,  [9/10]: restoring configuration
+,  [10/10]: starting directory server
+,Done.
+,Restarting the KDC
+,Configuring client side components
+,This program will set up FreeIPA client.
+,Version 4.7.2
+,
+,Using existing certificate '/etc/ipa/ca.crt'.
+,Client hostname: ipa.***REMOVED***.duckdns.org
+,Realm: ETHO201.DUCKDNS.ORG
+,DNS Domain: ***REMOVED***.duckdns.org
+,IPA Server: ipa.***REMOVED***.duckdns.org
+,BaseDN: dc=***REMOVED***,dc=duckdns,dc=org
+,
+,Configured sudoers in /data/etc/nsswitch.conf
+,Configured /etc/sssd/sssd.conf
+,Systemwide CA database updated.
+,SSSD enabled
+,Configured /etc/openldap/ldap.conf
+,/etc/ssh/ssh_config not found, skipping configuration
+,/etc/ssh/sshd_config not found, skipping configuration
+,Configuring ***REMOVED***.duckdns.org as NIS domain.
+,Client configuration complete.
+,The ipa-client-install command was successful
+,
+,Please add records in this file to your DNS system: /tmp/ipa.system.records.f4fw__cx.db
+,==============================================================================
+,Setup complete
+,
+,Next steps:
+,	1. You must make sure these network ports are open:
+,		TCP Ports:
+,		  * 80, 443: HTTP/HTTPS
+,		  * 389, 636: LDAP/LDAPS
+,		  * 88, 464: kerberos
+,		UDP Ports:
+,		  * 88, 464: kerberos
+,		  * 123: ntp
+,
+,	2. You can now obtain a kerberos ticket using the command: 'kinit admin'
+,	   This ticket will allow you to use the IPA tools (e.g., ipa user-add)
+,	   and the web user interface.
+,	3. Kerberos requires time synchronization between clients
+,	   and servers for correct operation. You should consider enabling chronyd.
+,
+,Be sure to back up the CA certificates stored in /root/cacert.p12
+,These files are required to create replicas. The password for these
+,files is the Directory Manager password
+,The ipa-server-install command was successful
+,FreeIPA server does not run DNS server, skipping update-self-ip-address.
+,Created symlink /etc/systemd/system/container-ipa.target.wants/ipa-server-update-self-ip-address.service → /usr/lib/systemd/system/ipa-server-update-self-ip-address.service.
+,Created symlink /etc/systemd/system/container-ipa.target.wants/ipa-server-upgrade.service → /usr/lib/systemd/system/ipa-server-upgrade.service.
+,Removed /etc/systemd/system/container-ipa.target.wants/ipa-server-configure-first.service.
+,FreeIPA server configured.
+,

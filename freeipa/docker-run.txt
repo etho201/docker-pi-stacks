@@ -1,0 +1,13 @@
+docker run -d --name freeipa -ti --rm \
+  --cap-add NET_ADMIN \
+  --sysctl net.ipv6.conf.all.disable_ipv6=0 \
+  --tmpfs /run --tmpfs /tmp \
+  -v /home/erik/containers/config/freeipa:/data:Z \
+  -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+  -h ipa.***REMOVED***.duckdns.org \
+  -p 80:80 -p 443:443 -p 389:389 -p 636:636 -p 88:88 -p 464:464 \
+  -p 88:88/udp -p 464:464/udp -p 123:123/udp -p 7389:7389 \
+  -p 9443:9443 -p 9444:9444 -p 9445:9445 \
+  -e PASSWORD=Password1 -e DEBUG_NO_EXIT=1 \
+  freeipa/freeipa-server -r ETHO201.DUCKDNS.ORG \
+  -U --admin-password=Password1 --ds-password=Password1
