@@ -69,6 +69,7 @@ services:
       - "-redirect-url=https://${FQDN}/oauth2/callback"
       - "-set-authorization-header"
       - "-set-xauthrequest"
+      - "-whitelist-domain=.${FQDN}"
     environment:
       - "OAUTH2_PROXY_CLIENT_ID=${GITHUB_OAUTH_CLIENT_ID}"
       - "OAUTH2_PROXY_CLIENT_SECRET=${GITHUB_OAUTH_CLIENT_SECRET}"
@@ -80,7 +81,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=oauth2"
-      - "traefik.frontend.rule=Host:${FQDN}; PathPrefix:/oauth2"
+      - "traefik.frontend.rule=HostRegexp:{subdomain:.+}.${FQDN},${FQDN}; PathPrefix:/oauth2"
       - "traefik.port=4180"
       - "traefik.docker.network=traefik_proxy"
       - "traefik.frontend.headers.SSLRedirect=true"
@@ -227,7 +228,7 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
-      - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
+      - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=false
       #- TRANSMISSION_RPC_HOST_WHITELIST="127.0.0.1,192.168.*.*"
       #- TRANSMISSION_RPC_USERNAME=${TRANSMISSION_USERNAME}
       #- TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_PASSWORD}
