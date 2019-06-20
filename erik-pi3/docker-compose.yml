@@ -73,7 +73,7 @@ services:
       - "OAUTH2_PROXY_COOKIE_SECRET=${OAUTH2_PROXY_COOKIE_SECRET}"
     expose:
       - "4180"
-    image: quay.io/pusher/oauth2_proxy:latest
+    image: quay.io/pusher/oauth2_proxy:latest-arm64
     labels:
       - "traefik.backend=oauth2" # necessary for custom error pages
       - "traefik.frontend.rule=Host:${FQDN};PathPrefix:/oauth2"
