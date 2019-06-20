@@ -63,7 +63,7 @@ services:
       - "-cookie-secure=true"
       - "-email-domain=*"
       - "-github-org=${GITHUB_ORG}"
-      - "-http-address=0.0.0.0:4180"
+      - "-http-address=127.0.0.1:4180"
       - "-pass-access-token"
       - "-provider=github"
       - "-redirect-url=https://${FQDN}/oauth2/callback"
@@ -76,8 +76,20 @@ services:
     expose:
       - "4180"
     labels:
-      - "traefik.backend=oauth2" # necessary for custom error pages
-      - "traefik.frontend.rule=Host:${FQDN};PathPrefix:/oauth2"
+      - "traefik.enable=true"
+      - "traefik.backend=oauth2"
+      - "traefik.frontend.rule=Host:${FQDN}; PathPrefix:/oauth2"
+      - "traefik.port=4180"
+      - "traefik.docker.network=traefik_proxy"
+      - "traefik.frontend.headers.SSLRedirect=true"
+      - "traefik.frontend.headers.STSSeconds=315360000"
+      - "traefik.frontend.headers.browserXSSFilter=true"
+      - "traefik.frontend.headers.contentTypeNosniff=true"
+      - "traefik.frontend.headers.forceSTSHeader=true"
+      - "traefik.frontend.headers.SSLHost=example.com"
+      - "traefik.frontend.headers.STSIncludeSubdomains=true"
+      - "traefik.frontend.headers.STSPreload=true"
+      - "traefik.frontend.headers.frameDeny=true"
     networks:
       - traefik_proxy
     restart: unless-stopped
