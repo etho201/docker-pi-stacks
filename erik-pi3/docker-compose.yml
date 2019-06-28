@@ -56,9 +56,6 @@ services:
     container_name: oauth2
     image: quay.io/pusher/oauth2_proxy:latest-armv6
     command:
-      # - -client-id
-      # - -client-secret # environment
-      # - -cookie-secret # environment
       - "-cookie-domain=${FQDN}"
       - "-cookie-secure=true"
       - "-email-domain=*"

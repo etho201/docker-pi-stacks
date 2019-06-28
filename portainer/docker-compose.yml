@@ -7,14 +7,14 @@ services:
     container_name: portainer
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /home/pi/containers/config/portainer:/data
+      - /home/erik/containers/config/portainer:/data
     environment:
       - TZ=America/Los_Angeles
     ports:
         - "9000:9000"
     restart: unless-stopped
     networks:
-      - traefik_proxy
+      - backend
     labels:
       - "traefik.enable=true"
       - "traefik.backend=portainer"
@@ -33,6 +33,6 @@ services:
       - "traefik.frontend.headers.frameDeny=true"
 
 networks:
-  traefik_proxy:
+  backend:
     external:
-      name: traefik_proxy
+      name: backend
