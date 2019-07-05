@@ -5,6 +5,8 @@
 # https://hub.docker.com/r/guacamole/guacd/
 # https://github.com/apache/guacamole-server
 # https://github.com/boschkundendienst/guacamole-docker-compose
+#
+# https://hub.docker.com/r/linuxserver/guacd
 ########################################################################################
 ---
 version: '3.7'
