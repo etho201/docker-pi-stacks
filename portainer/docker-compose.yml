@@ -7,7 +7,7 @@ services:
     container_name: portainer
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /home/erik/containers/config/portainer:/data
+      - /home/erik/Documents/containers/config/portainer:/data
     environment:
       - TZ=America/Los_Angeles
     ports:
@@ -15,22 +15,22 @@ services:
     restart: unless-stopped
     networks:
       - backend
-    labels:
-      - "traefik.enable=true"
-      - "traefik.backend=portainer"
+    #labels:
+      #- "traefik.enable=true"
+      #- "traefik.backend=portainer"
       #- "traefik.frontend.rule=Host:***REMOVED***.duckdns.org; PathPrefix: /portainer"
-      - "traefik.frontend.rule=Host:portainer.***REMOVED***.duckdns.org"
-      - "traefik.port=9000"
-      - "traefik.docker.network=traefik_proxy"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=example.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=true"
+      #- "traefik.frontend.rule=Host:portainer.***REMOVED***.duckdns.org"
+      #- "traefik.port=9000"
+      #- "traefik.docker.network=traefik_proxy"
+      #- "traefik.frontend.headers.SSLRedirect=true"
+      #- "traefik.frontend.headers.STSSeconds=315360000"
+      #- "traefik.frontend.headers.browserXSSFilter=true"
+      #- "traefik.frontend.headers.contentTypeNosniff=true"
+      #- "traefik.frontend.headers.forceSTSHeader=true"
+      #- "traefik.frontend.headers.SSLHost=example.com"
+      #- "traefik.frontend.headers.STSIncludeSubdomains=true"
+      #- "traefik.frontend.headers.STSPreload=true"
+      #- "traefik.frontend.headers.frameDeny=true"
 
 networks:
   backend:
