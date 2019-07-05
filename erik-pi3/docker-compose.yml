@@ -732,14 +732,6 @@ services:
       - "traefik.frontend.headers.STSIncludeSubdomains=true"
       - "traefik.frontend.headers.STSPreload=true"
       - "traefik.frontend.headers.frameDeny=true"
-      #- "traefik.frontend.auth.basic.users=${HTTP_USERNAME}:${HTTP_PASSWORD}"
-      # Require oauth2 for authentication
-      - "traefik.frontend.auth.forward.address=https://${FQDN}/oauth2/auth"
-      - "traefik.frontend.auth.forward.trustForwardHeader=true"
-      - "traefik.frontend.auth.forward.authResponseHeaders=X-Auth-Request-User,X-Auth-Request-Email,Authorization,Set-Cookie"
-      - "traefik.frontend.errors.401.backend=oauth2"
-      - "traefik.frontend.errors.401.status=401"
-      - "traefik.frontend.errors.401.query=/oauth2/sign_in"
 
 volumes:
   db:
