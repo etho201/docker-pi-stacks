@@ -616,7 +616,9 @@ services:
       - db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=whatever
+      - POSTGRES_DB=guacamole_db
       - POSTGRES_USER=nextcloud
+      - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     networks:
       - default
