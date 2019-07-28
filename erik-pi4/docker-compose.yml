@@ -80,7 +80,7 @@ services:
       - "traefik.backend=oauth2"
       - "traefik.frontend.rule=HostRegexp:{subdomain:.+}.${FQDN},${FQDN}; PathPrefix:/oauth2"
       - "traefik.port=4180"
-      - "traefik.docker.network=traefik_proxy"
+      - "traefik.docker.network=backend"
       - "traefik.frontend.headers.SSLRedirect=true"
       - "traefik.frontend.headers.STSSeconds=315360000"
       - "traefik.frontend.headers.browserXSSFilter=true"
@@ -91,7 +91,7 @@ services:
       - "traefik.frontend.headers.STSPreload=true"
       - "traefik.frontend.headers.frameDeny=true"
     networks:
-      - traefik_proxy
+      - backend
     restart: unless-stopped
 
 ########################################################################################
@@ -108,8 +108,8 @@ services:
     restart: always
     domainname: ${FQDN}
     networks:
-      - default
-      - traefik_proxy
+      - frontend
+      - backend
     ports:
       - "80:80"
       - "443:443"
@@ -120,7 +120,7 @@ services:
       #- "traefik.frontend.rule=Host:traefik.${FQDN}"
       - "traefik.frontend.rule=Host:${FQDN}; PathPrefixStrip: /traefik"
       - "traefik.port=8080"
-      - "traefik.docker.network=traefik_proxy"
+      - "traefik.docker.network=backend"
       - "traefik.frontend.headers.SSLRedirect=true"
       - "traefik.frontend.headers.STSSeconds=315360000"
       - "traefik.frontend.headers.browserXSSFilter=true"
@@ -167,7 +167,7 @@ services:
       - /sys:/host/sys:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
-      - traefik_proxy
+      - backend
     labels:
       - "traefik.enable=true"
       - "traefik.backend=netdata"
@@ -175,7 +175,7 @@ services:
       - "traefik.frontend.rule=Host:netdata.${FQDN}"
       - "traefik.port=19999"
       #- "traefik.protocol=https"
-      - "traefik.docker.network=traefik_proxy"
+      - "traefik.docker.network=backend"
       - "traefik.frontend.headers.SSLRedirect=true"
       - "traefik.frontend.headers.STSSeconds=315360000"
       - "traefik.frontend.headers.browserXSSFilter=true"
@@ -215,7 +215,6 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${CONFIG_DIR}/transmission-vpn:/data
-      - ${CONFIG_DIR}/shared:/shared
       - ${EXTHDD_DIR}/downloads/torrents/watch:/data/watch
       - ${EXTHDD_DIR}/downloads/torrents/complete:/data/completed
       - ${EXTHDD_DIR}/downloads/torrents/incomplete:/data/incomplete
@@ -241,14 +240,14 @@ services:
       - TRANSMISSION_RATIO_LIMIT_ENABLED=true
       - TRANSMISSION_WEB_UI=combustion
     networks:
-      - traefik_proxy
+      - backend
     labels:
       - "traefik.enable=true"
       - "traefik.backend=transmission-vpn"
       #- "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /transmission"
       - "traefik.frontend.rule=Host:transmission.${FQDN}"
       - "traefik.port=9091"
-      - "traefik.docker.network=traefik_proxy"
+      - "traefik.docker.network=backend"
       - "traefik.frontend.headers.SSLRedirect=true"
       - "traefik.frontend.headers.STSSeconds=315360000"
       - "traefik.frontend.headers.browserXSSFilter=true"
@@ -289,14 +288,14 @@ services:
       #- 8989:8989
     restart: unless-stopped
     networks:
-      - traefik_proxy
+      - backend
     labels:
       - "traefik.enable=true"
       - "traefik.backend=sonarr"
       #- "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /sonarr"
       - "traefik.frontend.rule=Host:sonarr.${FQDN}"
       - "traefik.port=8989"
-      - "traefik.docker.network=traefik_proxy"
+      - "traefik.docker.network=backend"
       - "traefik.frontend.headers.SSLRedirect=true"
       - "traefik.frontend.headers.STSSeconds=315360000"
       - "traefik.frontend.headers.browserXSSFilter=true"
@@ -331,14 +330,14 @@ services:
       #- 7878:7878
     restart: unless-stopped
     networks:
-      - traefik_proxy
+      - backend
     labels:
       - "traefik.enable=true"
       - "traefik.backend=radarr"
       #- "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /radarr"
       - "traefik.frontend.rule=Host:radarr.${FQDN}"
       - "traefik.port=7878"
-      - "traefik.docker.network=traefik_proxy"
+      - "traefik.docker.network=backend"
       - "traefik.frontend.headers.SSLRedirect=true"
       - "traefik.frontend.headers.STSSeconds=315360000"
       - "traefik.frontend.headers.browserXSSFilter=true"
@@ -372,14 +371,14 @@ services:
       #- 9117:9117
     restart: unless-stopped
     networks:
-      - traefik_proxy
+      - backend
     labels:
       - "traefik.enable=true"
       - "traefik.backend=jackett"
       #- "traefik.frontend.rule=Host:jackett.${FQDN}"
       - "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /jackett"
       - "traefik.port=9117"
-      - "traefik.docker.network=traefik_proxy"
+      - "traefik.docker.network=backend"
       - "traefik.frontend.headers.SSLRedirect=true"
       - "traefik.frontend.headers.STSSeconds=315360000"
       - "traefik.frontend.headers.browserXSSFilter=true"
@@ -426,14 +425,14 @@ services:
       #- 8181:8181
     restart: unless-stopped
     networks:
-      - traefik_proxy
+      - backend
     labels:
       - "traefik.enable=true"
       - "traefik.backend=tautulli"
       #- "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /tautulli"
       - "traefik.frontend.rule=Host:tautulli.${FQDN}"
       - "traefik.port=8181"
-      - "traefik.docker.network=traefik_proxy"
+      - "traefik.docker.network=backend"
       - "traefik.frontend.headers.SSLRedirect=true"
       - "traefik.frontend.headers.STSSeconds=315360000"
       - "traefik.frontend.headers.browserXSSFilter=true"
@@ -470,7 +469,7 @@ services:
       #- 443:443
     restart: unless-stopped
     networks:
-      - traefik_proxy
+      - backend
     labels:
       - "traefik.enable=true"
       - "traefik.backend=heimdall"
@@ -478,7 +477,7 @@ services:
       #- "traefik.frontend.rule=Host:heimdall.${FQDN}"
       - "traefik.port=443"
       - "traefik.protocol=https"
-      - "traefik.docker.network=traefik_proxy"
+      - "traefik.docker.network=backend"
       - "traefik.frontend.headers.SSLRedirect=true"
       - "traefik.frontend.headers.STSSeconds=315360000"
       - "traefik.frontend.headers.browserXSSFilter=true"
@@ -523,7 +522,7 @@ services:
     cap_add:
       - NET_ADMIN
     networks:
-      - traefik_proxy
+      - backend
     environment:
       - ServerIP=192.168.1.15
       - PROXY_LOCATION=pihole
@@ -538,7 +537,7 @@ services:
       - "traefik.enable=true"
       - "traefik.backend=pihole"
       - "traefik.port=80"
-      - "traefik.docker.network=traefik_proxy"
+      - "traefik.docker.network=backend"
       #- "traefik.frontend.rule=HostRegexp:pihole.${FQDN},{catchall:.*}"
       - "traefik.frontend.rule=Host:pihole.${FQDN}"
       - "traefik.frontend.priority=1"
@@ -569,14 +568,14 @@ services:
       #- 9000:9000
     restart: unless-stopped
     networks:
-      - traefik_proxy
+      - backend
     labels:
       - "traefik.enable=true"
       - "traefik.backend=portainer"
       #- "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /portainer"
       - "traefik.frontend.rule=Host:portainer.${FQDN}"
       - "traefik.port=9000"
-      - "traefik.docker.network=traefik_proxy"
+      - "traefik.docker.network=backend"
       - "traefik.frontend.headers.SSLRedirect=true"
       - "traefik.frontend.headers.STSSeconds=315360000"
       - "traefik.frontend.headers.browserXSSFilter=true"
@@ -621,7 +620,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     networks:
-      - default
+      - backend
 
   Nextcloud:
     image: nextcloud:latest
@@ -648,14 +647,13 @@ services:
       - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.${FQDN} duckdns.org
     domainname: nextcloud.${FQDN}
     networks:
-      - default
-      - traefik_proxy
+      - backend
     labels:
       - "traefik.enable=true"
       - "traefik.backend=Nextcloud"
       - "traefik.frontend.rule=Host:nextcloud.${FQDN}"
       - "traefik.port=80"
-      - "traefik.docker.network=traefik_proxy"
+      - "traefik.docker.network=backend"
       - "traefik.frontend.headers.SSLRedirect=true"
       - "traefik.frontend.headers.STSSeconds=315360000"
       - "traefik.frontend.headers.browserXSSFilter=true"
@@ -681,13 +679,13 @@ services:
       #- 8200:8200
     restart: unless-stopped
     networks:
-      - traefik_proxy
+      - backend
     labels:
       - "traefik.enable=true"
       - "traefik.backend=duplicati"
       - "traefik.frontend.rule=Host:duplicati.${FQDN}"
       - "traefik.port=8200"
-      - "traefik.docker.network=traefik_proxy"
+      - "traefik.docker.network=backend"
       - "traefik.frontend.headers.SSLRedirect=true"
       - "traefik.frontend.headers.STSSeconds=315360000"
       - "traefik.frontend.headers.browserXSSFilter=true"
@@ -716,7 +714,7 @@ services:
     #ports:
       #- 9283:80
     networks:
-      - traefik_proxy
+      - backend
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -724,7 +722,7 @@ services:
       #- "traefik.frontend.rule=Host:traefik.${FQDN}"
       - "traefik.frontend.rule=Host:grocy.${FQDN}"
       - "traefik.port=80"
-      - "traefik.docker.network=traefik_proxy"
+      - "traefik.docker.network=backend"
       - "traefik.frontend.headers.SSLRedirect=true"
       - "traefik.frontend.headers.STSSeconds=315360000"
       - "traefik.frontend.headers.browserXSSFilter=true"
@@ -742,8 +740,9 @@ volumes:
     driver: local
 
 networks:
-  traefik_proxy:
+  frontend:
     external:
-      name: traefik_proxy
-  default:
-    driver: bridge
+      name: frontend
+  backend:
+    external:
+      name: backend
