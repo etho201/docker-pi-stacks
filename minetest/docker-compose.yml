@@ -1,0 +1,31 @@
+---
+version: '3.7'
+services:
+
+######################################################################
+# https://github.com/linuxserver/docker-minetest
+# https://wiki.minetest.net/Minetest.conf
+# https://github.com/celeron55/minetest/blob/master/minetest.conf.example
+# https://wiki.minetest.net/Command_line
+######################################################################
+
+  minetest:
+    image: linuxserver/minetest
+    container_name: minetest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - CLI_ARGS="--gameid minetest" #optional
+    volumes:
+      - /home/pi/containers/config/minetest:/config/.minetest
+    ports:
+      - 30000:30000/udp
+    networks:
+      - frontend
+    restart: unless-stopped
+
+networks:
+  frontend:
+    external:
+      name: frontend
