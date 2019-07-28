@@ -42,7 +42,7 @@ services:
       - TOKEN=***REMOVED***
       - LOG_FILE=true #optional
     volumes:
-      - ${DOCKER_DIR}/duckdns:/config #optional
+      - ${CONFIG_DIR}/duckdns:/config #optional
     restart: unless-stopped
 
 ########################################################################################
@@ -140,8 +140,8 @@ services:
       - "traefik.frontend.errors.401.query=/oauth2/sign_in"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${DOCKER_DIR}/traefik:/etc/traefik
-      - ${DOCKER_DIR}/shared:/shared
+      - ${CONFIG_DIR}/traefik:/etc/traefik
+      - ${CONFIG_DIR}/shared:/shared
 
 ########################################################################################
 # netdata
@@ -214,12 +214,12 @@ services:
       - 1.0.0.1
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${DOCKER_DIR}/transmission-vpn:/data
-      - ${DOCKER_DIR}/shared:/shared
-      - /mnt/hdd/Downloads/Torrents/watch:/data/watch
-      - /mnt/hdd/Downloads/Torrents/complete:/data/completed
-      - /mnt/hdd/Downloads/Torrents/incomplete:/data/incomplete
-      - ${DOCKER_DIR}/transmission-vpn/openvpn:/etc/openvpn/torguard-custom
+      - ${CONFIG_DIR}/transmission-vpn:/data
+      - ${CONFIG_DIR}/shared:/shared
+      - ${EXTHDD_DIR}/downloads/torrents/watch:/data/watch
+      - ${EXTHDD_DIR}/downloads/torrents/complete:/data/completed
+      - ${EXTHDD_DIR}/downloads/torrents/incomplete:/data/incomplete
+      - ${CONFIG_DIR}/transmission-vpn/openvpn:/etc/openvpn/torguard-custom
     environment:
       - OPENVPN_PROVIDER=TORGUARD
       #- OPENVPN_PROVIDER=TORGUARD-CUSTOM
@@ -281,9 +281,9 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - ${DOCKER_DIR}/sonarr:/config
-      - /mnt/hdd/Media/TV:/tv
-      - /mnt/hdd/Downloads:/downloads
+      - ${CONFIG_DIR}/sonarr:/config
+      - ${EXTHDD_DIR}/media/tv:/tv
+      - ${EXTHDD_DIR}/downloads:/downloads
       - "/etc/localtime:/etc/localtime:ro"
     #ports:
       #- 8989:8989
@@ -323,9 +323,9 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - ${DOCKER_DIR}/radarr:/config
-      - /mnt/hdd/Downloads:/downloads
-      - /mnt/hdd/Media/Movies:/movies
+      - ${CONFIG_DIR}/radarr:/config
+      - ${EXTHDD_DIR}/downloads:/downloads
+      - ${EXTHDD_DIR}/media/movies:/movies
       - "/etc/localtime:/etc/localtime:ro"
     #ports:
       #- 7878:7878
@@ -365,8 +365,8 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - ${DOCKER_DIR}/jackett:/config
-      - /mnt/hdd/Jackett:/downloads
+      - ${CONFIG_DIR}/jackett:/config
+      - ${VOLUME_DIR}/jackett:/downloads
       - "/etc/localtime:/etc/localtime:ro"
     #ports:
       #- 9117:9117
@@ -405,11 +405,11 @@ services:
       - PGID=${PGID}
       - VERSION=docker
     volumes:
-      - /mnt/hdd/Plex/Config:/config
-      - /mnt/hdd/Media/TV:/data/tvshows
-      - /mnt/hdd/Media/Movies:/data/movies
-      - /mnt/hdd/Media/Other:/data/other
-      - /mnt/hdd/Plex/Transcode:/transcode
+      - ${CONFIG_DIR}/plex/config:/config
+      - ${EXTHDD_DIR}/media/tv:/data/tvshows
+      - ${EXTHDD_DIR}/media/movies:/data/movies
+      - ${EXTHDD_DIR}/media/other:/data/other
+      - ${CONFIG_DIR}/plex/transcode:/transcode
     restart: unless-stopped
 
   tautulli:
@@ -420,8 +420,8 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - /mnt/hdd/Plex/tautulli:/config
-      - /mnt/hdd/Plex/Config/Library/Application Support/Plex Media Server/Logs:/logs:ro #Map this to Plex log directory - recommended RO.
+      - ${CONFIG_DIR}/plex/tautulli:/config
+      - ${CONFIG_DIR}/plex/Config/Library/Application Support/Plex Media Server/Logs:/logs:ro #Map this to Plex log directory - recommended RO.
     #ports:
       #- 8181:8181
     restart: unless-stopped
@@ -464,7 +464,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - ${DOCKER_DIR}/heimdall:/config
+      - ${CONFIG_DIR}/heimdall:/config
     #ports:
       #- 80:80
       #- 443:443
@@ -515,9 +515,9 @@ services:
       #- 'YYYY:443'
     restart: unless-stopped
     volumes:
-      - ${DOCKER_DIR}/pihole/pihole:/etc/pihole
-      - ${DOCKER_DIR}/pihole/pihole.log:/var/log/pihole.log
-      - ${DOCKER_DIR}/pihole/dnsmask.d:/etc/dnsmasq.d
+      - ${CONFIG_DIR}/pihole/pihole:/etc/pihole
+      - ${CONFIG_DIR}/pihole/pihole.log:/var/log/pihole.log
+      - ${CONFIG_DIR}/pihole/dnsmask.d:/etc/dnsmasq.d
     # Recommended but not required (DHCP needs NET_ADMIN)
     #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
     cap_add:
@@ -562,7 +562,7 @@ services:
     container_name: portainer
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${DOCKER_DIR}/portainer:/data
+      - ${CONFIG_DIR}/portainer:/data
     environment:
       - TZ=${TZ}
     #ports:
@@ -632,8 +632,8 @@ services:
       - db
     volumes:
       - nextcloud:/var/www/html
-      - /home/pi/containers/config/nextcloud:/var/www/html/data:rw #config directory
-      - /mnt/hdd/docker/nextcloud:/mnt/hdd/storage #external storage
+      - ${CONFIG_DIR}/nextcloud:/var/www/html/data:rw #config directory
+      - ${EXTHDD_DIR}/nextcloud:/exthdd #external storage
       # Make check_data_directory_permissions => false and enable external storage support (https://github.com/nextcloud/docker/issues/236)
     restart: unless-stopped
     environment:
@@ -674,9 +674,9 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - /home/pi/containers/config/duplicati:/config
-      - /mnt/hdd/docker/backups:/backups
-      - /home/pi/containers:/source
+      - ${CONFIG_DIR}/duplicati:/config
+      - ${VOLUME_DIR}/duplicati:/backups
+      - ${EXTHDD_DIR}:/source
     #ports:
       #- 8200:8200
     restart: unless-stopped
@@ -712,7 +712,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - ${DOCKER_DIR}/grocy:/config
+      - ${CONFIG_DIR}/grocy:/config
     #ports:
       #- 9283:80
     networks:
