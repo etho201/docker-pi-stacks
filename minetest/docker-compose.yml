@@ -23,7 +23,6 @@ services:
       - 30000:30000/udp
     networks:
       - frontend
-      - backend
     restart: unless-stopped
 
 networks:
