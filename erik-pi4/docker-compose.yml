@@ -739,10 +739,10 @@ services:
 
 volumes:
   db1:
-    driver: local
+    external: local
       name: db1
   nextcloud:
-    driver: local
+    external: local
       name: nextcloud
 
 networks:
