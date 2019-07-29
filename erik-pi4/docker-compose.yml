@@ -739,11 +739,7 @@ services:
 
 volumes:
   db1:
-    external: local
-      name: db1
   nextcloud:
-    external: local
-      name: nextcloud
 
 networks:
   frontend:
