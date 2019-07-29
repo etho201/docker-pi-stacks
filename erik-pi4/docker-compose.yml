@@ -611,7 +611,7 @@ services:
 #      - MYSQL_DATABASE=nextcloud
 #      - MYSQL_USER=nextcloud
 
-  db:
+  db1:
     image: postgres
     container_name: PostgreSQL
     restart: unless-stopped
