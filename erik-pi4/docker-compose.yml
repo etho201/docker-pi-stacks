@@ -704,7 +704,11 @@ services:
 
 volumes:
   db1:
+    external: true
+    name: db1
   nextcloud:
+    external: true
+    name: nextcloud
 
 networks:
   frontend:
