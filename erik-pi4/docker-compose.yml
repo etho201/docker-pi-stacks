@@ -622,7 +622,7 @@ services:
     environment:
       - POSTGRES_DB=whatever
       - POSTGRES_DB=guacamole_db
-      - POSTGRES_USER=nextcloud
+      - POSTGRES_DB=nextcloud
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     networks:
@@ -644,10 +644,10 @@ services:
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
-      - POSTGRES_DB=nextcloud
-      - POSTGRES_USER=nextcloud
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_HOST=db1
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - NEXTCLOUD_ADMIN_USER=${USERNAME}
       - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_PASSWORD}
       - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.${FQDN} duckdns.org
