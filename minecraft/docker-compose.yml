@@ -1,0 +1,32 @@
+---
+version: '3.7'
+services:
+
+######################################################################
+# https://hub.docker.com/r/itzg/minecraft-server
+######################################################################
+
+  minecraft-server:
+    image: itzg/minecraft-server
+    container_name: minecraft
+    environment:
+      - EULA=TRUE
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - ${CONFIG_DIR}/minecraft:/data
+    ports:
+      - 25565:25565
+    networks:
+      - frontend
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
+
+networks:
+  frontend:
+    external:
+      name: frontend
+  default:
+    driver: bridge
