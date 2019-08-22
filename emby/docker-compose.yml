@@ -19,7 +19,7 @@ services:
     volumes:
       - ${CONFIG_DIR}/emby:/config
       - ${EXTHDD_DIR}/media:/mnt/media
-    device:
+    devices:
       - /dev/dri:/dev/dri # To mount all render nodes for VAAPI/NVDEC/NVENC
     ports:
       - 8096:8096 # http port
