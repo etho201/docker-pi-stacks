@@ -7,7 +7,7 @@ services:
 # https://www.mymediaalexa.com/home/docker
 ######################################################################
 
-  minecraft-server:
+  mymedia:
     image: bizmodeller/mymediaforalexa
     container_name: mymediaforalexa
     environment:
