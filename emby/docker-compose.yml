@@ -1,0 +1,36 @@
+---
+version: '3.7'
+services:
+
+######################################################################
+# https://hub.docker.com/r/emby/embyserver_arm32v7
+# https://hub.docker.com/r/emby/embyserver/
+######################################################################
+
+  emby:
+    image: emby/embyserver_arm32v7
+    container_name: emby
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UID=1000
+      - GID=100
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_DIR}/emby:/config
+      - ${EXTHDD_DIR}/media:/mnt/media
+    device:
+      - /dev/dri:/dev/dri # To mount all render nodes for VAAPI/NVDEC/NVENC
+    ports:
+      - 8096:8096 # http port
+      - 8920:8920 # https port
+    networks:
+      - frontend
+    restart: unless-stopped
+
+networks:
+  frontend:
+    external:
+      name: frontend
+  default:
+    driver: bridge
