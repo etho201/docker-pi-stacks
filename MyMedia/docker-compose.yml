@@ -11,9 +11,9 @@ services:
     image: bizmodeller/mymediaforalexa
     container_name: mymediaforalexa
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
       - ${CONFIG_DIR}/mymediaforalexa:/datadir
       - ${EXTHDD_DIR}/media/music:/medialibrary
