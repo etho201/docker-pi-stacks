@@ -1,0 +1,32 @@
+---
+version: '3.7'
+services:
+
+######################################################################
+# https://hub.docker.com/r/bizmodeller/mymediaforalexa
+# https://www.mymediaalexa.com/home/docker
+######################################################################
+
+  minecraft-server:
+    image: bizmodeller/mymediaforalexa
+    container_name: mymediaforalexa
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - ${CONFIG_DIR}/mymediaforalexa:/datadir
+      - ${EXTHDD_DIR}/media/music:/medialibrary
+    ports:
+      - 52050:52050
+      - 52051:52051
+    networks:
+      - frontend
+    restart: unless-stopped
+
+networks:
+  frontend:
+    external:
+      name: frontend
+  default:
+    driver: bridge
