@@ -359,6 +359,47 @@ services:
       - "traefik.frontend.errors.401.status=401"
       - "traefik.frontend.errors.401.query=/oauth2/sign_in"
 
+  lidarr:
+    image: linuxserver/lidarr
+    container_name: lidarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK_SET=022 #optional
+    volumes:
+      - ${CONFIG_DIR}/lidarr:/config
+      - ${EXTHDD_DIR}/downloads:/downloads
+      - ${EXTHDD_DIR}/media/music:/music
+      #- "/etc/localtime:/etc/localtime:ro"
+    #ports:
+      #- 8686:8686
+    restart: unless-stopped
+    networks:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=lidarr"
+      #- "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /lidarr"
+      - "traefik.frontend.rule=Host:lidarr.${FQDN}"
+      - "traefik.port=8686"
+      - "traefik.docker.network=backend"
+      - "traefik.frontend.headers.SSLRedirect=true"
+      - "traefik.frontend.headers.STSSeconds=315360000"
+      - "traefik.frontend.headers.browserXSSFilter=true"
+      - "traefik.frontend.headers.contentTypeNosniff=true"
+      - "traefik.frontend.headers.forceSTSHeader=true"
+      - "traefik.frontend.headers.SSLHost=example.com"
+      - "traefik.frontend.headers.STSIncludeSubdomains=true"
+      - "traefik.frontend.headers.STSPreload=true"
+      - "traefik.frontend.headers.frameDeny=true"
+        # Require oauth2 for authentication
+      - "traefik.frontend.auth.forward.address=https://${FQDN}/oauth2/auth"
+      - "traefik.frontend.auth.forward.trustForwardHeader=true"
+      - "traefik.frontend.auth.forward.authResponseHeaders=X-Auth-Request-User,X-Auth-Request-Email,Authorization,Set-Cookie"
+      - "traefik.frontend.errors.401.backend=oauth2"
+      - "traefik.frontend.errors.401.status=401"
+      - "traefik.frontend.errors.401.query=/oauth2/sign_in"
 
   jackett:
     image: linuxserver/jackett
