@@ -1,0 +1,54 @@
+logLevel = "WARN" #DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+InsecureSkipVerify = true
+defaultEntryPoints = ["http", "https"]
+
+# WEB interface of Traefik - it will show web page with overview of frontend and backend configurations 
+[api]
+  entryPoint = "traefik"
+  dashboard = true
+  address = ":8080"
+
+# Force HTTPS
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+#      [entryPoints.https.tls.defaultCertificate]
+
+# File configuration backends
+[file]
+  filename = "/etc/traefik/rules.toml"
+  watch = true
+
+# Let's encrypt configuration
+[acme]
+email = "***INSERT_EMAIL***"
+storage="/etc/traefik/acme/acme.json"
+entryPoint = "https"
+acmeLogging=true
+onDemand = false #create certificate when container is created
+onHostRule = true
+  # Use a HTTP-01 acme challenge rather than TLS-SNI-01 challenge
+  #[acme.httpChallenge]
+  #entryPoint = "http"
+
+[[acme.domains]]
+  main = "*.***INSERT_FQDN***"
+  sans = ["***INSERT_FQDN***"]
+
+# List of providers found here: https://docs.traefik.io/configuration/acme/#provider
+[acme.dnsChallenge]
+  provider = "duckdns"
+  delayBeforeCheck = 0
+
+# Connection to docker host system (docker.sock)
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+domain = "***INSERT_FQDN***"
+watch = true
+# This will make containers hidden unless they have a "traefik.enable=true" label
+exposedbydefault = false
