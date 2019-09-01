@@ -679,9 +679,7 @@ services:
       - db1
     volumes:
       - ${CONFIG_DIR}/nextcloud:/var/www/html #config directory
-      - ${VOLUME_DIR}/nextcloud:/var/www/html/data:rw #config directory
-      - ${EXTHDD_DIR}/nextcloud:/exthdd:rw #external storage
-      # Make check_data_directory_permissions => false and enable external storage support (https://github.com/nextcloud/docker/issues/236)
+      - ${VOLUME_DIR}/nextcloud:/var/www/html/data:rw #data directory
     restart: unless-stopped
     environment:
       - PUID=${PUID}
@@ -748,14 +746,14 @@ volumes:
   db1:
     external: true
     name: db1
-  #nextcloud:
-    #external: true
-    #name: nextcloud
+    #run: docker volume create --name=db1
 
 networks:
   frontend:
     external:
       name: frontend
+      #run: docker network create --name=frontend
   backend:
     external:
       name: backend
+      #run: docker network create --name=backend
