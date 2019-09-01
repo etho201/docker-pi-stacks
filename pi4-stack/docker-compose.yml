@@ -663,7 +663,7 @@ services:
     environment:
       - POSTGRES_DB=whatever
       - POSTGRES_DB=guacamole_db
-      # Do not create the nextcloud database here. Doing so will cause the Nextcloud installation to fail. The nextcloud container handles this automaticcally.
+      # Do not create the 'nextcloud' database here. Doing so will cause the Nextcloud installation to fail. The nextcloud container handles this automatically; however, you must create at least one other database first (for example: whatever).
       #- POSTGRES_DB=nextcloud
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -680,7 +680,7 @@ services:
     volumes:
       - nextcloud:/var/www/html
       - ${CONFIG_DIR}/nextcloud:/var/www/html/data:rw #config directory
-      - ${EXTHDD_DIR}/nextcloud:/exthdd #external storage
+      - ${EXTHDD_DIR}/nextcloud:/exthdd:rw #external storage
       # Make check_data_directory_permissions => false and enable external storage support (https://github.com/nextcloud/docker/issues/236)
     restart: unless-stopped
     environment:
