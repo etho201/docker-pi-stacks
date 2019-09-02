@@ -711,7 +711,7 @@ services:
       - "traefik.frontend.headers.frameDeny=true"
 
   duplicati:
-    image: linuxserver/duplicati
+    image: duplicati/duplicati:linux-arm32v7-latest
     container_name: duplicati
     environment:
       - PUID=${PUID}
@@ -719,8 +719,8 @@ services:
       - TZ=${TZ}
     volumes:
       - ${CONFIG_DIR}/duplicati:/config
-      - ${VOLUME_DIR}/duplicati:/backups
-      - ${EXTHDD_DIR}:/source
+      - ${VOLUME_DIR}/duplicati:/backups #local backups
+      - ${EXTHDD_DIR}:/source #backup source directory
     #ports:
       #- 8200:8200
     restart: unless-stopped
