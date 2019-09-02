@@ -4,6 +4,7 @@
 Create a .env file and place in the same directory as the docker-compose.yml file. Paste the following content into the .env file. Sensitive information is stored in BitWarden.
 
 ```
+#General/common settings
 PUID=1000
 PGID=1000
 TZ=America/Los_Angeles
@@ -11,27 +12,38 @@ USERDIR=/home/pi
 EXTHDD_DIR=/mnt/hdd
 CONFIG_DIR=/mnt/hdd/docker/config
 VOLUME_DIR=/mnt/hdd/docker/volume
+
+#Username you want to use for everything
 USERNAME=
-EMAIL_FROM=
-EMAIL_TO=
-EMAIL_PASSWORD=
+
+#Duckdns / Let's Encrypt
+FQDN=example1.duckdns.org
 DUCKDNS_SUBDOMAINS=example1,example2
 DUCKDNS_TOKEN=
-HTTP_USERNAME=
-HTTP_PASSWORD=
-TRANSMISSION_USERNAME=
-TRANSMISSION_PASSWORD=
-FQDN=example1.duckdns.org
+
+#Nextcloud and database config
 POSTGRES_USER=
 POSTGRES_PASSWORD=
 NEXTCLOUD_PASSWORD=
+
+#Transmission-VPN
 OPENVPN_USERNAME=
 OPENVPN_PASSWORD=
-DUCKDNS_TOKEN=
+
+#Used for oauth2 authentication
 GITHUB_ORG=
 GITHUB_OAUTH_CLIENT_ID=
 GITHUB_OAUTH_CLIENT_SECRET=
 OAUTH2_PROXY_COOKIE_SECRET=
+
+#No longer used
+#EMAIL_FROM=
+#EMAIL_TO=
+#EMAIL_PASSWORD=
+#HTTP_USERNAME=
+#HTTP_PASSWORD=
+#TRANSMISSION_USERNAME=
+#TRANSMISSION_PASSWORD=
 ```
 
 ---
