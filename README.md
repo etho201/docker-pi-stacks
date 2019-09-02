@@ -4,7 +4,7 @@
 Create a .env file and place in the same directory as the docker-compose.yml file. Paste the following content into the .env file. Sensitive information is stored in BitWarden.
 
 ```
-#General/common settings
+#General / common settings
 PUID=1000
 PGID=1000
 TZ=America/Los_Angeles
@@ -16,7 +16,7 @@ VOLUME_DIR=/mnt/hdd/docker/volume
 #Username you want to use for everything
 USERNAME=
 
-#Duckdns / Let's Encrypt
+#Duck DNS / Let's Encrypt
 FQDN=example1.duckdns.org
 DUCKDNS_SUBDOMAINS=example1,example2
 DUCKDNS_TOKEN=
@@ -35,6 +35,8 @@ GITHUB_ORG=
 GITHUB_OAUTH_CLIENT_ID=
 GITHUB_OAUTH_CLIENT_SECRET=
 OAUTH2_PROXY_COOKIE_SECRET=
+
+
 
 #No longer used
 #EMAIL_FROM=
