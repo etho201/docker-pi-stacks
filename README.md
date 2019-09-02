@@ -16,7 +16,7 @@ VOLUME_DIR=/mnt/hdd/docker/volume
 # Username you want to use for (nearly) everything
 USERNAME=
 
-# Duck DNS / Let's Encrypt
+# Duck DNS / Let's Encrypt / Traefik
 FQDN=example1.duckdns.org
 DUCKDNS_SUBDOMAINS=example1,example2
 DUCKDNS_TOKEN=
@@ -30,10 +30,12 @@ NEXTCLOUD_PASSWORD=
 OPENVPN_USERNAME=
 OPENVPN_PASSWORD=
 
-# Used for oauth2 authentication
+# Used for OAuth 2 authentication
+# https://pusher.github.io/oauth2_proxy/auth-configuration
 GITHUB_ORG=
 GITHUB_OAUTH_CLIENT_ID=
 GITHUB_OAUTH_CLIENT_SECRET=
+# Just use a random password to encrypt the cookie
 OAUTH2_PROXY_COOKIE_SECRET=
 
 
