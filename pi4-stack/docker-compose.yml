@@ -637,7 +637,7 @@ services:
 # Backup Stack
 # https://hub.docker.com/_/postgres
 # https://hub.docker.com/_/nextcloud
-# https://hub.docker.com/r/linuxserver/duplicati
+# https://hub.docker.com/r/duplicati/duplicati/
 # Volumes are at bottom of yaml file
 ########################################################################################
 
