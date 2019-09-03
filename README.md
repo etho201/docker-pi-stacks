@@ -1,7 +1,20 @@
 # docker-compose
 
+## Introduction
+This is a curated stack of useful Docker containers optimized for the Raspberry Pi.
+
+Many of the containers will require additional configuration upon first use, but after everything is configured, you can easily migrate somewhere else provided you keep a backup of your config directory.
+
+Once configured, you'll be able to organize all of your containers neatly using Heimdall. For example, my "home page" looks liks this:
+
+![documentation/1-heimdall.png](documentation/1-heimdall.png)
+
+The best thing is, this setup integrates Duck DNS and Traefik so you don't have to memorize IP addresses and port numbers, and Let's Encrypt for secure SSL. Additionally, you can conveniently authenticate only once for many of the containers by leveraging [OAuth 2](documentation/0-oauth2.png) and signing in with GitHub.
+
+---
+
 ## Getting Started
-Create a .env file and place in the same directory as the docker-compose.yml file. Paste the following content into the .env file. Sensitive information is stored in BitWarden.
+Create a [.env file](.env) and place it into the pi4-stack directory (in the same directory as the docker-compose.yml). Paste the following content into the .env file and input/change variables according to your preferences.
 
 ```bash
 # General / common settings
@@ -50,6 +63,8 @@ OAUTH2_PROXY_COOKIE_SECRET=
 #TRANSMISSION_PASSWORD=
 ```
 
+Make sure to fully configure Traefik before launching any containers. You may reference the included Traefik config files and replace `***INSERT_FQDN***` and `***INSERT_EMAIL***` with your information. 
+
 ---
 
 ## Launching containers:
@@ -72,3 +87,5 @@ OAUTH2_PROXY_COOKIE_SECRET=
 ---
 
 > **_NOTE:_**  New containers are delevoped in the dev folder and evaluated before moving to the pi-stack.
+
+> **_NOTE:_**  You could technically run this on various chipset architectures, but you'll have to change some of the images if you're not running on a Raspberry Pi or some other ARM-based computer.
