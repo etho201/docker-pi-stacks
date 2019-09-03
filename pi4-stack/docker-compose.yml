@@ -718,7 +718,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - ${CONFIG_DIR}/duplicati:/config
+      - ${CONFIG_DIR}/duplicati:/data #config directory
       - ${VOLUME_DIR}/duplicati:/backups #local backups
       - ${EXTHDD_DIR}:/source #backup source directory
     #ports:
