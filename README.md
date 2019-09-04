@@ -1,7 +1,7 @@
 # Docker Pi-Stacks
 
 ## Introduction
-This is a curated stack of useful Docker containers optimized for the Raspberry Pi &mdash; primarily geared toward media/entertainment.
+This repository contains curated stacks of useful Docker containers optimized for the Raspberry Pi &mdash; primarily geared toward media/entertainment.
 
 Many of the containers will require additional configuration upon first use, but after everything is configured, you can easily migrate somewhere else provided you keep a backup of your config directory.
 
