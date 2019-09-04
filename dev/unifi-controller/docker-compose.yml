@@ -1,0 +1,47 @@
+---
+version: '3.7'
+services:
+
+########################################################################################
+# Unifi Controller
+# https://hub.docker.com/r/linuxserver/unifi-controller
+########################################################################################
+
+  unifi-controller:
+    image: linuxserver/unifi-controller
+    container_name: unifi-controller
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      #- MEM_LIMIT=1024M #Optionally change the Java memory limit (-Xmx) (default is 1024M)
+    volumes:
+      - ${CONFIG_DIR}/unifi-controller:/config #All Unifi data stored here
+    ports:
+      - 3478:3478/udp #Unifi communication port
+      - 10001:10001/udp #required for AP discovery
+      - 8080:8080 #required for Unifi to function
+      - 8081:8081 #Unifi communication port
+      - 8443:8443 #The webui is at https://ip:8443.
+      - 8843:8843 #Unifi communication port
+      - 8880:8880 #Unifi communication port
+      - 6789:6789 #For throughput test
+    restart: unless-stopped
+    networks:
+      - backend
+    labels:
+      # Traefik Configuration
+      - "traefik.enable=true"
+      - "traefik.backend=unifi-controller"
+      #- "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /unifi"
+      - "traefik.frontend.rule=Host:unifi.${FQDN}"
+      - "traefik.port=8443"
+      - "traefik.docker.network=backend"
+      - "traefik.frontend.headers.SSLRedirect=true"
+      - "traefik.frontend.headers.STSSeconds=315360000"
+      - "traefik.frontend.headers.browserXSSFilter=true"
+      - "traefik.frontend.headers.contentTypeNosniff=true"
+      - "traefik.frontend.headers.forceSTSHeader=true"
+      - "traefik.frontend.headers.SSLHost=example.com"
+      - "traefik.frontend.headers.STSIncludeSubdomains=true"
+      - "traefik.frontend.headers.STSPreload=true"
+      - "traefik.frontend.headers.frameDeny=true"
