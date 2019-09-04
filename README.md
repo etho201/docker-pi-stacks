@@ -1,7 +1,7 @@
-# docker-compose
+# Docker Pi-Stacks
 
 ## Introduction
-This is a curated stack of useful Docker containers optimized for the Raspberry Pi.
+This is a curated stack of useful Docker containers optimized for the Raspberry Pi &mdash; primarily geared toward media/entertainment.
 
 Many of the containers will require additional configuration upon first use, but after everything is configured, you can easily migrate somewhere else provided you keep a backup of your config directory.
 
@@ -9,12 +9,14 @@ Once configured, you'll be able to organize all of your containers neatly using 
 
 ![documentation/1-heimdall.png](documentation/1-heimdall.png)
 
-The best thing is, this setup integrates Duck DNS and Traefik so you don't have to memorize IP addresses and port numbers, and Let's Encrypt for secure SSL. Additionally, you can conveniently authenticate only once for many of the containers by leveraging [OAuth 2](documentation/0-oauth2.png) and signing in with GitHub.
+The best thing is, this setup integrates Duck DNS and Traefik so you don't have to memorize IP addresses and port numbers, and uses SSL certificates from Let's Encrypt to keep everything secure. Additionally, you can conveniently authenticate only once for many of the containers by leveraging [OAuth 2](documentation/0-oauth2.png) and signing in with GitHub (or any other supported Oauth 2 provider).
+
+> **_NOTE:_**  During the initial setup you may need to uncomment the ports to configure the various microservices. Once everything is fully configured, Traefik will neatly route everything so you only need to keep 2 ports open (80 and 443).
 
 ---
 
-## Getting Started
-Create a [.env file](.env) and place it into the pi4-stack directory (in the same directory as the docker-compose.yml). Paste the following content into the .env file and input/change variables according to your preferences.
+## Getting Started:
+Clone this repo, then create a [.env file](.env) and place it into the pi4-stack directory (in the same directory as the docker-compose.yml). Paste the following content into the .env file and input/change variables according to your preferences.
 
 ```bash
 # General / common settings
@@ -63,7 +65,7 @@ OAUTH2_PROXY_COOKIE_SECRET=
 #TRANSMISSION_PASSWORD=
 ```
 
-Make sure to fully configure Traefik before launching any containers. You may reference the included Traefik config files and replace `***INSERT_FQDN***` and `***INSERT_EMAIL***` with your information. 
+Ideally you should fully configure Traefik before launching any containers. This is simple, just reference the included Traefik config files (config/traefik) and replace `***INSERT_FQDN***` and `***INSERT_EMAIL***` in `traefik.toml` with your own information.
 
 ---
 
@@ -86,6 +88,6 @@ Make sure to fully configure Traefik before launching any containers. You may re
 
 ---
 
-> **_NOTE:_**  New containers are delevoped in the dev folder and evaluated before moving to the pi-stack.
+> **_NOTE:_**  New containers are evaluated in the dev folder before graduating to the pi-stack. If there's something you want that isn't in the stack you can check for it in the dev folder and move it over.
 
 > **_NOTE:_**  You could technically run this on various chipset architectures, but you'll have to change some of the images if you're not running on a Raspberry Pi or some other ARM-based computer.
