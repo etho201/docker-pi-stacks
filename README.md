@@ -5,7 +5,7 @@ This repository contains curated stacks of useful Docker containers optimized fo
 
 Many of the containers will require additional configuration upon first use, but after everything is configured, you can easily migrate somewhere else provided you keep a backup of your config directory.
 
-Once configured, you'll be able to organize all of your containers neatly using Heimdall. For example, my "home page" looks liks this:
+Once configured, you'll be able to organize all of your containers neatly using Heimdall. For example, my "home page" looks like this:
 
 ![documentation/1-heimdall.png](documentation/1-heimdall.png)
 
