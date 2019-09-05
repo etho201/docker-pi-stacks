@@ -12,7 +12,7 @@ A few notes regarding the Unifi Controller.
 
     `- "traefik.protocol=https"` 
     
-    If you don't have that label you will be plagued with a "Bad Request" message, folloed by "This combination of host and port requires TLS."
+    If you don't have that label you will be plagued with a "Bad Request" message, followed by "This combination of host and port requires TLS."
 
 - Since the Unifi controller ships with its own self-signed certificate, you must include `"InsecureSkipVerify = true"` in the `traefik.toml` configuration file.
 
