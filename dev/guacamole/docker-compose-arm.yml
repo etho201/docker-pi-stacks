@@ -68,7 +68,7 @@ services:
       - "traefik.enable=true"
       - "traefik.backend=guacamole"
       - "traefik.frontend.rule=Host:guacamole.${FQDN}"
-      - "traefik.port=443"
+      - "traefik.port=443" # See "On containers with Multiple Ports (segment labels)" --> https://docs.traefik.io/configuration/backends/docker/
       - "traefik.docker.network=backend"
       - "traefik.frontend.headers.SSLRedirect=true"
       - "traefik.frontend.headers.STSSeconds=315360000"
