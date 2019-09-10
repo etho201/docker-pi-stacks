@@ -1,5 +1,5 @@
 logLevel = "WARN" #DEBUG, INFO, WARN, ERROR, FATAL, PANIC
-InsecureSkipVerify = true
+insecureSkipVerify = true
 defaultEntryPoints = ["http", "https"]
 
 # WEB interface of Traefik - it will show web page with overview of frontend and backend configurations 
