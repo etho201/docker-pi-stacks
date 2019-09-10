@@ -1,5 +1,5 @@
 logLevel = "WARN" #DEBUG, INFO, WARN, ERROR, FATAL, PANIC
-insecureSkipVerify = true
+insecureSkipVerify = true # If set to true invalid SSL certificates are accepted for backends. This disables detection of man-in-the-middle attacks so should only be used on secure backend networks
 defaultEntryPoints = ["http", "https"]
 
 # WEB interface of Traefik - it will show web page with overview of frontend and backend configurations 
@@ -24,20 +24,20 @@ defaultEntryPoints = ["http", "https"]
   filename = "/etc/traefik/rules.toml"
   watch = true
 
-# Let's encrypt configuration
+# Let's Encrypt configuration
 [acme]
 email = "***INSERT_EMAIL***"
 storage="/etc/traefik/acme/acme.json"
 entryPoint = "https"
 acmeLogging=true
-onDemand = false #create certificate when container is created
+onDemand = false # Create certificate when container is created
 onHostRule = true
   # Use a HTTP-01 acme challenge rather than TLS-SNI-01 challenge
   #[acme.httpChallenge]
   #entryPoint = "http"
 
 [[acme.domains]]
-  main = "*.***INSERT_FQDN***"
+  main = "*.***INSERT_FQDN***" # The first asterisk (*.FQDN) generates wildcard certificates
   sans = ["***INSERT_FQDN***"]
 
 # List of providers found here: https://docs.traefik.io/configuration/acme/#provider
