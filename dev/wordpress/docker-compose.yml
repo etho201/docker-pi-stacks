@@ -32,7 +32,7 @@ services:
 ########################################################################################
 
   db:
-    image: mariadb:arm64v8
+    image: mariadb
     container_name: mariadb
     environment:
       - PUID=${PUID}
