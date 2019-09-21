@@ -1,0 +1,60 @@
+---
+version: '3.7'
+services:
+
+########################################################################################
+# Wordpress
+# https://hub.docker.com/_/wordpress
+########################################################################################
+
+  wordpress:
+    image: wordpress
+    container_name: wordpress
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: ${USERNAME}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_DB_NAME: ${DB_NAME}
+    volumes:
+      - wordpress:/var/www/html
+
+########################################################################################
+# MySQL (MariaDB)
+# The only official MySQL compatible database compiled for ARM is MariaDB
+# https://hub.docker.com/_/mariadb
+########################################################################################
+
+  db:
+    image: mariadb:arm64v8
+    container_name: mariadb
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOTPW}
+      MYSQL_USER: ${USERNAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    volumes:
+      - wordpress_db:/var/lib/mysql
+
+########################################################################################
+# Volumes
+########################################################################################
+
+volumes:
+  wordpress:
+    name: wordpress
+  wordpress_db:
+    #external: true
+    name: wordpress_db
+    #run: docker volume create --name=wordpress_db
