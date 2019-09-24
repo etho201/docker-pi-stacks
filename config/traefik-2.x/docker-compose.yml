@@ -1,0 +1,72 @@
+---
+version: '3.7'
+
+services:
+
+########################################################################################
+# Traefik
+# https://hub.docker.com/_/traefik
+########################################################################################
+
+  traefik:
+    hostname: traefik
+    image: traefik:latest
+    container_name: traefik
+    environment:
+      - DUCKDNS_TOKEN=${DUCKDNS_TOKEN}
+    restart: always
+    domainname: ${FQDN}
+    networks:
+      - frontend
+      #- router
+      #- middleware
+      #- service
+      - backend
+    ports:
+      - "80:80"
+      - "443:443"
+      #- "8080:8080"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=traefik"
+      #- "traefik.frontend.rule=Host:traefik.${FQDN}" #Traefik 1.x
+      #- "traefik.http.routers.router0.rule=Host(`traefik.${FQDN}`)" #Traefik 2.x
+      - "traefik.http.routers.router0.rule=Host(`${FQDN}`) && PathPrefix(`/traefik`)" #Traefik 2.x
+      - "traefik.frontend.rule=Host:${FQDN}; PathPrefixStrip: /traefik"
+      - "traefik.port=8080"
+      - "traefik.docker.network=backend"
+      - "traefik.frontend.headers.SSLRedirect=true"
+      - "traefik.frontend.headers.STSSeconds=315360000"
+      - "traefik.frontend.headers.browserXSSFilter=true"
+      - "traefik.frontend.headers.contentTypeNosniff=true"
+      - "traefik.frontend.headers.forceSTSHeader=true"
+      - "traefik.frontend.headers.SSLHost=duckdns.org"
+      - "traefik.frontend.headers.STSIncludeSubdomains=true"
+      - "traefik.frontend.headers.STSPreload=true"
+      - "traefik.frontend.headers.frameDeny=true"
+      #- "traefik.frontend.auth.basic.users=${HTTP_USERNAME}:${HTTP_PASSWORD}" #traefik 1.x
+      #- "traefik.http.routers.router0.middlewares=auth" #traefik 2.x
+      #- "traefik.http.middlewares.auth.basicauth.users=${HTTP_USERNAME1}:${HTTP_PASSWORD1},${HTTP_USERNAME2}:${HTTP_PASSWORD2}" #traefik 2.x
+      # Require oauth2 for authentication
+      - "traefik.frontend.auth.forward.address=https://${FQDN}/oauth2/auth"
+      - "traefik.frontend.auth.forward.trustForwardHeader=true"
+      - "traefik.frontend.auth.forward.authResponseHeaders=X-Auth-Request-User,X-Auth-Request-Email,Authorization,Set-Cookie"
+      - "traefik.frontend.errors.401.backend=oauth2"
+      - "traefik.frontend.errors.401.status=401"
+      - "traefik.frontend.errors.401.query=/oauth2/sign_in"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${CONFIG_DIR}/traefik:/etc/traefik
+      - ${CONFIG_DIR}/shared:/shared
+
+
+
+networks:
+  frontend:
+    external:
+      name: frontend
+      #run: docker network create --name=frontend
+  backend:
+    external:
+      name: backend
+      #run: docker network create --name=backend
