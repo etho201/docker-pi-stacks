@@ -1,0 +1,86 @@
+version: '3.7'
+
+services:
+
+##########################################################################
+# Traefik v2.0
+#
+# https://docs.traefik.io/v2.0/getting-started/quick-start/
+##########################################################################
+
+  reverse-proxy:
+    # The official v2.0 Traefik docker image
+    image: traefik:v2.0
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # Enable a dns challenge named "mydnschallenge"
+      - "--certificatesresolvers.mydnschallenge.acme.dnschallenge=true"
+      # Tell which provider to use
+      - "--certificatesresolvers.mydnschallenge.acme.dnschallenge.provider=duckdns" # https://docs.traefik.io/v2.0/https/acme/
+      #- "--certificatesresolvers.mydnschallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.mydnschallenge.acme.email=${EMAIL}"
+      - "--certificatesresolvers.mydnschallenge.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - 80:80 # The HTTP port
+      - 443:443 # The Secure Web port
+      - 8080:8080 # The Web UI (enabled by --api.insecure=true)
+    environment:
+      # For Duck DNS
+      - DUCKDNS_TOKEN=${DUCKDNS_TOKEN}
+      # For Cloudflare
+      #- CF_API_EMAIL
+      #- CF_API_KEY # Use the Global API Key, not the Origin CA Key 
+    volumes:
+      - ${CONFIG_DIR}/letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro # So that Traefik can listen to the Docker events
+    networks:
+      - backend
+
+# ...
+  whoami:
+    image: "containous/whoami"
+    container_name: "simple-service"
+    networks:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.${FQDN}`)"
+      - "traefik.http.routers.whoami.entrypoints=websecure"
+      - "traefik.http.routers.whoami.tls.certresolver=mydnschallenge" # Uses the Host rule to define which certificate to issue
+
+  heimdall:
+    image: linuxserver/heimdall
+    container_name: heimdall
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_DIR}/heimdall:/config
+    #ports:
+      #- 80:80
+      #- 443:443
+    restart: unless-stopped
+    networks:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`heimdall.${FQDN}`)"
+      - "traefik.http.routers.whoami.entrypoints=websecure"
+      - "traefik.http.routers.whoami.tls.certresolver=mydnschallenge" # Uses the Host rule to define which certificate to issue
+
+networks:
+  frontend:
+    external:
+      name: frontend
+      #run: docker network create --name=frontend
+  backend:
+    external:
+      name: backend
+      #run: docker network create --name=backend
