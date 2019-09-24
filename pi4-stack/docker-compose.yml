@@ -105,7 +105,7 @@ services:
 
   traefik:
     hostname: traefik
-    image: traefik:latest
+    image: traefik:v1.7.16
     container_name: traefik
     environment:
       - DUCKDNS_TOKEN=${DUCKDNS_TOKEN}
