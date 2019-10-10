@@ -656,7 +656,7 @@ services:
 #      - MYSQL_USER=nextcloud
 
   db1:
-    image: postgres
+    image: postgres:11.5
     container_name: postgres1
     restart: unless-stopped
     volumes:
