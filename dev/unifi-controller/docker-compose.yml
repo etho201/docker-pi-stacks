@@ -16,15 +16,15 @@ services:
       #- MEM_LIMIT=1024M #Optionally change the Java memory limit (-Xmx) (default is 1024M)
     volumes:
       - ${CONFIG_DIR}/unifi-controller:/config #All Unifi data stored here
-    #ports:
-      #- 3478:3478/udp #Unifi communication port
+    ports:
+      - 3478:3478/udp #For STUN
       #- 10001:10001/udp #required for AP discovery
-      #- 8080:8080 #required for Unifi to function
+      - 8080:8080 #For device and controller communication.
       #- 8081:8081 #Unifi communication port
-      #- 8443:8443 #The webui is at https://ip:8443.
+      #- 8443:8443 #For controller GUI/API as seen in a web browser
       #- 8843:8843 #Unifi communication port
-      #- 8880:8880 #Unifi communication port
-      #- 6789:6789 #For throughput test
+      #- 8880:8880 #For HTTP portal redirection.
+      #- 6789:6789 #For UniFi mobile speed test.
     restart: unless-stopped
     networks:
       - backend
