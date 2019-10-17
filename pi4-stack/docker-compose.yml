@@ -158,8 +158,8 @@ services:
     hostname: ${FQDN} # set to fqdn of host
     environment:
       - PUID=${PUID}
-      - PGID=${PGID}
-      - PGID=996
+      #- PGID=${PGID}
+      - PGID=995 #`grep docker /etc/group | cut -d ':' -f 3`
     #ports:
       #- 19999:19999
     cap_add:
