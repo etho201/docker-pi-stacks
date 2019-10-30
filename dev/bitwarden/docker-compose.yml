@@ -1,0 +1,42 @@
+---
+version: '3.7'
+services:
+
+########################################################################################
+# Bitwarden_rs - Bitwarden server API implementation written in Rust compatible with upstream Bitwarden clients
+# https://github.com/dani-garcia/bitwarden_rs/wiki/Using-Docker-Compose
+########################################################################################
+
+  bitwarden:
+    image: bitwardenrs/server
+    container_name: bitwarden
+    restart: unless-stopped
+    volumes:
+        - ${CONFIG_DIR}/bitwarden:/data
+    environment:
+      - SIGNUPS_ALLOWED=true
+      - SMTP_HOST=${SMTP_SERVER}
+      - SMTP_FROM=${EMAIL_FROM}
+      - SMTP_PORT=587
+      - SMTP_SSL=true
+      - SMTP_USERNAME=${EMAIL_FROM}
+      - SMTP_PASSWORD=${EMAIL_PASSWORD}
+      - LOG_FILE=/data/bitwarden.log
+    #ports:
+      #- 443:443
+      #- 80:80
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=bitwarden"
+      - "traefik.frontend.rule=Host:bitwarden.${FQDN}"
+      - "traefik.port=443"
+      - "traefik.docker.network=backend"
+      - "traefik.frontend.headers.SSLRedirect=true"
+      - "traefik.frontend.headers.STSSeconds=315360000"
+      - "traefik.frontend.headers.browserXSSFilter=true"
+      - "traefik.frontend.headers.contentTypeNosniff=true"
+      - "traefik.frontend.headers.forceSTSHeader=true"
+      - "traefik.frontend.headers.SSLHost=example.com"
+      - "traefik.frontend.headers.STSIncludeSubdomains=true"
+      - "traefik.frontend.headers.STSPreload=true"
+      - "traefik.frontend.headers.frameDeny=true"
