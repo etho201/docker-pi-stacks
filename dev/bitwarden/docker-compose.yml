@@ -8,7 +8,7 @@ services:
 ########################################################################################
 
   bitwarden:
-    image: bitwardenrs/server
+    image: bitwardenrs/server:raspberry
     container_name: bitwarden
     restart: unless-stopped
     volumes:
@@ -22,6 +22,8 @@ services:
       - SMTP_USERNAME=${EMAIL_FROM}
       - SMTP_PASSWORD=${EMAIL_PASSWORD}
       - LOG_FILE=/data/bitwarden.log
+    networks:
+      - backend
     #ports:
       #- 443:443
       #- 80:80
@@ -29,7 +31,7 @@ services:
       - "traefik.enable=true"
       - "traefik.backend=bitwarden"
       - "traefik.frontend.rule=Host:bitwarden.${FQDN}"
-      - "traefik.port=443"
+      - "traefik.port=80"
       - "traefik.docker.network=backend"
       - "traefik.frontend.headers.SSLRedirect=true"
       - "traefik.frontend.headers.STSSeconds=315360000"
@@ -40,3 +42,10 @@ services:
       - "traefik.frontend.headers.STSIncludeSubdomains=true"
       - "traefik.frontend.headers.STSPreload=true"
       - "traefik.frontend.headers.frameDeny=true"
+
+networks:
+  backend:
+    external:
+      name: backend
+      #run: docker network create --name=backend
+
