@@ -1,0 +1,49 @@
+# https://github.com/linuxserver/docker-diskover
+# Still in developement -- Not tested!
+
+version: '2'
+services:
+  diskover:
+    image: linuxserver/diskover
+    container_name: diskover
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ES_HOST=elasticsearch
+      - ES_PORT=9200
+      - ES_USER=elastic
+      - ES_PASS=changeme
+      - RUN_ON_START=true
+      - USE_CRON=true
+    volumes:
+      - ${CONFIG_DIR}/diskover:/config
+      - ${VOLUME_DIR}/diskover:/data
+    ports:
+      - 80:80
+      - 9181:9181
+      - 9999:9999
+    mem_limit: 4096m
+    restart: unless-stopped
+    depends_on:
+      - elasticsearch
+      - redis
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.9
+    volumes:
+      - ${VOLUME_DIR}/elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms2048m -Xmx2048m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+  redis:
+    container_name: redis
+    image: redis:alpine
+    volumes:
+      - ${VOLUME_DIR}/redis:/data
