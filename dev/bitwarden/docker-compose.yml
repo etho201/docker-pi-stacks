@@ -14,7 +14,7 @@ services:
     volumes:
         - ${CONFIG_DIR}/bitwarden:/data
     environment:
-      - DOMAIN=https://bitwarden.${FQDN}
+      - DOMAIN=https://bitwarden.${FQDN} # Required for correct generation of invite links
       - SIGNUPS_ALLOWED=false
       - SMTP_HOST=${SMTP_SERVER}
       - SMTP_FROM=${EMAIL_FROM}
