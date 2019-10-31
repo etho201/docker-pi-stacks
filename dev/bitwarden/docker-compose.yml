@@ -14,12 +14,13 @@ services:
     volumes:
         - ${CONFIG_DIR}/bitwarden:/data
     environment:
+      - DOMAIN=https://bitwarden.${FQDN}
       - SIGNUPS_ALLOWED=false
       - SMTP_HOST=${SMTP_SERVER}
       - SMTP_FROM=${EMAIL_FROM}
       - SMTP_PORT=587
-      - SMTP_SSL=true
-      - SMTP_USERNAME=${EMAIL_FROM}
+      - SMTP_SSL=true # https://github.com/dani-garcia/bitwarden_rs/wiki/SMTP-configuration
+      - SMTP_USERNAME=${EMAIL_FROM} # Must 'allow less secure app access' if using Gmail --> https://myaccount.google.com/lesssecureapps?utm_source=google-account&utm_medium=web
       - SMTP_PASSWORD=${EMAIL_PASSWORD}
       - LOG_FILE=/data/bitwarden.log
     networks:
