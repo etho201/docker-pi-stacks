@@ -14,7 +14,7 @@ services:
     volumes:
         - ${CONFIG_DIR}/bitwarden:/data
     environment:
-      - SIGNUPS_ALLOWED=true
+      - SIGNUPS_ALLOWED=false
       - SMTP_HOST=${SMTP_SERVER}
       - SMTP_FROM=${EMAIL_FROM}
       - SMTP_PORT=587
