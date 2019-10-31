@@ -547,6 +547,8 @@ services:
 # Pihole
 # https://github.com/pi-hole/docker-pi-hole/
 # https://docs.pi-hole.net/
+#
+# Note: Once running, navigate to https://pihole.${FQDN}/admin
 ########################################################################################
 
   pihole:
