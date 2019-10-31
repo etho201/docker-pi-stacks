@@ -23,6 +23,7 @@ services:
       - SMTP_USERNAME=${EMAIL_FROM} # Must 'allow less secure app access' if using Gmail --> https://myaccount.google.com/lesssecureapps?utm_source=google-account&utm_medium=web
       - SMTP_PASSWORD=${EMAIL_PASSWORD}
       - LOG_FILE=/data/bitwarden.log
+      # - DATABASE_URL=mysql://bitwarden:${BITWARDEN_DBPASS}@maria-bitwarden/bitwarden #FORMAT: DATABASE_URL=mysql://[[user]:[password]@]host[:port][/database]
     networks:
       - backend
     #ports:
@@ -43,6 +44,33 @@ services:
       - "traefik.frontend.headers.STSIncludeSubdomains=true"
       - "traefik.frontend.headers.STSPreload=true"
       - "traefik.frontend.headers.frameDeny=true"
+
+########################################################################################
+# MariaDB
+# The only official MySQL compatible database compiled for ARM is MariaDB
+# https://hub.docker.com/_/mariadb
+#
+# Notes: https://github.com/dani-garcia/bitwarden_rs/wiki/Using-the-MySQL-Backend
+########################################################################################
+#
+#  mariadb:
+#    image: mariadb
+#    container_name: mariadb
+#    environment:
+#      - PUID=${PUID}
+#      - PGID=${PGID}
+#      - TZ=${TZ}
+#    restart: always
+#    networks:
+#      - backend
+#    environment:
+#      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOTPW}
+#      MYSQL_USER: ${USERNAME}
+#      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+#      MYSQL_DATABASE: ${DB_NAME}
+#    volumes:
+#      - ./data/database:/docker-entrypoint-initdb.d
+#      - ${VOLUME_DIR}/mariadb:/var/lib/mysql #Data Directory
 
 networks:
   backend:
