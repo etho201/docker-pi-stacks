@@ -14,6 +14,7 @@ services:
     volumes:
         - ${CONFIG_DIR}/bitwarden:/data
     environment:
+      - ADMIN_TOKEN=${ADMIN_TOKEN} # https://github.com/dani-garcia/bitwarden_rs/wiki/Enabling-admin-page
       - DOMAIN=https://bitwarden.${FQDN} # Required for correct generation of invite links
       - SIGNUPS_ALLOWED=false
       - SMTP_HOST=${SMTP_SERVER}
