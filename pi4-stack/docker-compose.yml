@@ -14,6 +14,9 @@ services:
     image: containrrr/watchtower:armhf-latest
     environment:
       - TZ=${TZ}
+      - WATCHTOWER_NOTIFICATIONS=gotify
+      - WATCHTOWER_NOTIFICATION_GOTIFY_URL=https://gotify.${FQDN}
+      - WATCHTOWER_NOTIFICATION_GOTIFY_TOKEN=${GOTIFY_WATCHTOWER}
       #- WATCHTOWER_NOTIFICATIONS=email
       #- WATCHTOWER_NOTIFICATION_EMAIL_FROM=${EMAIL_FROM}
       #- WATCHTOWER_NOTIFICATION_EMAIL_TO=${EMAIL_TO}
