@@ -1,52 +1,105 @@
 ---
 version: '3.7'
 
-volumes:
-    prometheus_data: {}
-    grafana_data: {}
-
-networks:
-  front-tier:
-  back-tier:
-
-########################################################################################
-# Prometheus
-# https://prometheus.io/
-# https://quay.io/repository/prometheus/prometheus
-########################################################################################
+#volumes:
+    #prometheus_data: {}
+    #grafana_data: {}
 
 services:
 
+########################################################################################
+# Prometheus
+# https://quay.io/repository/prometheus/prometheus?tab=info
+# https://hub.docker.com/r/prom/prometheus/
+# https://prometheus.io/docs/introduction/https://grafana.com/docs/installation/docker/overview/
+########################################################################################
+
   prometheus:
-    image: quay.io/prometheus/prometheus:latest
+    image: quay.io/prometheus/prometheus
     container_name: prometheus
+    restart: unless-stopped
+    volumes:
+        - ./prometheus:/etc/prometheus # Prometheus settings
+        - ${VOLUME_DIR}/prometheus:/prometheus # Data directory
+        #- prometheus_data:/prometheus # Data directory
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
-    volumes:
-      - ${DOCKER_DIR}/prometheus:/etc/prometheus
-      - prometheus_data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--web.listen-address=:9010'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
-    ports:
-      - 9010:9010
-    links:
-      #- cadvisor:cadvisor
-      - alertmanager:alertmanager
-    depends_on:
-      - cadvisor
+    #network_mode: host
     networks:
-      - back-tier
-    restart: unless-stopped
+      - backend
+    ports:
+      - 9090:9090
+    #labels:
+      #- "traefik.enable=true"
+      #- "traefik.backend=prometheus"
+      #- "traefik.frontend.rule=Host:prometheus.${FQDN}"
+      #- "traefik.port=9090"
+      #- "traefik.docker.network=backend"
+      #- "traefik.frontend.headers.SSLRedirect=true"
+      #- "traefik.frontend.headers.STSSeconds=315360000"
+      #- "traefik.frontend.headers.browserXSSFilter=true"
+      #- "traefik.frontend.headers.contentTypeNosniff=true"
+      #- "traefik.frontend.headers.forceSTSHeader=true"
+      #- "traefik.frontend.headers.SSLHost=example.com"
+      #- "traefik.frontend.headers.STSIncludeSubdomains=true"
+      #- "traefik.frontend.headers.STSPreload=true"
+      #- "traefik.frontend.headers.frameDeny=true"
+
+########################################################################################
+# Graphana
+# https://hub.docker.com/r/grafana/grafana/
+# https://grafana.com/docs/installation/docker/
+########################################################################################
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    #user: "104"
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana/provisioning/:/etc/grafana/provisioning/ # Graphana settings and dashboards
+      - ${VOLUME_DIR}/grafana:/var/lib/grafana # Data directory
+      #- grafana_data:/var/lib/grafana # Data directory
+    env_file:
+      - ./grafana/config.monitoring
+    networks:
+      - backend
+    restart: always
+    #labels:
+      #- "traefik.enable=true"
+      #- "traefik.backend=graphana"
+      #- "traefik.frontend.rule=Host:graphana.${FQDN}"
+      #- "traefik.port=3000"
+      #- "traefik.docker.network=backend"
+      #- "traefik.frontend.headers.SSLRedirect=true"
+      #- "traefik.frontend.headers.STSSeconds=315360000"
+      #- "traefik.frontend.headers.browserXSSFilter=true"
+      #- "traefik.frontend.headers.contentTypeNosniff=true"
+      #- "traefik.frontend.headers.forceSTSHeader=true"
+      #- "traefik.frontend.headers.SSLHost=example.com"
+      #- "traefik.frontend.headers.STSIncludeSubdomains=true"
+      #- "traefik.frontend.headers.STSPreload=true"
+      #- "traefik.frontend.headers.frameDeny=true"
+
+########################################################################################
+# Node Exporter
+# https://hub.docker.com/r/prom/node-exporter/
+# https://github.com/prometheus/node_exporter
+# https://prometheus.io/docs/guides/node-exporter/
+########################################################################################
 
   node-exporter:
     image: quay.io/prometheus/node-exporter:latest
-    container_name: node-exporter
+    container_name: node-exporter-x1
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -56,58 +109,18 @@ services:
       - /sys:/host/sys:ro
       - /:/rootfs:ro
     command: 
-      - '--path.procfs=/host/proc' 
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
       - '--path.sysfs=/host/sys'
-      - --collector.filesystem.ignored-mount-points
-      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
     ports:
       - 9100:9100
     networks:
-      - back-tier
+      - backend
     restart: always
-    #deploy:
-      #mode: global
 
-  alertmanager:
-    image: quay.io/prometheus/alertmanager:latest
-    container_name: alertmanager
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    ports:
-      - 9093:9093
-    volumes:
-      - ${DOCKER_DIR}/alertmanager/:/etc/alertmanager/
-    networks:
-      - back-tier
-    restart: always
-    command:
-      - '--config.file=/etc/alertmanager/config.yml'
-      - '--storage.path=/alertmanager'
-#    deploy:
-#      placement:
-#        constraints:
-#          - node.hostname == ${HOSTNAME}
-
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    user: "104"
-    depends_on:
-      - prometheus
-    ports:
-      - 3000:3000
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ${DOCKER_DIR}/grafana/provisioning/:/etc/grafana/provisioning/
-    env_file:
-      - ./grafana/config.monitoring
-    networks:
-      - back-tier
-      - front-tier
-    restart: always
+networks:
+  backend:
+    external:
+      name: backend
+      #run: docker network create --name=backend

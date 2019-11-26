@@ -12,13 +12,14 @@ datasources:
   # <string, required> name of the datasource. Required
 - name: Prometheus
   # <string, required> datasource type. Required
-  type: prometheus
+Datasource named ${DS_PROMETHEUS_111} was not found
+
   # <string, required> access mode. direct or proxy. Required
   access: proxy
   # <int> org id. will default to orgId 1 if not specified
   orgId: 1
   # <string> url
-  url: http://172.18.0.5:9090
+  url: node-exporter-x1:9090
   # <string> database password, if used
   password:
   # <string> database user, if used
