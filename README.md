@@ -91,3 +91,13 @@ Ideally you should fully configure Traefik before launching any containers. This
 > **_NOTE:_**  New containers are evaluated in the dev folder before graduating to the pi-stack. If there's something you want that isn't in the stack you can check for it in the dev folder and move it over.
 
 > **_NOTE:_**  You could technically run this on various chipset architectures, but you'll have to change some of the images if you're not running on a Raspberry Pi or some other ARM-based computer.
+
+---
+
+## Troubleshooting:
+
+If things stop working, make sure Traefik is running.
+```
+docker container ls | grep traefik
+docker-compose up -d traefik
+```
