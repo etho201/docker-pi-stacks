@@ -7,8 +7,8 @@ A few notes regarding the Unifi Controller.
 - You can keep all the ports commented out (with the exception of `3478` and `8080`) and tell Traefik to route to port 8443 in the label section.
 
     `- "traefik.port=8443"`
-
-- Uncomment ports `3478` and `8080` and configure your external firewall to allow communication to/from those ports on your Unifi controller.
+    
+> :notebook: **Note:** Uncomment ports `3478` and `8080` and configure your external firewall to allow communication to/from those ports on your Unifi controller.
 
 - The configuation must include this label:
 
