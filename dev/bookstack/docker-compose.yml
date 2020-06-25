@@ -10,8 +10,7 @@ services:
       - PGID=${PGID}
       - DB_HOST=bookstack_db
       - DB_USER=bookstack
-      # - DB_PASS=${MYSQL_PASSWORD}   # Instructions say to use DB_PASS
-      - DB_PASSWORD=${MYSQL_PASSWORD} # DB_PASS didn't work, using DB_PASSWORD instead
+      - DB_PASS=${MYSQL_PASSWORD} # Had trouble with this. May not support password with special characters?
       - DB_DATABASE=bookstackapp
       - APP_URL=https://bookstack.${FQDN}
     volumes:
