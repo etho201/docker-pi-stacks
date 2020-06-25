@@ -27,7 +27,7 @@ services:
     - "traefik.enable=true"
     - "traefik.backend=bookstack"
     - "traefik.frontend.rule=Host:bookstack.${FQDN}"
-    - "traefik.port=6875"
+    - "traefik.port=80"
     - "traefik.docker.network=backend"
     - "traefik.frontend.headers.SSLRedirect=true"
     - "traefik.frontend.headers.STSSeconds=315360000"
