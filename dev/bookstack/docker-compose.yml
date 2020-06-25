@@ -12,6 +12,7 @@ services:
       - DB_USER=${USERNAME}
       - DB_PASS=${MYSQL_PASSWORD}
       - DB_DATABASE=bookstackapp
+      - APP_URL=https://bookstack.${FQDN}
     volumes:
       - ${CONFIG_DIR}/bookstack:/config
     # ports:
