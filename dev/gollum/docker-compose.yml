@@ -1,0 +1,38 @@
+---
+version: '3.7'
+
+services:
+
+  wiki:
+    container_name: gollum
+    hostname: gollum
+    build: .
+    image: etechonomy/gollum
+    restart: unless-stopped
+    # ports:
+    #   - 80:80
+    networks:
+      - backend
+    volumes:
+      - ${VOLUME_DIR}/gollum:/wiki
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=gollum"
+      - "traefik.frontend.rule=Host:gollum.${FQDN}"
+      - "traefik.port=80"
+      - "traefik.docker.network=backend"
+      - "traefik.frontend.headers.SSLRedirect=true"
+      - "traefik.frontend.headers.STSSeconds=315360000"
+      - "traefik.frontend.headers.browserXSSFilter=true"
+      - "traefik.frontend.headers.contentTypeNosniff=true"
+      - "traefik.frontend.headers.forceSTSHeader=true"
+      - "traefik.frontend.headers.SSLHost=example.com"
+      - "traefik.frontend.headers.STSIncludeSubdomains=true"
+      - "traefik.frontend.headers.STSPreload=true"
+      - "traefik.frontend.headers.frameDeny=true"
+
+networks:
+  backend:
+    external:
+      name: backend
+      #run: docker network create --name=backend
