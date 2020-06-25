@@ -9,8 +9,8 @@ services:
       - PUID=1000
       - PGID=1000
       - DB_HOST=bookstack_db
-      - DB_USER=${USERNAME}
-      - DB_PASS=${MYSQL_PASSWORD}
+      - DB_USER=bookstack
+      - DB_PASS=${MYSQL_ROOT_PASSWORD}
       - DB_DATABASE=bookstackapp
       - APP_URL=https://bookstack.${FQDN}
     volumes:
@@ -38,22 +38,35 @@ services:
     - "traefik.frontend.headers.STSPreload=true"
     - "traefik.frontend.headers.frameDeny=true"
 
+  # bookstack_db:
+  #   image: linuxserver/mariadb
+  #   container_name: bookstack_db
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+  #     - TZ=${TZ}
+  #     - MYSQL_DATABASE=bookstackapp
+  #     - MYSQL_USER=${USERNAME}
+  #     - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+  #   volumes:
+  #     - ${CONFIG_DIR}/bookstackdb:/config
+  #   restart: unless-stopped
+  #   networks:
+  #       - backend
+
   bookstack_db:
-    image: linuxserver/mariadb
+    image: mariadb:latest
     container_name: bookstack_db
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - TZ=${TZ}
-      - MYSQL_DATABASE=bookstackapp
-      - MYSQL_USER=${USERNAME}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    # command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    restart: unless-stopped
     volumes:
       - ${CONFIG_DIR}/bookstackdb:/config
-    restart: unless-stopped
-    networks:
-        - backend
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=bookstackapp
+      - MYSQL_USER=bookstack
 
 networks:
   backend:
