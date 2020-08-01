@@ -10,7 +10,7 @@ services:
       - TZ=${TZ}
       #- PASSWORD=password #optional
       #- SUDO_PASSWORD=password #optional
-      - PROXY_DOMAIN=code-server.${FQDN} #optional
+      #- PROXY_DOMAIN=code-server.${FQDN} #optional
     volumes:
       - ${CONFIG_DIR}/code-server:/config
     #ports:
