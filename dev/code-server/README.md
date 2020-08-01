@@ -9,6 +9,7 @@ PUID=1000
 PGID=1000
 TZ=America/New_York
 CONFIG_DIR=/mnt/hdd/docker/config
+FQDN=
 ```
 
 This container runs on a pre-defined network called `backend`. If you don't already have it created, run this:
