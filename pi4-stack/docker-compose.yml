@@ -238,7 +238,7 @@ services:
       - "traefik.http.routers.traefik-rtr.service=api@internal"
       ## Middlewares
       #- "traefik.http.routers.traefik-rtr.middlewares=chain-authelia@file"
-      - "traefik.http.routers.traefik-rtr.middlewares=chain-no-auth@file" # No Authentication
+      #- "traefik.http.routers.traefik-rtr.middlewares=chain-no-auth@file" # No Authentication
 
 ########################################################################################
 # netdata
