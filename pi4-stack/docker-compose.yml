@@ -135,7 +135,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.oauth-rtr.entrypoints=https"
-      - "traefik.http.routers.oauth-rtr.rule=HostHeader(`oauth.${FQDN}`)"
+      - "traefik.http.routers.oauth-rtr.rule=HostHeader(`oauth.$FQDN`)"
       ## Middlewares
       - "traefik.http.routers.oauth-rtr.middlewares=chain-oauth@file"
       ## HTTP Services
@@ -636,12 +636,12 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.portainer-rtr.entrypoints=https"
-      - "traefik.http.routers.portainer-rtr.rule=HostHeader(`portainer.${FQDN}`)"
+      - "traefik.http.routers.portainer-rtr.rule=HostHeader(`portainer.$FQDN`)"
       - "traefik.http.routers.portainer-rtr.tls=true"
       ## Middlewares
-#      - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
-#      - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      - "traefik.http.routers.portainer-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
+      - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.portainer-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.portainer-rtr.service=portainer-svc"
       - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
