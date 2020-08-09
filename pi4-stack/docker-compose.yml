@@ -212,10 +212,6 @@ services:
       - "traefik.http.routers.traefik-rtr.tls.domains[0].sans=*.${FQDN}"
       # - "traefik.http.routers.traefik-rtr.tls.domains[1].main=$SECONDDOMAINNAME" # Pulls main cert for second domain
       # - "traefik.http.routers.traefik-rtr.tls.domains[1].sans=*.$SECONDDOMAINNAME" # Pulls wildcard cert for second domain
-      ## HTTP Services ### MAY NEED TO REMOVE THE BELOW 3 LATER...
-      - "traefik.http.routers.traefik-rtr.middlewares=chain-no-auth@file" # No Authentication
-      - "traefik.http.routers.traefik-rtr.service=traefik-svc"
-      - "traefik.http.services.traefik-svc.loadbalancer.server.port=8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${CONFIG_DIR}/traefik2/rules:/rules
