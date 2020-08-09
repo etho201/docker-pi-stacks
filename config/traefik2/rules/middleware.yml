@@ -43,10 +43,10 @@ http:
 
     middlewares-oauth:
       forwardAuth:
-        address: "http://oauth:4180/oauth2/auth" # Make sure you have the OAuth service in docker-compose.yml
+        address: "http://oauth:4181" # Make sure you have the OAuth service in docker-compose.yml
         trustForwardHeader: true
         authResponseHeaders:
-          - "X-Forwarded-User,X-Auth-Request-User,X-Auth-Request-Email,Set-Cookie"
+          - "X-Forwarded-User"
 
     middlewares-authelia:
       forwardAuth:
