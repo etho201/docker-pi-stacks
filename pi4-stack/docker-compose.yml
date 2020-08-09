@@ -143,7 +143,7 @@ services:
       - --providers.file.directory=${CONFIG_DIR}/traefik2/rules # Load dynamic configuration from one or more .toml or .yml files in a directory.
 #      - --providers.file.filename=/path/to/file # Load dynamic configuration from a file.
       - --providers.file.watch=true # Only works on top level files in the rules folder
-      - --certificatesResolvers.dns-duckdns.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
+      #- --certificatesResolvers.dns-duckdns.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
       - --certificatesResolvers.dns-duckdns.acme.email=${EMAIL}
       - --certificatesResolvers.dns-duckdns.acme.storage=${CONFIG_DIR}/traefik2/acme.json
       - --certificatesResolvers.dns-duckdns.acme.dnschallenge.provider=duckdns
