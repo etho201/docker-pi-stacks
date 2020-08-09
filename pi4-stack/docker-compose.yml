@@ -152,7 +152,7 @@ services:
 
   traefik:
     hostname: traefik
-    image: traefik:2.2.1 
+    image: traefik:chevrotin
     container_name: traefik
     environment:
       - DUCKDNS_TOKEN=${DUCKDNS_TOKEN}
@@ -184,7 +184,7 @@ services:
       - --accessLog.filters.statusCodes=400-499
       - --providers.docker=true
       - --providers.docker.endpoint=unix:///var/run/docker.sock
-      - --providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.${FQDN}`)
+      - --providers.docker.defaultrule=HostHeader(`{{ index .Labels "com.docker.compose.service" }}.${FQDN}`)
       - --providers.docker.exposedByDefault=false
       - --providers.docker.network=backend
       - --providers.docker.swarmMode=false
