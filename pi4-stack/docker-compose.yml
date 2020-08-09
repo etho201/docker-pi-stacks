@@ -166,7 +166,7 @@ services:
       # - --api.insecure=true
       # - --serversTransport.insecureSkipVerify=true
       - --log=true
-      - --log.level=DEBUG # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+      - --log.level=INFO # (Default: ERROR) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
       - --accessLog=true
       - --accessLog.filePath=/traefik.log
       - --accessLog.bufferingSize=100 # Configuring a buffer of 100 lines
@@ -179,8 +179,8 @@ services:
       # - --entrypoints.https.http.middlewares=chain-authelia@file
       # Add dns-cloudflare as default certresolver for all services. Also enables TLS and no need to specify on individual services
       - --entrypoints.https.http.tls.certresolver=dns-duckdns # Comment out this line after first run of traefik to force the use of wildcard certs
-      - --entrypoints.https.http.tls.domains[0].main=${FQDN}
-      - --entrypoints.https.http.tls.domains[0].sans=*.${FQDN}
+      - --entrypoints.https.http.tls.domains[0].main=*.${FQDN}
+      - --entrypoints.https.http.tls.domains[0].sans=${FQDN}
       # - --entrypoints.https.http.tls.domains[1].main=$DOMAIN # Pulls main cert for second domain
       # - --entrypoints.https.http.tls.domains[1].sans=*.$DOMAIN # Pulls wildcard cert for second domain
       - --providers.docker.network=backend
@@ -192,7 +192,7 @@ services:
       - --certificatesResolvers.dns-duckdns.acme.email=${EMAIL}
       - --certificatesResolvers.dns-duckdns.acme.storage=/acme.json
       - --certificatesResolvers.dns-duckdns.acme.dnsChallenge.provider=duckdns
-      - --certificatesResolvers.dns-duckdns.acme.dnsChallenge.resolvers=1.1.1.1:53,1.0.0.1:53
+      - --certificatesResolvers.dns-duckdns.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53
       - --certificatesResolvers.dns-duckdns.acme.dnsChallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
     networks:
       - frontend
