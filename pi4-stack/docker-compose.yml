@@ -86,13 +86,26 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.oauth-rtr.entrypoints=https"
-      - "traefik.http.routers.oauth-rtr.rule=Host(`oauth.${FQDN}`)"
+      #- "traefik.http.routers.oauth-rtr.rule=Host(`oauth.${FQDN}`)"
+      - "traefik.http.routers.oauth-rtr.rule=Host(`oauth.${FQDN?err}`) || PathPrefix(`/oauth2`)"
       - "traefik.http.routers.oauth-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.oauth-rtr.middlewares=chain-oauth@file"
       ## HTTP Services
       - "traefik.http.routers.oauth-rtr.service=oauth-svc"
       - "traefik.http.services.oauth-svc.loadbalancer.server.port=4180"
+      ## Other labels
+      - "traefik.http.middlewares.oauth-verify.forwardAuth.address=http://oauth:4180/oauth2/auth"
+      - "traefik.http.middlewares.oauth-verify.forwardAuth.trustForwardHeader=true"
+      - "traefik.http.middlewares.oauth-verify.forwardAuth.authResponseHeaders=X-Auth-Request-User,X-Auth-Request-Email,Set-Cookie"
+      - "traefik.http.middlewares.oauth-signin.errors.service=oauth@docker"
+      - "traefik.http.middlewares.oauth-signin.errors.status=401"
+      - "traefik.http.middlewares.oauth-signin.errors.query=/oauth2/sign_in"
+      - "traefik.http.routers.oauth.entrypoints=https"
+      - "traefik.http.routers.oauth.tls.certResolver=default"
+      - "traefik.http.routers.oauth.service=oauth@docker"
+      - "traefik.http.services.oauth.loadbalancer.server.port=4180"
+
     networks:
       - backend
     restart: unless-stopped
