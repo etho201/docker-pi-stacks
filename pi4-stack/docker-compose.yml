@@ -98,12 +98,12 @@ services:
       - "traefik.http.middlewares.oauth-verify.forwardAuth.address=http://oauth:4180/oauth2/auth"
       - "traefik.http.middlewares.oauth-verify.forwardAuth.trustForwardHeader=true"
       - "traefik.http.middlewares.oauth-verify.forwardAuth.authResponseHeaders=X-Auth-Request-User,X-Auth-Request-Email,Set-Cookie"
-      - "traefik.http.middlewares.oauth-signin.errors.service=oauth@docker"
+      - "traefik.http.middlewares.oauth-signin.errors.service=oauth@file"
       - "traefik.http.middlewares.oauth-signin.errors.status=401"
       - "traefik.http.middlewares.oauth-signin.errors.query=/oauth2/sign_in"
       - "traefik.http.routers.oauth.entrypoints=https"
       - "traefik.http.routers.oauth.tls.certResolver=default"
-      - "traefik.http.routers.oauth.service=oauth@docker"
+      - "traefik.http.routers.oauth.service=oauth@file"
       - "traefik.http.services.oauth.loadbalancer.server.port=4180"
 
     networks:
