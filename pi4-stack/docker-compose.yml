@@ -178,7 +178,7 @@ services:
       - --providers.docker.exposedByDefault=false
       # - --entrypoints.https.http.middlewares=chain-authelia@file
       # Add dns-cloudflare as default certresolver for all services. Also enables TLS and no need to specify on individual services
-      # - --entrypoints.https.http.tls.certresolver=dns-duckdns # Comment out this line after first run of traefik to force the use of wildcard certs
+      - --entrypoints.https.http.tls.certresolver=dns-duckdns # Comment out this line after first run of traefik to force the use of wildcard certs
       - --entrypoints.https.http.tls.domains[0].main=${FQDN}
       - --entrypoints.https.http.tls.domains[0].sans=*.${FQDN}
       # - --entrypoints.https.http.tls.domains[1].main=$DOMAIN # Pulls main cert for second domain
@@ -188,7 +188,7 @@ services:
       - --providers.file.directory=/rules # Load dynamic configuration from one or more .toml or .yml files in a directory
       # - --providers.file.filename=/path/to/file # Load dynamic configuration from a file
       - --providers.file.watch=true # Only works on top level files in the rules folder
-      # - --certificatesResolvers.dns-duckdns.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
+      - --certificatesResolvers.dns-duckdns.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
       - --certificatesResolvers.dns-duckdns.acme.email=${EMAIL}
       - --certificatesResolvers.dns-duckdns.acme.storage=/acme.json
       - --certificatesResolvers.dns-duckdns.acme.dnsChallenge.provider=duckdns
