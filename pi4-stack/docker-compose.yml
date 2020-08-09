@@ -155,45 +155,45 @@ services:
     image: traefik:chevrotin # the chevrotin tag refers to v2.2.x
     restart: unless-stopped
     command: # CLI arguments
-      - "--global.checkNewVersion=true"
-      - "--global.sendAnonymousUsage=true"
-      - "--entryPoints.http.address=:80"
-      - "--entryPoints.https.address=:443"
+      - --global.checkNewVersion=true
+      - --global.sendAnonymousUsage=true
+      - --entryPoints.http.address=:80
+      - --entryPoints.https.address=:443
       # Allow these IPs to set the X-Forwarded-* headers - Cloudflare IPs: https://www.cloudflare.com/ips/
-      #- "--entrypoints.https.forwardedHeaders.trustedIPs=173.245.48.0/20,103.21.244.0/22,103.22.200.0/22,103.31.4.0/22,141.101.64.0/18,108.162.192.0/18,190.93.240.0/20,188.114.96.0/20,197.234.240.0/22,198.41.128.0/17,162.158.0.0/15,104.16.0.0/12,172.64.0.0/13,131.0.72.0/22"
-      - "--entryPoints.traefik.address=:8080"
-      - "--api=true"
-      # - "--api.insecure=true"
-      # - "--serversTransport.insecureSkipVerify=true"
-      - "--log=true"
-      - "--log.level=INFO" # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
-      - "--accessLog=true"
-      - "--accessLog.filePath=/traefik.log"
-      - "--accessLog.bufferingSize=100" # Configuring a buffer of 100 lines
-      - "--accessLog.filters.statusCodes=400-499"
-      - "--providers.docker=true"
-      - "--providers.docker.endpoint=unix:///var/run/docker.sock" # Use Docker Socket Proxy instead for improved security
-      # - "--providers.docker.endpoint=tcp://socket-proxy:2375"
+      #- --entrypoints.https.forwardedHeaders.trustedIPs=173.245.48.0/20,103.21.244.0/22,103.22.200.0/22,103.31.4.0/22,141.101.64.0/18,108.162.192.0/18,190.93.240.0/20,188.114.96.0/20,197.234.240.0/22,198.41.128.0/17,162.158.0.0/15,104.16.0.0/12,172.64.0.0/13,131.0.72.0/22
+      - --entryPoints.traefik.address=:8080
+      - --api=true
+      # - --api.insecure=true
+      # - --serversTransport.insecureSkipVerify=true
+      - --log=true
+      - --log.level=DEBUG # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+      - --accessLog=true
+      - --accessLog.filePath=/traefik.log
+      - --accessLog.bufferingSize=100 # Configuring a buffer of 100 lines
+      - --accessLog.filters.statusCodes=400-499
+      - --providers.docker=true
+      - --providers.docker.endpoint=unix:///var/run/docker.sock # Connection to the Docker host. Consider using Docker Socket Proxy instead for improved security
+      # - --providers.docker.endpoint=tcp://socket-proxy:2375
       - --providers.docker.defaultrule=HostHeader(`{{ index .Labels "com.docker.compose.service" }}.$FQDN`)
-      - "--providers.docker.exposedByDefault=false"
-      # - "--entrypoints.https.http.middlewares=chain-authelia@file"
+      - --providers.docker.exposedByDefault=false
+      # - --entrypoints.https.http.middlewares=chain-authelia@file
       # Add dns-cloudflare as default certresolver for all services. Also enables TLS and no need to specify on individual services
-      - "--entrypoints.https.http.tls.certresolver=dns-duckdns"
-      - "--entrypoints.https.http.tls.domains[0].main=${FQDN}"
-      - "--entrypoints.https.http.tls.domains[0].sans=*.${FQDN}"
-      # - "--entrypoints.https.http.tls.domains[1].main=$DOMAIN" # Pulls main cert for second domain
-      # - "--entrypoints.https.http.tls.domains[1].sans=*.$DOMAIN" # Pulls wildcard cert for second domain
-      - "--providers.docker.network=backend"
-      - "--providers.docker.swarmMode=false"
-      - "--providers.file.directory=/rules" # Load dynamic configuration from one or more .toml or .yml files in a directory
-      # - "--providers.file.filename=/path/to/file" # Load dynamic configuration from a file
-      - "--providers.file.watch=true" # Only works on top level files in the rules folder
-      # - "--certificatesResolvers.dns-cloudflare.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory" # LetsEncrypt Staging Server - uncomment when testing
-      - "--certificatesResolvers.dns-duckdns.acme.email=${EMAIL}"
-      - "--certificatesResolvers.dns-duckdns.acme.storage=/acme.json"
-      - "--certificatesResolvers.dns-duckdns.acme.dnsChallenge.provider=duckdns"
-      - "--certificatesResolvers.dns-duckdns.acme.dnsChallenge.resolvers=1.1.1.1:53,1.0.0.1:53"
-      - "--certificatesResolvers.dns-duckdns.acme.dnsChallenge.delayBeforeCheck=90" # To delay DNS check and reduce LE hitrate
+      - --entrypoints.https.http.tls.certresolver=dns-duckdns
+      - --entrypoints.https.http.tls.domains[0].main=${FQDN}
+      - --entrypoints.https.http.tls.domains[0].sans=*.${FQDN}
+      # - --entrypoints.https.http.tls.domains[1].main=$DOMAIN # Pulls main cert for second domain
+      # - --entrypoints.https.http.tls.domains[1].sans=*.$DOMAIN # Pulls wildcard cert for second domain
+      - --providers.docker.network=backend
+      - --providers.docker.swarmMode=false
+      - --providers.file.directory=/rules # Load dynamic configuration from one or more .toml or .yml files in a directory
+      # - --providers.file.filename=/path/to/file # Load dynamic configuration from a file
+      - --providers.file.watch=true # Only works on top level files in the rules folder
+      # - --certificatesResolvers.dns-duckdns.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
+      - --certificatesResolvers.dns-duckdns.acme.email=${EMAIL}
+      - --certificatesResolvers.dns-duckdns.acme.storage=/acme.json
+      - --certificatesResolvers.dns-duckdns.acme.dnsChallenge.provider=duckdns
+      - --certificatesResolvers.dns-duckdns.acme.dnsChallenge.resolvers=1.1.1.1:53,1.0.0.1:53
+      - --certificatesResolvers.dns-duckdns.acme.dnsChallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
     networks:
       - frontend
       - backend
@@ -238,7 +238,7 @@ services:
       - "traefik.http.routers.traefik-rtr.service=api@internal"
       ## Middlewares
       #- "traefik.http.routers.traefik-rtr.middlewares=chain-authelia@file"
-      #- "traefik.http.routers.traefik-rtr.middlewares=chain-no-auth@file" # No Authentication
+      - "traefik.http.routers.traefik-rtr.middlewares=chain-no-auth@file" # No Authentication
 
 ########################################################################################
 # netdata
