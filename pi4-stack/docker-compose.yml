@@ -84,19 +84,15 @@ services:
       #- 4180:4180
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=oauth2"
-      - "traefik.frontend.rule=HostRegexp:{subdomain:.+}.${FQDN},${FQDN}; PathPrefix:/oauth2"
-      - "traefik.port=4180"
-      - "traefik.docker.network=backend"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=example.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=true"
+      ## HTTP Routers
+      - "traefik.http.routers.oauth-rtr.entrypoints=https"
+      - "traefik.http.routers.oauth-rtr.rule=Host(`oauth.${FQDN}`)"
+      - "traefik.http.routers.oauth-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.oauth-rtr.middlewares=chain-oauth@file"
+      ## HTTP Services
+      - "traefik.http.routers.oauth-rtr.service=oauth-svc"
+      - "traefik.http.services.oauth-svc.loadbalancer.server.port=4180"
     networks:
       - backend
     restart: unless-stopped
@@ -108,7 +104,7 @@ services:
 
   traefik:
     hostname: traefik
-    image: traefik:v1.7
+    image: traefik:2.2.1 
     container_name: traefik
     environment:
       - DUCKDNS_TOKEN=${DUCKDNS_TOKEN}
@@ -120,34 +116,59 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      #- "8080:8080"
+      - "8080:8080"
+    command: # CLI arguments
+      - --global.checkNewVersion=true
+      - --global.sendAnonymousUsage=true
+      - --entryPoints.http.address=:80
+      - --entryPoints.https.address=:443
+        # Allow these IPs to set the X-Forwarded-* headers - Cloudflare IPs: https://www.cloudflare.com/ips/
+      #- --entrypoints.https.forwardedHeaders.trustedIPs=173.245.48.0/20,103.21.244.0/22,103.22.200.0/22,103.31.4.0/22,141.101.64.0/18,108.162.192.0/18,190.93.240.0/20,188.114.96.0/20,197.234.240.0/22,198.41.128.0/17,162.158.0.0/15,104.16.0.0/12,172.64.0.0/13,131.0.72.0/22
+      - --entryPoints.traefik.address=:8080
+      - --api=true
+#      - --api.insecure=true
+#      - --serversTransport.insecureSkipVerify=true
+      - --log=true
+      - --log.level=DEBUG # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+      - --accessLog=true
+      - --accessLog.filePath=/traefik.log
+      - --accessLog.bufferingSize=100 # Configuring a buffer of 100 lines
+      - --accessLog.filters.statusCodes=400-499
+      - --providers.docker=true
+      - --providers.docker.endpoint=unix:///var/run/docker.sock
+      - --providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.${FQDN}`)
+      - --providers.docker.exposedByDefault=false
+      - --providers.docker.network=t2_proxy
+      - --providers.docker.swarmMode=false
+      - --providers.file.directory=${CONFIG_DIR}/traefik2/rules # Load dynamic configuration from one or more .toml or .yml files in a directory.
+#      - --providers.file.filename=/path/to/file # Load dynamic configuration from a file.
+      - --providers.file.watch=true # Only works on top level files in the rules folder
+      - --certificatesResolvers.dns-duckdns.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
+      - --certificatesResolvers.dns-duckdns.acme.email=${EMAIL}
+      - --certificatesResolvers.dns-duckdns.acme.storage=${CONFIG_DIR}/traefik2/acme.json
+      - --certificatesResolvers.dns-duckdns.acme.dnschallenge.provider=duckdns
+      - --certificatesresolvers.dns-duckdns.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=traefik"
-      #- "traefik.frontend.rule=Host:traefik.${FQDN}"
-      - "traefik.frontend.rule=Host:${FQDN}; PathPrefixStrip: /traefik"
-      - "traefik.port=8080"
-      - "traefik.docker.network=backend"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=duckdns.org"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=true"
-      #- "traefik.frontend.auth.basic.users=${HTTP_USERNAME}:${HTTP_PASSWORD}"
-      # Require oauth2 for authentication
-      - "traefik.frontend.auth.forward.address=https://${FQDN}/oauth2/auth"
-      - "traefik.frontend.auth.forward.trustForwardHeader=true"
-      - "traefik.frontend.auth.forward.authResponseHeaders=X-Auth-Request-User,X-Auth-Request-Email,Authorization,Set-Cookie"
-      - "traefik.frontend.errors.401.backend=oauth2"
-      - "traefik.frontend.errors.401.status=401"
-      - "traefik.frontend.errors.401.query=/oauth2/sign_in"
+      # HTTP-to-HTTPS Redirect
+      - "traefik.http.routers.http-catchall.entrypoints=http"
+      - "traefik.http.routers.http-catchall.rule=HostRegexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      # HTTP Routers
+      - "traefik.http.routers.traefik-rtr.entrypoints=https"
+      - "traefik.http.routers.traefik-rtr.rule=Host(`traefik.${FQDN}`)"
+      - "traefik.http.routers.traefik-rtr.tls=true"
+      - "traefik.http.routers.traefik-rtr.tls.certresolver=dns-duckdns" # Comment out this line after first run of traefik to force the use of wildcard certs
+      - "traefik.http.routers.traefik-rtr.tls.domains[0].main=${FQDN}"
+      - "traefik.http.routers.traefik-rtr.tls.domains[0].sans=*.${FQDN}"
+      # - "traefik.http.routers.traefik-rtr.tls.domains[1].main=$SECONDDOMAINNAME" # Pulls main cert for second domain
+      # - "traefik.http.routers.traefik-rtr.tls.domains[1].sans=*.$SECONDDOMAINNAME" # Pulls wildcard cert for second domain
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${CONFIG_DIR}/traefik:/etc/traefik
+      - ${CONFIG_DIR}/traefik2/rules:/rules
+      - ${CONFIG_DIR}/traefik2/acme/acme.json:/acme.json
+      - ${CONFIG_DIR}/traefik2/traefik.log:/traefik.log
       - ${CONFIG_DIR}/shared:/shared
 
 ########################################################################################
@@ -178,29 +199,17 @@ services:
       - backend
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=netdata"
-      #- "traefik.frontend.rule=Host:${FQDN}; PathPrefixStrip: /netdata"
-      - "traefik.frontend.rule=Host:netdata.${FQDN}"
-      - "traefik.port=19999"
-      #- "traefik.protocol=https"
-      - "traefik.docker.network=backend"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=example.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=true"
-      #- "traefik.frontend.auth.basic.users=${HTTP_USERNAME}:${HTTP_PASSWORD}"
-      # Require oauth2 for authentication
-      - "traefik.frontend.auth.forward.address=https://${FQDN}/oauth2/auth"
-      - "traefik.frontend.auth.forward.trustForwardHeader=true"
-      - "traefik.frontend.auth.forward.authResponseHeaders=X-Auth-Request-User,X-Auth-Request-Email,Authorization,Set-Cookie"
-      - "traefik.frontend.errors.401.backend=oauth2"
-      - "traefik.frontend.errors.401.status=401"
-      - "traefik.frontend.errors.401.query=/oauth2/sign_in"
+      ## HTTP Routers
+      - "traefik.http.routers.netdata-rtr.entrypoints=https"
+      - "traefik.http.routers.netdata-rtr.rule=Host(`netdata.${FQDN}`)"
+      - "traefik.http.routers.netdata-rtr.tls=true"
+      ## Middlewares
+#      - "traefik.http.routers.netdata-rtr.middlewares=chain-no-auth@file" # No Authentication
+#      - "traefik.http.routers.netdata-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.netdata-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.netdata-rtr.service=netdata-svc"
+      - "traefik.http.services.netdata-svc.loadbalancer.server.port=19999"
 
 ########################################################################################
 # Downloaders
@@ -251,27 +260,17 @@ services:
       - backend
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=transmission-vpn"
-      #- "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /transmission"
-      - "traefik.frontend.rule=Host:transmission.${FQDN}"
-      - "traefik.port=9091"
-      - "traefik.docker.network=backend"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=example.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=true"
-      # Require oauth2 for authentication
-      - "traefik.frontend.auth.forward.address=https://${FQDN}/oauth2/auth"
-      - "traefik.frontend.auth.forward.trustForwardHeader=true"
-      - "traefik.frontend.auth.forward.authResponseHeaders=X-Auth-Request-User,X-Auth-Request-Email,Authorization,Set-Cookie"
-      - "traefik.frontend.errors.401.backend=oauth2"
-      - "traefik.frontend.errors.401.status=401"
-      - "traefik.frontend.errors.401.query=/oauth2/sign_in"
+      ## HTTP Routers
+      - "traefik.http.routers.transmission-vpn-rtr.entrypoints=https"
+      - "traefik.http.routers.transmission-vpn-rtr.rule=Host(`transmission.$FQDN`)"
+      - "traefik.http.routers.transmission-vpn-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.transmission-vpn-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.transmission-vpn-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.transmission-vpn-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.transmission-vpn-rtr.service=transmission-vpn-svc"
+      - "traefik.http.services.transmission-vpn-svc.loadbalancer.server.port=9091"
 
 ########################################################################################
 # Indexers
@@ -299,27 +298,17 @@ services:
       - backend
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=sonarr"
-      #- "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /sonarr"
-      - "traefik.frontend.rule=Host:sonarr.${FQDN}"
-      - "traefik.port=8989"
-      - "traefik.docker.network=backend"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=example.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=true"
-      # Require oauth2 for authentication
-      - "traefik.frontend.auth.forward.address=https://${FQDN}/oauth2/auth"
-      - "traefik.frontend.auth.forward.trustForwardHeader=true"
-      - "traefik.frontend.auth.forward.authResponseHeaders=X-Auth-Request-User,X-Auth-Request-Email,Authorization,Set-Cookie"
-      - "traefik.frontend.errors.401.backend=oauth2"
-      - "traefik.frontend.errors.401.status=401"
-      - "traefik.frontend.errors.401.query=/oauth2/sign_in"
+      ## HTTP Routers
+      - "traefik.http.routers.sonarr-rtr.entrypoints=https"
+      - "traefik.http.routers.sonarr-rtr.rule=Host(`sonarr.$FQDN`)"
+      - "traefik.http.routers.sonarr-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.sonarr-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.sonarr-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.sonarr-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.sonarr-rtr.service=sonarr-svc"
+      - "traefik.http.services.sonarr-svc.loadbalancer.server.port=8989"
 
 
   radarr:
@@ -341,27 +330,17 @@ services:
       - backend
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=radarr"
-      #- "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /radarr"
-      - "traefik.frontend.rule=Host:radarr.${FQDN}"
-      - "traefik.port=7878"
-      - "traefik.docker.network=backend"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=example.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=true"
-        # Require oauth2 for authentication
-      - "traefik.frontend.auth.forward.address=https://${FQDN}/oauth2/auth"
-      - "traefik.frontend.auth.forward.trustForwardHeader=true"
-      - "traefik.frontend.auth.forward.authResponseHeaders=X-Auth-Request-User,X-Auth-Request-Email,Authorization,Set-Cookie"
-      - "traefik.frontend.errors.401.backend=oauth2"
-      - "traefik.frontend.errors.401.status=401"
-      - "traefik.frontend.errors.401.query=/oauth2/sign_in"
+      ## HTTP Routers
+      - "traefik.http.routers.radarr-rtr.entrypoints=https"
+      - "traefik.http.routers.radarr-rtr.rule=Host(`radarr.$FQDN`)"
+      - "traefik.http.routers.radarr-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.radarr-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.radarr-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.radarr-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.radarr-rtr.service=radarr-svc"
+      - "traefik.http.services.radarr-svc.loadbalancer.server.port=7878"
 
   lidarr:
     image: linuxserver/lidarr
@@ -383,27 +362,17 @@ services:
       - backend
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=lidarr"
-      #- "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /lidarr"
-      - "traefik.frontend.rule=Host:lidarr.${FQDN}"
-      - "traefik.port=8686"
-      - "traefik.docker.network=backend"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=example.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=true"
-        # Require oauth2 for authentication
-      - "traefik.frontend.auth.forward.address=https://${FQDN}/oauth2/auth"
-      - "traefik.frontend.auth.forward.trustForwardHeader=true"
-      - "traefik.frontend.auth.forward.authResponseHeaders=X-Auth-Request-User,X-Auth-Request-Email,Authorization,Set-Cookie"
-      - "traefik.frontend.errors.401.backend=oauth2"
-      - "traefik.frontend.errors.401.status=401"
-      - "traefik.frontend.errors.401.query=/oauth2/sign_in"
+      ## HTTP Routers
+      - "traefik.http.routers.lidarr-rtr.entrypoints=https"
+      - "traefik.http.routers.lidarr-rtr.rule=Host(`lidarr.$FQDN`)"
+      - "traefik.http.routers.lidarr-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.lidarr-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.lidarr-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.lidarr-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.lidarr-rtr.service=lidarr-svc"
+      - "traefik.http.services.lidarr-svc.loadbalancer.server.port=8686"
 
   jackett:
     image: linuxserver/jackett
@@ -423,20 +392,17 @@ services:
       - backend
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=jackett"
-      #- "traefik.frontend.rule=Host:jackett.${FQDN}"
-      - "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /jackett"
-      - "traefik.port=9117"
-      - "traefik.docker.network=backend"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=example.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=true"
+      ## HTTP Routers
+      - "traefik.http.routers.jackett-rtr.entrypoints=https"
+      - "traefik.http.routers.jackett-rtr.rule=Host(`jackett.$FQDN`)"
+      - "traefik.http.routers.jackett-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.jackett-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.jackett-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      #- "traefik.http.routers.jackett-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.jackett-rtr.service=jackett-svc"
+      - "traefik.http.services.jackett-svc.loadbalancer.server.port=9117"
 
 ########################################################################################
 # Media
@@ -479,27 +445,17 @@ services:
       - backend
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=tautulli"
-      #- "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /tautulli"
-      - "traefik.frontend.rule=Host:tautulli.${FQDN}"
-      - "traefik.port=8181"
-      - "traefik.docker.network=backend"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=example.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=true"
-      # Require oauth2 for authentication
-      - "traefik.frontend.auth.forward.address=https://${FQDN}/oauth2/auth"
-      - "traefik.frontend.auth.forward.trustForwardHeader=true"
-      - "traefik.frontend.auth.forward.authResponseHeaders=X-Auth-Request-User,X-Auth-Request-Email,Authorization,Set-Cookie"
-      - "traefik.frontend.errors.401.backend=oauth2"
-      - "traefik.frontend.errors.401.status=401"
-      - "traefik.frontend.errors.401.query=/oauth2/sign_in"
+      ## HTTP Routers
+      - "traefik.http.routers.tautulli-rtr.entrypoints=https"
+      - "traefik.http.routers.tautulli-rtr.rule=Host(`tautulli.$FQDN`)"
+      - "traefik.http.routers.tautulli-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.tautulli-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.tautulli-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.tautulli-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.tautulli-rtr.service=tautulli-svc"
+      - "traefik.http.services.tautulli-svc.loadbalancer.server.port=8181"
 
 ########################################################################################
 # Organize
@@ -523,28 +479,17 @@ services:
       - backend
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=heimdall"
-      - "traefik.frontend.rule=Host:${FQDN}"
-      #- "traefik.frontend.rule=Host:heimdall.${FQDN}"
-      - "traefik.port=443"
-      - "traefik.protocol=https"
-      - "traefik.docker.network=backend"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=example.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=true"
-      # Require oauth2 for authentication
-      - "traefik.frontend.auth.forward.address=https://${FQDN}/oauth2/auth"
-      - "traefik.frontend.auth.forward.trustForwardHeader=true"
-      - "traefik.frontend.auth.forward.authResponseHeaders=X-Auth-Request-User,X-Auth-Request-Email,Authorization,Set-Cookie"
-      - "traefik.frontend.errors.401.backend=oauth2"
-      - "traefik.frontend.errors.401.status=401"
-      - "traefik.frontend.errors.401.query=/oauth2/sign_in"
+      ## HTTP Routers
+      - "traefik.http.routers.heimdall-rtr.entrypoints=https"
+      - "traefik.http.routers.heimdall-rtr.rule=Host(`${FQDN}`)"
+      - "traefik.http.routers.heimdall-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.heimdall-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.heimdall-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.heimdall-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.heimdall-rtr.service=heimdall-svc"
+      - "traefik.http.services.heimdall-svc.loadbalancer.server.port=9000"
 
 ########################################################################################
 # Pihole
@@ -588,21 +533,17 @@ services:
       #- DNS2=1.0.0.1
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=pihole"
-      - "traefik.port=80"
-      - "traefik.docker.network=backend"
-      #- "traefik.frontend.rule=HostRegexp:pihole.${FQDN},{catchall:.*}"
-      - "traefik.frontend.rule=Host:pihole.${FQDN}"
-      - "traefik.frontend.priority=1"
-      - traefik.frontend.headers.SSLRedirect=true
-      - traefik.frontend.headers.STSSeconds=315360000
-      - traefik.frontend.headers.browserXSSFilter=true
-      - traefik.frontend.headers.contentTypeNosniff=true
-      - traefik.frontend.headers.forceSTSHeader=true
-      - traefik.frontend.headers.SSLHost=duckdns.org
-      - traefik.frontend.headers.STSIncludeSubdomains=true
-      - traefik.frontend.headers.STSPreload=true
-      - traefik.frontend.headers.frameDeny=true
+      ## HTTP Routers
+      - "traefik.http.routers.pihole-rtr.entrypoints=https"
+      - "traefik.http.routers.pihole-rtr.rule=Host(`pihole.$FQDN`)"
+      - "traefik.http.routers.pihole-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.pihole-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.pihole-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.pihole-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.pihole-rtr.service=pihole-svc"
+      - "traefik.http.services.pihole-svc.loadbalancer.server.port=80"
 
 ########################################################################################
 # Portainer
@@ -624,20 +565,17 @@ services:
       - backend
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=portainer"
-      #- "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /portainer"
-      - "traefik.frontend.rule=Host:portainer.${FQDN}"
-      - "traefik.port=9000"
-      - "traefik.docker.network=backend"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=example.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=true"
+      ## HTTP Routers
+      - "traefik.http.routers.portainer-rtr.entrypoints=https"
+      - "traefik.http.routers.portainer-rtr.rule=Host(`portainer.${FQDN}`)"
+      - "traefik.http.routers.portainer-rtr.tls=true"
+      ## Middlewares
+#      - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
+#      - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.portainer-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.portainer-rtr.service=portainer-svc"
+      - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
 
 ########################################################################################
 # Backup Stack
@@ -702,19 +640,17 @@ services:
       - backend
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=Nextcloud"
-      - "traefik.frontend.rule=Host:nextcloud.${FQDN}"
-      - "traefik.port=80"
-      - "traefik.docker.network=backend"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=example.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=true"
+      ## HTTP Routers
+      - "traefik.http.routers.nextcloud-rtr.entrypoints=https"
+      - "traefik.http.routers.nextcloud-rtr.rule=Host(`nextcloud.$FQDN`)"
+      - "traefik.http.routers.nextcloud-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.nextcloud-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.nextcloud-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.nextcloud-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.nextcloud-rtr.service=nextcloud-svc"
+      - "traefik.http.services.nextcloud-svc.loadbalancer.server.port=80"
 
   duplicati:
     image: duplicati/duplicati:linux-arm32v7-latest
@@ -734,19 +670,17 @@ services:
       - backend
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=duplicati"
-      - "traefik.frontend.rule=Host:duplicati.${FQDN}"
-      - "traefik.port=8200"
-      - "traefik.docker.network=backend"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=example.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=true"
+      ## HTTP Routers
+      - "traefik.http.routers.duplicati-rtr.entrypoints=https"
+      - "traefik.http.routers.duplicati-rtr.rule=Host(`duplicati.$FQDN`)"
+      - "traefik.http.routers.duplicati-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.duplicati-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.duplicati-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.duplicati-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.duplicati-rtr.service=duplicati-svc"
+      - "traefik.http.services.duplicati-svc.loadbalancer.server.port=8200"
 
 volumes:
   db1:
