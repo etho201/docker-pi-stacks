@@ -85,7 +85,7 @@ services:
   #   labels:
   #     - "traefik.enable=true"
   #     ## HTTP Routers
-  #     - "traefik.http.routers.oauth-rtr.entrypoints=https"
+  #     - "traefik.http.routers.oauth-rtr.entrypoints=websecure"
   #     #- "traefik.http.routers.oauth-rtr.rule=HostHeader(`oauth.${FQDN}`)"
   #     - "traefik.http.routers.oauth-rtr.rule=HostHeader(`oauth.${FQDN?err}`) || PathPrefix(`/oauth2`)"
   #     - "traefik.http.routers.oauth-rtr.tls=true"
@@ -101,7 +101,7 @@ services:
   #     - "traefik.http.middlewares.oauth-signin.errors.service=oauth@file"
   #     - "traefik.http.middlewares.oauth-signin.errors.status=401"
   #     - "traefik.http.middlewares.oauth-signin.errors.query=/oauth2/sign_in"
-  #     - "traefik.http.routers.oauth.entrypoints=https"
+  #     - "traefik.http.routers.oauth.entrypoints=websecure"
   #     - "traefik.http.routers.oauth.tls.certResolver=default"
   #     - "traefik.http.routers.oauth.service=oauth@file"
   #     - "traefik.http.services.oauth.loadbalancer.server.port=4180"
@@ -134,7 +134,7 @@ services:
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
-      - "traefik.http.routers.oauth-rtr.entrypoints=https"
+      - "traefik.http.routers.oauth-rtr.entrypoints=websecure"
       - "traefik.http.routers.oauth-rtr.rule=HostHeader(`oauth.$FQDN`)"
       ## Middlewares
       - "traefik.http.routers.oauth-rtr.middlewares=chain-oauth@file"
@@ -233,12 +233,12 @@ services:
     labels:
       - "traefik.enable=true"
       # HTTP-to-HTTPS Redirect
-      - "traefik.http.routers.http-catchall.entrypoints=http"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
       - "traefik.http.routers.http-catchall.rule=HostRegexp(`{host:.+}`)"
       - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       # HTTP Routers
-      - "traefik.http.routers.traefik-rtr.entrypoints=https"
+      - "traefik.http.routers.traefik-rtr.entrypoints=websecure"
       - "traefik.http.routers.traefik-rtr.rule=HostHeader(`traefik.$FQDN`)"
       ## Services - API
       - "traefik.http.routers.traefik-rtr.service=api@internal"
@@ -275,7 +275,7 @@ services:
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
-      - "traefik.http.routers.netdata-rtr.entrypoints=https"
+      - "traefik.http.routers.netdata-rtr.entrypoints=websecure"
       - "traefik.http.routers.netdata-rtr.rule=HostHeader(`netdata.${FQDN}`)"
       - "traefik.http.routers.netdata-rtr.tls=true"
       ## Middlewares
@@ -336,7 +336,7 @@ services:
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
-      - "traefik.http.routers.transmission-vpn-rtr.entrypoints=https"
+      - "traefik.http.routers.transmission-vpn-rtr.entrypoints=websecure"
       - "traefik.http.routers.transmission-vpn-rtr.rule=HostHeader(`transmission.$FQDN`)"
       - "traefik.http.routers.transmission-vpn-rtr.tls=true"
       ## Middlewares
@@ -374,7 +374,7 @@ services:
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
-      - "traefik.http.routers.sonarr-rtr.entrypoints=https"
+      - "traefik.http.routers.sonarr-rtr.entrypoints=websecure"
       - "traefik.http.routers.sonarr-rtr.rule=HostHeader(`sonarr.$FQDN`)"
       - "traefik.http.routers.sonarr-rtr.tls=true"
       ## Middlewares
@@ -406,7 +406,7 @@ services:
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
-      - "traefik.http.routers.radarr-rtr.entrypoints=https"
+      - "traefik.http.routers.radarr-rtr.entrypoints=websecure"
       - "traefik.http.routers.radarr-rtr.rule=HostHeader(`radarr.$FQDN`)"
       - "traefik.http.routers.radarr-rtr.tls=true"
       ## Middlewares
@@ -438,7 +438,7 @@ services:
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
-      - "traefik.http.routers.lidarr-rtr.entrypoints=https"
+      - "traefik.http.routers.lidarr-rtr.entrypoints=websecure"
       - "traefik.http.routers.lidarr-rtr.rule=HostHeader(`lidarr.$FQDN`)"
       - "traefik.http.routers.lidarr-rtr.tls=true"
       ## Middlewares
@@ -468,7 +468,7 @@ services:
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
-      - "traefik.http.routers.jackett-rtr.entrypoints=https"
+      - "traefik.http.routers.jackett-rtr.entrypoints=websecure"
       - "traefik.http.routers.jackett-rtr.rule=HostHeader(`jackett.${FQDN}`)"
       - "traefik.http.routers.jackett-rtr.tls=true"
       ## Middlewares
@@ -521,7 +521,7 @@ services:
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
-      - "traefik.http.routers.tautulli-rtr.entrypoints=https"
+      - "traefik.http.routers.tautulli-rtr.entrypoints=websecure"
       - "traefik.http.routers.tautulli-rtr.rule=HostHeader(`tautulli.$FQDN`)"
       - "traefik.http.routers.tautulli-rtr.tls=true"
       ## Middlewares
@@ -555,7 +555,7 @@ services:
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
-      - "traefik.http.routers.heimdall-rtr.entrypoints=https"
+      - "traefik.http.routers.heimdall-rtr.entrypoints=websecure"
       - "traefik.http.routers.heimdall-rtr.rule=HostHeader(`${FQDN}`)"
       - "traefik.http.routers.heimdall-rtr.tls=true"
       ## Middlewares
@@ -609,7 +609,7 @@ services:
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
-      - "traefik.http.routers.pihole-rtr.entrypoints=https"
+      - "traefik.http.routers.pihole-rtr.entrypoints=websecure"
       - "traefik.http.routers.pihole-rtr.rule=HostHeader(`pihole.$FQDN`)"
       - "traefik.http.routers.pihole-rtr.tls=true"
       ## Middlewares
@@ -641,7 +641,7 @@ services:
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
-      - "traefik.http.routers.portainer-rtr.entrypoints=https"
+      - "traefik.http.routers.portainer-rtr.entrypoints=websecure"
       - "traefik.http.routers.portainer-rtr.rule=HostHeader(`portainer.$FQDN`)"
       - "traefik.http.routers.portainer-rtr.tls=true"
       ## Middlewares
@@ -716,7 +716,7 @@ services:
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
-      - "traefik.http.routers.nextcloud-rtr.entrypoints=https"
+      - "traefik.http.routers.nextcloud-rtr.entrypoints=websecure"
       - "traefik.http.routers.nextcloud-rtr.rule=HostHeader(`nextcloud.$FQDN`)"
       - "traefik.http.routers.nextcloud-rtr.tls=true"
       ## Middlewares
@@ -746,7 +746,7 @@ services:
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
-      - "traefik.http.routers.duplicati-rtr.entrypoints=https"
+      - "traefik.http.routers.duplicati-rtr.entrypoints=websecure"
       - "traefik.http.routers.duplicati-rtr.rule=HostHeader(`duplicati.$FQDN`)"
       - "traefik.http.routers.duplicati-rtr.tls=true"
       ## Middlewares
