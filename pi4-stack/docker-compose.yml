@@ -243,6 +243,7 @@ services:
       # HTTP Routers
       - "traefik.http.routers.traefik-rtr.entrypoints=websecure"
       - "traefik.http.routers.traefik-rtr.rule=HostHeader(`traefik.$FQDN`)"
+      - "traefik.http.routers.traefik-rtr.tls=true"
       ## Services - API
       - "traefik.http.routers.traefik-rtr.service=api@internal"
       ## Middlewares
