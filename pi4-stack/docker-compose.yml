@@ -162,7 +162,7 @@ services:
     volumes:
       - './authelia/configuration.yml:/etc/authelia/configuration.yml:ro'
       - './authelia/users_database.yml:/etc/authelia/users_database.yml:ro'
-      - '{CONFIG_DIR}/authelia:/etc/authelia/data:rw'
+      - ${CONFIG_DIR}/authelia:/etc/authelia/data:rw
     environment:
       - TZ=${TZ}
     labels:
