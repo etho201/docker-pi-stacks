@@ -168,7 +168,7 @@ services:
       - --log=true
       - --log.level=INFO # (Default: ERROR) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
       - --accessLog=true
-      - --accessLog.filePath=/traefik.log
+      - --accessLog.filePath=/etc/traefik/traefik.log
       - --accessLog.bufferingSize=100 # Configuring a buffer of 100 lines
       - --accessLog.filters.statusCodes=400-499
       - --providers.docker=true
@@ -185,12 +185,12 @@ services:
       # - --entrypoints.https.http.tls.domains[1].sans=*.$DOMAIN # Pulls wildcard cert for second domain
       - --providers.docker.network=backend
       - --providers.docker.swarmMode=false
-      - --providers.file.directory=/rules # Load dynamic configuration from one or more .toml or .yml files in a directory
+      - --providers.file.directory=/etc/traefik/config # Load dynamic configuration from one or more .toml or .yml files in a directory
       # - --providers.file.filename=/path/to/file # Load dynamic configuration from a file
       - --providers.file.watch=true # Only works on top level files in the rules folder
       - --certificatesResolvers.dns-duckdns.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
       - --certificatesResolvers.dns-duckdns.acme.email=${EMAIL}
-      - --certificatesResolvers.dns-duckdns.acme.storage=/acme.json
+      - --certificatesResolvers.dns-duckdns.acme.storage=/etc/traefik/acme/acme.json
       - --certificatesResolvers.dns-duckdns.acme.dnsChallenge.provider=duckdns
       - --certificatesResolvers.dns-duckdns.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53
       - --certificatesResolvers.dns-duckdns.acme.dnsChallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
@@ -218,10 +218,16 @@ services:
       #   mode: host
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro # Use Docker Socket Proxy instead for improved security
-      - ${CONFIG_DIR}/traefik2/rules:/rules # file provider directory
-      - ${CONFIG_DIR}/traefik2/acme/acme.json:/acme.json # cert location - you must touch this file and change permissions to 
-      - ${CONFIG_DIR}/traefik2/traefik.log:/traefik.log # for fail2ban - make sure to touch file before starting container
-      - ${CONFIG_DIR}/shared:/shared
+      - ${CONFIG_DIR}/shared:/shared # for use with basic auth
+      - ${CONFIG_DIR}/traefik2:/etc/traefik
+      # traefik2
+      # ├── acme
+      # │   └── acme.json # cert location - you must touch this file and change permissions to 600
+      # ├── config # file provider directory
+      # │   ├── app-plex.yml
+      # │   ├── middlewares-chains.yml
+      # │   └── middlewares.yml
+      # └── traefik.log # for fail2ban - make sure to touch file before starting container
     environment:
       - DUCKDNS_TOKEN=${DUCKDNS_TOKEN}
     labels:
