@@ -118,19 +118,22 @@ services:
     security_opt:
       - no-new-privileges:true
     environment:
-      - CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - PROVIDERS_GENERIC_OAUTH_CLIENT_ID=$GITHUB_CLIENT_ID
+      - PROVIDERS_GENERIC_OAUTH_CLIENT_SECRET=$GITHUB_CLIENT_SECRET
+      - PROVIDERS_GENERIC_OAUTH_USER_URL=https://github.com/login/oauth/authorize
+      - PROVIDERS_GENERIC_OAUTH_AUTH_URL=https://api.github.com/user
+      - PROVIDERS_GENERIC_OAUTH_TOKEN_URL=https://github.com/login/oauth/access_token
       - SECRET=$OAUTH2_PROXY_COOKIE_SECRET
-      - COOKIE_DOMAIN=$FQDN
+      - COOKIE_DOMAIN=${FQDN}
       - INSECURE_COOKIE=false
-      - AUTH_HOST=oauth.$FQDN
+      - AUTH_HOST=oauth.${FQDN}
       - URL_PATH=/_oauth
-      #- WHITELIST_FILE=/run/secrets/my_email
+      - WHITELIST=${EMAIL}
       - LOG_LEVEL=warn
       - LOG_FORMAT=text
       - LIFETIME=2592000 # 30 days
       - DEFAULT_ACTION=auth
-      - DEFAULT_PROVIDER=google
+      - DEFAULT_PROVIDER=generic-oauth # use generic-oauth for GitHub
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
