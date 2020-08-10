@@ -148,6 +148,32 @@ services:
       - backend
     restart: unless-stopped
 
+  # Authelia (Lite) - Self-Hosted Single Sign-On and Two-Factor Authentication
+  authelia:
+    container_name: authelia
+    # Check this before upgrading: https://github.com/authelia/authelia/blob/master/BREAKING.md
+    # image: authelia/authelia:latest
+    image: authelia/authelia:4.21.0
+    restart: always
+    networks:
+      - backend
+    # ports:
+    #   - "9091:9091"
+    volumes:
+      - ${CONFIG_DIR}/authelia:/config
+    environment:
+      - TZ=${TZ}
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.authelia-rtr.entrypoints=websecure"
+      - "traefik.http.routers.authelia-rtr.rule=HostHeader(`authelia.${FQDN}`)"
+      ## Middlewares
+      - "traefik.http.routers.authelia-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.authelia-rtr.service=authelia-svc"
+      - "traefik.http.services.authelia-svc.loadbalancer.server.port=9091"
+
 ########################################################################################
 # Traefik
 # https://hub.docker.com/_/traefik
@@ -247,9 +273,9 @@ services:
       ## Services - API
       - "traefik.http.routers.traefik-rtr.service=api@internal"
       ## Middlewares
-      # - "traefik.http.routers.traefik-rtr.middlewares=chain-authelia@file"
+      - "traefik.http.routers.traefik-rtr.middlewares=chain-authelia@file"
       # - "traefik.http.routers.traefik-rtr.middlewares=chain-no-auth@file" # No Authentication
-      - "traefik.http.routers.traefik-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
+      # - "traefik.http.routers.traefik-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
 
 ########################################################################################
 # netdata
