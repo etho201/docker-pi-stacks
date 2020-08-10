@@ -7,7 +7,7 @@ port: 9091
 log_level: debug
 # This secret can also be set using the env variables AUTHELIA_JWT_SECRET_FILE
 jwt_secret: ${AUTHELIA_JWT_SECRET_FILE}
-default_redirection_url: https://public.example.com
+default_redirection_url: https://{FQDN}
 totp:
   issuer: authelia.com
 
@@ -32,12 +32,12 @@ access_control:
   default_policy: deny
   rules:
     # Rules applied to everyone
-    - domain: public.example.com
-      policy: bypass
-    - domain: traefik.example.com
+    - domain: "${FQDN}"
       policy: one_factor
-    - domain: secure.example.com
-      policy: two_factor
+    - domain: "*.${FQDN}"
+      policy: one_factor
+    # - domain: secure.example.com
+    #   policy: two_factor
 
 session:
   name: authelia_session
@@ -63,11 +63,15 @@ storage:
   local:
     path: /config/db.sqlite3
 
-notifier:
-  smtp:
-    username: test
-    # This secret can also be set using the env variables AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE
-    password: ${AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE}
-    host: mail.example.com
-    port: 25
-    sender: admin@example.com
+# notifier:
+  # For testing purpose, notifications can be sent in a file
+  filesystem:
+    filename: /etc/authelia/data/notification.txt
+  # For email, create an app password, following: https://support.google.com/accounts/answer/185833?hl=en
+#   smtp:
+#     username: test
+#     # This secret can also be set using the env variables AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE
+#     password: ${AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE}
+#     host: smtp.gmail.com
+#     port: 587
+#     sender: admin@example.com
