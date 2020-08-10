@@ -191,7 +191,7 @@ services:
       - --providers.file.directory=/etc/traefik/rules # Load dynamic configuration from one or more .toml or .yml files in a directory
       # - --providers.file.filename=/path/to/file # Load dynamic configuration from a file
       - --providers.file.watch=true # Only works on top level files in the rules folder
-      - --certificatesResolvers.letsencrypt.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
+      # - --certificatesResolvers.letsencrypt.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
       - --certificatesResolvers.letsencrypt.acme.email=${EMAIL}
       - --certificatesResolvers.letsencrypt.acme.storage=/etc/traefik/acme/acme.json
       - --certificatesResolvers.letsencrypt.acme.dnsChallenge.provider=duckdns
@@ -247,8 +247,9 @@ services:
       ## Services - API
       - "traefik.http.routers.traefik-rtr.service=api@internal"
       ## Middlewares
-      #- "traefik.http.routers.traefik-rtr.middlewares=chain-authelia@file"
-      - "traefik.http.routers.traefik-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.traefik-rtr.middlewares=chain-authelia@file"
+      # - "traefik.http.routers.traefik-rtr.middlewares=chain-no-auth@file" # No Authentication
+      - "traefik.http.routers.traefik-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
 
 ########################################################################################
 # netdata
