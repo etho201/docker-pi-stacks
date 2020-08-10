@@ -470,7 +470,7 @@ services:
       ## HTTP Routers
       - "traefik.http.routers.jackett-rtr.entrypoints=https"
       - "traefik.http.routers.jackett-rtr.rule=HostHeader(`jackett.$FQDN`)"
-      - "traefik.http.routers.jackett-rtr.tls=true"
+      # - "traefik.http.routers.jackett-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.jackett-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.jackett-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
