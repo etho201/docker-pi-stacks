@@ -33,7 +33,7 @@ services:
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
-      - "traefik.http.routers.bitwarden-rtr.entrypoints=https"
+      - "traefik.http.routers.bitwarden-rtr.entrypoints=websecure"
       - "traefik.http.routers.bitwarden-rtr.rule=Host(`bitwarden.$FQDN`)"
       - "traefik.http.routers.bitwarden-rtr.tls=true"
       ## Middlewares
