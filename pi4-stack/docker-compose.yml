@@ -287,6 +287,8 @@ services:
   whoami:
     image: containous/whoami
     container_name: whoami
+    networks:
+      - backend
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
