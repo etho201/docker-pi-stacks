@@ -273,9 +273,32 @@ services:
       ## Services - API
       - "traefik.http.routers.traefik-rtr.service=api@internal"
       ## Middlewares
-      - "traefik.http.routers.traefik-rtr.middlewares=chain-authelia@file"
+      # - "traefik.http.routers.traefik-rtr.middlewares=chain-authelia@file"
       # - "traefik.http.routers.traefik-rtr.middlewares=chain-no-auth@file" # No Authentication
-      # - "traefik.http.routers.traefik-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
+      - "traefik.http.routers.traefik-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
+
+########################################################################################
+# whoami
+# https://hub.docker.com/r/containous/whoami
+# A container that exposes an API to show its IP address
+# Tiny Go webserver that prints OS information and HTTP request to output
+########################################################################################
+
+  whoami:
+    image: containous/whoami
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.whoami-rtr.entrypoints=websecure"
+      - "traefik.http.routers.whoami-rtr.rule=HostHeader(`whoami.${FQDN}`)"
+      - "traefik.http.routers.whoami-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.whoami-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.whoami-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.whoami-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.whoami-rtr.service=whoami-svc"
+      - "traefik.http.services.whoami-svc.loadbalancer.server.port=80"
 
 ########################################################################################
 # netdata
