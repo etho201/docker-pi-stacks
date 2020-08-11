@@ -619,7 +619,7 @@ services:
       - "traefik.http.routers.heimdall-rtr.middlewares=chain-oauth@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.heimdall-rtr.service=heimdall-svc"
-      - "traefik.http.services.heimdall-svc.loadbalancer.server.port=9000"
+      - "traefik.http.services.heimdall-svc.loadbalancer.server.port=443"
 
 ########################################################################################
 # Pihole
