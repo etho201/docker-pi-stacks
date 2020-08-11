@@ -32,17 +32,15 @@ services:
     labels:
       # Traefik Configuration
       - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.unifi-rtr.entrypoints=websecure"
-      - "traefik.http.routers.unifi-rtr.rule=HostHeader(`unifi.$FQDN`)"
-      - "traefik.http.routers.unifi-rtr.tls=true"
-      ## Middlewares
-      - "traefik.http.routers.unifi-rtr.middlewares=chain-no-auth@file" # No Authentication
-      # - "traefik.http.routers.unifi-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      # - "traefik.http.routers.unifi-rtr.middlewares=chain-oauth@file" # OAuth 2.0
-      ## HTTP Services
-      - "traefik.http.routers.unifi-rtr.service=unifi-svc"
-      - "traefik.http.services.unifi-svc.loadbalancer.server.port=8443"
+      ## TCP Routers
+      - "traefik.tcp.routers.unifi-tcp.entrypoints=websecure"
+      - "traefik.tcp.routers.unifi-tcp.rule=HostSNI(`unifi.${FQDN}`)"
+      - "traefik.tcp.routers.unifi-tcp.tls=true"
+#      - "traefik.tcp.routers.unifi-tcp.tls.certresolver=letsencrypt"
+      - "traefik.tcp.routers.unifi-tcp.tls.passthrough=true"
+      ## TCP Services
+      - "traefik.tcp.routers.unifi-tcp.service=unifi-tcp-svc"
+      - "traefik.tcp.services.unifi-tcp-svc.loadbalancer.server.port=443"
 
 networks:
   # frontend:
