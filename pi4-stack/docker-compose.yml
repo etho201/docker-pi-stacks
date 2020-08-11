@@ -112,9 +112,9 @@ services:
 
   # Google OAuth - Single Sign On using OAuth 2.0 for Traefik 2.2
   oauth:
+    image: thomseddon/traefik-forward-auth:2.2.0-arm # Use this image with Raspberry Pi
     container_name: oauth
     #image: thomseddon/traefik-forward-auth:latest
-    image: thomseddon/traefik-forward-auth:2.2.0-arm # Use this image with Raspberry Pi
     security_opt:
       - no-new-privileges:true
     environment:
@@ -180,8 +180,8 @@ services:
 ########################################################################################
 
   traefik:
-    container_name: traefik
     image: traefik:chevrotin # the chevrotin tag refers to v2.2.x
+    container_name: traefik
     restart: unless-stopped
     command: # CLI arguments
       - --global.checkNewVersion=true
@@ -286,6 +286,7 @@ services:
 
   whoami:
     image: containous/whoami
+    container_name: whoami
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
