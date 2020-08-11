@@ -195,7 +195,7 @@ services:
       # - --api.insecure=true
       # - --serversTransport.insecureSkipVerify=true
       - --log=true
-      - --log.level=INFO # (Default: ERROR) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+      - --log.level=WARN # (Default: ERROR) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
       - --accessLog=true
       - --accessLog.filePath=/etc/traefik/traefik.log
       - --accessLog.bufferingSize=100 # Configuring a buffer of 100 lines
