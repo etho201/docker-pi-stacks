@@ -33,14 +33,14 @@ services:
       # Traefik Configuration
       - "traefik.enable=true"
       ## TCP Routers
-      - "traefik.tcp.routers.unifi-tcp.entrypoints=websecure"
-      - "traefik.tcp.routers.unifi-tcp.rule=HostSNI(`unifi.${FQDN}`)"
-      - "traefik.tcp.routers.unifi-tcp.tls=true"
+      - "traefik.tcp.routers.unifi-controller-tcp.entrypoints=websecure"
+      - "traefik.tcp.routers.unifi-controller-tcp.rule=HostSNI(`unifi.${FQDN}`)"
+      - "traefik.tcp.routers.unifi-controller-tcp.tls=true"
 #      - "traefik.tcp.routers.unifi-tcp.tls.certresolver=letsencrypt"
-      - "traefik.tcp.routers.unifi-tcp.tls.passthrough=true"
+      - "traefik.tcp.routers.unifi-controller-tcp.tls.passthrough=true"
       ## TCP Services
-      - "traefik.tcp.routers.unifi-tcp.service=unifi-tcp-svc"
-      - "traefik.tcp.services.unifi-tcp-svc.loadbalancer.server.port=443"
+      - "traefik.tcp.routers.unifi-controller-tcp.service=unifi-controller-tcp-svc"
+      - "traefik.tcp.services.unifi-controller-tcp-svc.loadbalancer.server.port=443"
 
 networks:
   # frontend:
