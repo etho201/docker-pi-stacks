@@ -120,8 +120,8 @@ services:
     environment:
       - PROVIDERS_GENERIC_OAUTH_CLIENT_ID=$GITHUB_CLIENT_ID
       - PROVIDERS_GENERIC_OAUTH_CLIENT_SECRET=$GITHUB_CLIENT_SECRET
-      - PROVIDERS_GENERIC_OAUTH_USER_URL=https://github.com/login/oauth/authorize
-      - PROVIDERS_GENERIC_OAUTH_AUTH_URL=https://api.github.com/user
+      - PROVIDERS_GENERIC_OAUTH_USER_URL=https://api.github.com/user
+      - PROVIDERS_GENERIC_OAUTH_AUTH_URL=https://github.com/login/oauth/authorize
       - PROVIDERS_GENERIC_OAUTH_TOKEN_URL=https://github.com/login/oauth/access_token
       - SECRET=$OAUTH2_PROXY_COOKIE_SECRET
       - COOKIE_DOMAIN=${FQDN}
