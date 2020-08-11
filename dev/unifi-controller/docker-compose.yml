@@ -32,21 +32,17 @@ services:
     labels:
       # Traefik Configuration
       - "traefik.enable=true"
-      - "traefik.backend=unifi-controller"
-      #- "traefik.frontend.rule=Host:${FQDN}; PathPrefix: /unifi"
-      - "traefik.frontend.rule=Host:unifi.${FQDN}"
-      - "traefik.port=8443"
-      - "traefik.protocol=https" #Required for Unifi -- without this and you will get "This combination of host and port requires TLS."
-      - "traefik.docker.network=backend"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=example.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=true"
+      ## HTTP Routers
+      - "traefik.http.routers.unifi-rtr.entrypoints=websecure"
+      - "traefik.http.routers.unifi-rtr.rule=HostHeader(`unifi.$FQDN`)"
+      - "traefik.http.routers.unifi-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.unifi-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.unifi-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.unifi-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.unifi-rtr.service=unifi-svc"
+      - "traefik.http.services.unifi-svc.loadbalancer.server.port=8443"
 
 networks:
   #frontend:
