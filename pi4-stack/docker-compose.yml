@@ -126,7 +126,7 @@ services:
       - SECRET=$OAUTH2_PROXY_COOKIE_SECRET
       - COOKIE_DOMAIN=${FQDN}
       - INSECURE_COOKIE=false
-      - AUTH_HOST=oauth.${FQDN}
+      # - AUTH_HOST=oauth.${FQDN} # Note: This should be considered advanced usage, if you are having problems please try disabling this option and then re-read the Auth Host Mode section.
       - URL_PATH=/_oauth
       - WHITELIST=${EMAIL}
       - LOG_LEVEL=warn
