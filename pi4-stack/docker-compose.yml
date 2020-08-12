@@ -772,15 +772,17 @@ services:
       - backend
     labels:
       - "traefik.enable=true"
-      ## TCP Routers
-      - "traefik.tcp.routers.nextcloud-tcp.entrypoints=websecure"
-      - "traefik.tcp.routers.nextcloud-tcp.rule=HostSNI(`nextcloud.${FQDN}`)"
-      - "traefik.tcp.routers.nextcloud-tcp.tls=true"
-#      - "traefik.tcp.routers.nextcloud-tcp.tls.certresolver=letsencrypt"
-      - "traefik.tcp.routers.nextcloud-tcp.tls.passthrough=true"
-      ## TCP Services
-      - "traefik.tcp.routers.nextcloud-tcp.service=nextcloud-tcp-svc"
-      - "traefik.tcp.services.nextcloud-tcp-svc.loadbalancer.server.port=443"
+      ## HTTP Routers
+      - "traefik.http.routers.nextcloud-rtr.entrypoints=websecure"
+      - "traefik.http.routers.nextcloud-rtr.rule=HostHeader(`nextcloud.$FQDN`)"
+      - "traefik.http.routers.nextcloud-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.nextcloud-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.nextcloud-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.nextcloud-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.nextcloud-rtr.service=nextcloud-svc"
+      - "traefik.http.services.nextcloud-svc.loadbalancer.server.port=80"
 
   duplicati:
     image: duplicati/duplicati:linux-arm32v7-latest
