@@ -33,6 +33,7 @@ services:
       # Traefik Configuration
       - "traefik.enable=true"
       ## TCP Routers
+      # https://github.com/containous/traefik/issues/5783 (--serverstransport.insecureskipverify=true)
       - "traefik.tcp.routers.unifi-controller-tcp.entrypoints=websecure"
       - "traefik.tcp.routers.unifi-controller-tcp.rule=HostSNI(`unifi.${FQDN}`)"
       - "traefik.tcp.routers.unifi-controller-tcp.tls=true"
