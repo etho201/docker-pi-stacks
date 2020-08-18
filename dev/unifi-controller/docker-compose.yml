@@ -34,6 +34,7 @@ services:
       - "traefik.enable=true"
       ## TCP Routers
       # https://github.com/containous/traefik/issues/5783 (--serverstransport.insecureskipverify=true)
+      # https://community.containo.us/t/problem-using-ssl-backend-with-selfsigned-certificates/1974
       - "traefik.tcp.routers.unifi-controller-tcp.entrypoints=websecure"
       - "traefik.tcp.routers.unifi-controller-tcp.rule=HostSNI(`unifi.${FQDN}`)"
       - "traefik.tcp.routers.unifi-controller-tcp.tls=true"
