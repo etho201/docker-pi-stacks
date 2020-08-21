@@ -46,7 +46,7 @@ services:
       - "traefik.http.routers.unifi-controller-rtr.service=unifi-controller-svc"
       - "traefik.http.services.unifi-controller-svc.loadbalancer.server.port=8443"
       ## TCP Routers
-      - "traefik.tcp.routers.unifi-controller-tcp.entrypoints=https"
+      - "traefik.tcp.routers.unifi-controller-tcp.entrypoints=websecure"
       - "traefik.tcp.routers.unifi-controller-tcp.rule=HostSNI(`unifi.${FQDN}`)"
       - "traefik.tcp.routers.unifi-controller-tcp.tls=true"
       # - "traefik.tcp.routers.unifi-controller-tcp.tls.certresolver=dns-cloudflare"
