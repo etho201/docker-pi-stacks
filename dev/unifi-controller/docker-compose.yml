@@ -34,6 +34,7 @@ services:
       # https://community.containo.us/t/problem-using-ssl-backend-with-selfsigned-certificates/1974
       # Traefik Configuration
       - "traefik.enable=true"
+      - "traefik.docker.network=backend"
       ## HTTP Routers
       - "traefik.http.routers.unifi-controller-rtr.entrypoints=websecure"
       - "traefik.http.routers.unifi-controller-rtr.rule=HostHeader(`unifi.${FQDN}`)"
