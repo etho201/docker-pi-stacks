@@ -39,9 +39,9 @@ services:
       - "traefik.http.routers.unifi-controller-rtr.rule=HostHeader(`unifi.${FQDN}`)"
       - "traefik.http.routers.unifi-controller-rtr.tls=true"
       ## Middlewares
-      # - "traefik.http.routers.unifi-controller-rtr.middlewares=chain-no-auth@file" # No Authentication
+      - "traefik.http.routers.unifi-controller-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.unifi-controller-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      - "traefik.http.routers.unifi-controller-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      # - "traefik.http.routers.unifi-controller-rtr.middlewares=chain-oauth@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.unifi-controller-rtr.service=unifi-controller-svc"
       - "traefik.http.services.unifi-controller-svc.loadbalancer.server.port=8443"
