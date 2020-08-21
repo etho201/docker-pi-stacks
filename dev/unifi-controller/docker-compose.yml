@@ -34,25 +34,25 @@ services:
       # https://community.containo.us/t/problem-using-ssl-backend-with-selfsigned-certificates/1974
       # Traefik Configuration
       - "traefik.enable=true"
-      - "traefik.docker.network=backend"
       ## HTTP Routers
       - "traefik.http.routers.unifi-controller-rtr.entrypoints=websecure"
       - "traefik.http.routers.unifi-controller-rtr.rule=HostHeader(`unifi.${FQDN}`)"
       - "traefik.http.routers.unifi-controller-rtr.tls=true"
       ## Middlewares
-      # - "traefik.http.routers.unifi-controller-rtr.middlewares=chain-no-auth@file" # No Authentication
+      - "traefik.http.routers.unifi-controller-rtr.middlewares=chain-no-auth@file" # No Authentication
       ## HTTP Services
       - "traefik.http.routers.unifi-controller-rtr.service=unifi-controller-svc"
       - "traefik.http.services.unifi-controller-svc.loadbalancer.server.port=8443"
-      ## TCP Routers
-      - "traefik.tcp.routers.unifi-controller-tcp.entrypoints=websecure"
-      - "traefik.tcp.routers.unifi-controller-tcp.rule=HostSNI(`unifi.${FQDN}`)"
-      - "traefik.tcp.routers.unifi-controller-tcp.tls=true"
-      - "traefik.tcp.routers.unifi-controller-tcp.tls.certresolver=letsencrypt"
-      - "traefik.tcp.routers.unifi-controller-tcp.tls.passthrough=true"
-      ## TCP Services
-      - "traefik.tcp.routers.unifi-controller-tcp.service=unifi-controller-tcp-svc"
-      - "traefik.tcp.services.unifi-controller-tcp-svc.loadbalancer.server.port=8443"
+      - "traefik.http.services.unifi-controller-svc.loadbalancer.server.scheme=https"
+      # ## TCP Routers
+      # - "traefik.tcp.routers.unifi-controller-tcp.entrypoints=websecure"
+      # - "traefik.tcp.routers.unifi-controller-tcp.rule=HostSNI(`unifi.${FQDN}`)"
+      # - "traefik.tcp.routers.unifi-controller-tcp.tls=true"
+      # - "traefik.tcp.routers.unifi-controller-tcp.tls.certresolver=letsencrypt"
+      # - "traefik.tcp.routers.unifi-controller-tcp.tls.passthrough=true"
+      # ## TCP Services
+      # - "traefik.tcp.routers.unifi-controller-tcp.service=unifi-controller-tcp-svc"
+      # - "traefik.tcp.services.unifi-controller-tcp-svc.loadbalancer.server.port=8443"
 
 networks:
   # frontend:
