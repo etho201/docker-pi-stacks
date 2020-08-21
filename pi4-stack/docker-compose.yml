@@ -193,7 +193,7 @@ services:
       - --entryPoints.traefik.address=:8080
       - --api=true
       # - --api.insecure=true
-      # - --serversTransport.insecureSkipVerify=true
+      - --serversTransport.insecureSkipVerify=true # Required for Unifi since it comes with a self-signed certificate
       - --log=true
       - --log.level=WARN # (Default: ERROR) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
       - --accessLog=true
