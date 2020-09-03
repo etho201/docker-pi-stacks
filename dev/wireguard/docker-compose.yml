@@ -27,6 +27,41 @@ services:
       - net.ipv4.conf.all.src_valid_mark=1
     restart: unless-stopped
 
+
+  qbittorrent:
+    image: linuxserver/qbittorrent
+    container_name: qbittorrent
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK_SET=022
+      - WEBUI_PORT=8080
+    volumes:
+      - ${CONFIG_DIR}/qbittorrent:/config
+      - ${EXTHDD_DIR}/downloads/torrents/downloads:/downloads
+    # networks:
+    #   - backend
+    network_mode: service:wireguard
+    # ports:
+    #   - 6881:6881
+    #   - 6881:6881/udp
+    #   - 8080:8080
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.qbittorrent-rtr.entrypoints=websecure"
+      - "traefik.http.routers.qbittorrent-rtr.rule=HostHeader(`qbittorrent.$FQDN`)"
+      - "traefik.http.routers.qbittorrent-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.qbittorrent-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.qbittorrent-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.qbittorrent-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.qbittorrent-rtr.service=qbittorrent-svc"
+      - "traefik.http.services.qbittorrent-svc.loadbalancer.server.port=8080"
+
 networks:
   backend:
     external:
