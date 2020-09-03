@@ -13,7 +13,7 @@ services:
     volumes:
       - ${CONFIG_DIR}/qbittorrent:/config
       - ${EXTHDD_DIR}/downloads/torrents/downloads:/downloads
-    network:
+    networks:
       - backend
     network_mode: service:wireguard
     # ports:
