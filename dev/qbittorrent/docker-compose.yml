@@ -13,8 +13,8 @@ services:
     volumes:
       - ${CONFIG_DIR}/qbittorrent:/config
       - ${EXTHDD_DIR}/downloads/torrents/downloads:/downloads
-    networks:
-      - backend
+    # networks:
+    #   - backend
     network_mode: service:wireguard
     # ports:
     #   - 6881:6881
@@ -35,8 +35,8 @@ services:
       - "traefik.http.routers.qbittorrent-rtr.service=qbittorrent-svc"
       - "traefik.http.services.qbittorrent-svc.loadbalancer.server.port=8080"
 
-networks:
-  backend:
-    external:
-      name: backend
+# networks:
+#   backend:
+#     external:
+#       name: backend
       #run: docker network create backend
