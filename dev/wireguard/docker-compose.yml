@@ -1,0 +1,34 @@
+---
+version: "3.7"
+services:
+  wireguard:
+    image: linuxserver/wireguard
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      # - SERVERURL=wireguard.domain.com #optional
+      # - SERVERPORT=51820 #optional
+      # - PEERS=1 #do not set PEERS for client mode.
+      # - PEERDNS=auto #optional
+      # - INTERNAL_SUBNET=10.13.13.0 #optional
+    volumes:
+      - ${CONFIG_DIR}/config:/config
+      - /lib/modules:/lib/modules
+    networks:
+      - wireguard
+    ports:
+      - 51820:51820/udp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+
+networks:
+  wireguard:
+    external:
+      name: wireguard
+      #run: docker network create --name=wireguard
