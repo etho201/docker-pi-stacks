@@ -20,7 +20,7 @@ services:
       - ${CONFIG_DIR}/wireguard:/config
       - /lib/modules:/lib/modules
     networks:
-      - wireguard
+      - backend
     ports:
       - 51820:51820/udp
     sysctls:
@@ -28,7 +28,7 @@ services:
     restart: unless-stopped
 
 networks:
-  wireguard:
+  backend:
     external:
-      name: wireguard
-      #run: docker network create wireguard
+      name: backend
+      #run: docker network create backend
