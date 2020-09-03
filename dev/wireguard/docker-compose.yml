@@ -17,7 +17,7 @@ services:
       # - PEERDNS=auto #optional
       # - INTERNAL_SUBNET=10.13.13.0 #optional
     volumes:
-      - ${CONFIG_DIR}/config:/config
+      - ${CONFIG_DIR}/wireguard:/config
       - /lib/modules:/lib/modules
     networks:
       - wireguard
@@ -31,4 +31,4 @@ networks:
   wireguard:
     external:
       name: wireguard
-      #run: docker network create --name=wireguard
+      #run: docker network create wireguard
