@@ -19,6 +19,7 @@ services:
     volumes:
       - ${CONFIG_DIR}/wireguard:/config
       - /lib/modules:/lib/modules
+      - ${EXTHDD_DIR}/downloads/torrents:/downloads # Added path here so it's accesible by Radarr/Sonarr
     networks:
       - backend
     ports:
