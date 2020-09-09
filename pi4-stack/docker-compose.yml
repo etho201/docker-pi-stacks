@@ -212,7 +212,7 @@ services:
       - --entrypoints.websecure.http.tls.domains[0].sans=*.${FQDN}
       # - --entrypoints.websecure.http.tls.domains[1].main=$DOMAIN # Pulls main cert for second domain
       # - --entrypoints.websecure.http.tls.domains[1].sans=*.$DOMAIN # Pulls wildcard cert for second domain
-      - --providers.docker.network=backend
+      # - --providers.docker.network=backend # Defines a default docker network to use for connections to all containers. Setting this will cause issues if a container uses network_mode
       - --providers.docker.swarmMode=false
       - --providers.file.directory=/etc/traefik/rules # Load dynamic configuration from one or more .toml or .yml files in a directory
       # - --providers.file.filename=/path/to/file # Load dynamic configuration from a file
