@@ -22,8 +22,8 @@ services:
       - ${EXTHDD_DIR}/downloads/torrents:/downloads # Added path here so it's accesible by Radarr/Sonarr
     networks:
       - backend
-    ports:
-      - 51820:51820/udp
+    # ports:
+    #   - 51820:51820/udp
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
     restart: unless-stopped
