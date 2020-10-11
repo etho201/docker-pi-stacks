@@ -1,0 +1,103 @@
+---
+version: "3.7"
+services:
+  wireguard:
+    image: linuxserver/wireguard
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      # - SERVERURL=wireguard.domain.com #optional
+      # - SERVERPORT=51820 #optional
+      # - PEERS=1 #do not set PEERS for client mode.
+      # - PEERDNS=auto #optional
+      # - INTERNAL_SUBNET=10.13.13.0 #optional
+    volumes:
+      - ${CONFIG_DIR}/wireguard:/config
+      - /lib/modules:/lib/modules
+      - ${EXTHDD_DIR}/downloads/torrents:/downloads # Added path here so it's accesible by Radarr/Sonarr
+    networks:
+      - backend
+    # ports:
+    #   - 51820:51820/udp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+
+  transmission:
+    image: linuxserver/transmission
+    container_name: transmission
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - TRANSMISSION_WEB_HOME=/combustion-release/ #optional
+      # - USER=username #optional
+      # - PASS=password #optional
+    volumes:
+      - ${CONFIG_DIR}/transmission:/config
+      - ${EXTHDD_DIR}/downloads/torrents:/downloads
+      - ${EXTHDD_DIR}/downloads/torrents/watch:/watch
+    network_mode: service:wireguard
+    # ports:
+    #   - 9091:9091
+    #   - 51413:51413
+    #   - 51413:51413/udp
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.transmission-rtr.entrypoints=websecure"
+      - "traefik.http.routers.transmission-rtr.rule=HostHeader(`transmission.$FQDN`)"
+      - "traefik.http.routers.transmission-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.transmission-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.transmission-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.transmission-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.transmission-rtr.service=transmission-svc"
+      - "traefik.http.services.transmission-svc.loadbalancer.server.port=9091"
+
+  qbittorrent:
+    image: linuxserver/qbittorrent
+    container_name: qbittorrent
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK_SET=022
+      - WEBUI_PORT=8080
+    volumes:
+      - ${CONFIG_DIR}/qbittorrent:/config
+      - ${EXTHDD_DIR}/downloads/torrents/downloads:/downloads
+    # networks:
+    #   - backend
+    network_mode: service:wireguard
+    # ports:
+    #   - 6881:6881
+    #   - 6881:6881/udp
+    #   - 8080:8080
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.qbittorrent-rtr.entrypoints=websecure"
+      - "traefik.http.routers.qbittorrent-rtr.rule=HostHeader(`qbittorrent.$FQDN`)"
+      - "traefik.http.routers.qbittorrent-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.qbittorrent-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.qbittorrent-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.qbittorrent-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.qbittorrent-rtr.service=qbittorrent-svc"
+      - "traefik.http.services.qbittorrent-svc.loadbalancer.server.port=8080"
+
+networks:
+  backend:
+    external:
+      name: backend
+      #run: docker network create backend

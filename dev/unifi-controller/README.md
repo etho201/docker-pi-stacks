@@ -12,7 +12,9 @@ A few notes regarding the Unifi Controller.
 
 - The configuation must include this label:
 
-    `- "traefik.protocol=https"` 
+    Traefik v1: `- "traefik.protocol=https"`
+    
+    Traefik v2: `- "traefik.http.services.unifi-controller-svc.loadbalancer.server.scheme=https"`
     
     This overrides the default http protocol. If you don't have that label you will be plagued with a "Bad Request" message, followed by "This combination of host and port requires TLS."
 

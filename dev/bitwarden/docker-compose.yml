@@ -8,7 +8,7 @@ services:
 ########################################################################################
 
   bitwarden:
-    image: bitwardenrs/server:raspberry
+    image: bitwardenrs/server:latest
     container_name: bitwarden
     restart: unless-stopped
     volumes:
@@ -24,27 +24,41 @@ services:
       - SMTP_USERNAME=${EMAIL_FROM} # Must 'allow less secure app access' if using Gmail --> https://myaccount.google.com/lesssecureapps?utm_source=google-account&utm_medium=web
       - SMTP_PASSWORD=${EMAIL_PASSWORD}
       - LOG_FILE=/data/bitwarden.log
+      - WEBSOCKET_ENABLED=true # Required to use WebSocket notifications
       # - DATABASE_URL=mysql://bitwarden:${BITWARDEN_DBPASS}@maria-bitwarden/bitwarden #FORMAT: DATABASE_URL=mysql://[[user]:[password]@]host[:port][/database]
     networks:
       - backend
     #ports:
-      #- 443:443
-      #- 80:80
+      # - 443:443
+      # - 80:80
+      # - 3012:3012 # For WebSocket
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=bitwarden"
-      - "traefik.frontend.rule=Host:bitwarden.${FQDN}"
-      - "traefik.port=80"
-      - "traefik.docker.network=backend"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=example.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=true"
+      ## HTTP Routers
+      - "traefik.http.routers.bitwarden-rtr.entrypoints=websecure"
+      - "traefik.http.routers.bitwarden-rtr.rule=HostHeader(`bitwarden.$FQDN`)"
+      - "traefik.http.routers.bitwarden-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.bitwarden-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.bitwarden-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.bitwarden-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.bitwarden-rtr.service=bitwarden-svc"
+      - "traefik.http.services.bitwarden-svc.loadbalancer.server.port=80"
+      #---------------------------------
+      # WebSocket Traefik configuration
+      #---------------------------------
+      ## HTTP Routers
+      - "traefik.http.routers.bitwarden-websocket-rtr.entrypoints=websecure"
+      - "traefik.http.routers.bitwarden-websocket-rtr.rule=HostHeader(`bitwarden.$FQDN`) && Path(`/notifications/hub`)"
+      - "traefik.http.routers.bitwarden-websocket-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.bitwarden-websocket-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.bitwarden-websocket-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.bitwarden-websocket-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.bitwarden-websocket-rtr.service=bitwarden-websocket-svc"
+      - "traefik.http.services.bitwarden-websocket-svc.loadbalancer.server.port=3012"
 
 ########################################################################################
 # MariaDB
