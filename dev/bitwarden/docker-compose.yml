@@ -8,7 +8,7 @@ services:
 ########################################################################################
 
   bitwarden:
-    image: bitwardenrs/server:raspberry
+    image: bitwardenrs/server:latest
     container_name: bitwarden
     restart: unless-stopped
     volumes:
