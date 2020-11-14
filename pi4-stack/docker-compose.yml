@@ -257,6 +257,9 @@ services:
       # │   ├── middleware-chains.yml
       # │   └── middleware.yml
       # └── traefik.log # for fail2ban - make sure to touch file before starting container
+      #
+      # Tip: Use Subversion to quickly download the Traefik2 folder into the config directory.
+      # svn export https://github.com/etho201/docker-pi-stacks/trunk/config/traefik2
     environment:
       - DUCKDNS_TOKEN=${DUCKDNS_TOKEN}
     labels:
