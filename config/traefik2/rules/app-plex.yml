@@ -1,0 +1,16 @@
+http:
+  routers:
+    plex-rtr:
+      rule: "HostHeader(`plex.***FQDN***`)"
+      entryPoints:
+        - websecure # https
+      middlewares:
+        - chain-no-auth
+      service: plex-svc
+      tls:
+        certResolver: letsencrypt
+  services:
+    plex-svc:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.50:32400/web/index.html"

@@ -1,0 +1,16 @@
+http:
+  routers:
+    website-rtr:
+      rule: "HostHeader(`***domain***.com`)" # need to use HostHeader if using Traefik 2.2.2
+      entryPoints:
+        - websecure # https
+      middlewares:
+        - chain-no-auth@file
+      service: website-svc
+      #tls:
+        #certResolver: dns-duckdns
+  services:
+    website-svc:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.20:8080"
