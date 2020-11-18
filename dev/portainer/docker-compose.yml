@@ -3,7 +3,7 @@ version: '3.7'
 services:
 
   portainer:
-    image: portainer/portainer
+    image: portainer/portainer-ce
     container_name: portainer
     environment:
       - PUID=${PUID}
