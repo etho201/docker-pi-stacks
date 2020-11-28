@@ -1,0 +1,21 @@
+---
+version: "3.7"
+services:
+
+  rclone:
+    image: rclone/rclone:latest
+    container_name: rclone
+    env_file:
+      - rclone.env
+    volumes:
+      #- ${CONFIG_DIR}/rclone:/config
+      - /home/erik/Downloads/TEST:/backup
+    networks:
+      - backend
+    restart: "no"
+
+networks:
+  backend:
+    external:
+      name: backend
+      #run: docker network create backend
