@@ -16,13 +16,13 @@ The best thing is, this setup integrates Duck DNS and Traefik so you don't have 
 ---
 
 ## Getting Started:
-Clone this repo, then create a [.env file](.env) and place it into the pi4-stack directory (in the same directory as the docker-compose.yml). Paste the following content into the .env file and input/change variables according to your preferences.
+Clone this repo, then create a [.env file](.env.sample) and place it into the pi4-stack directory (in the same directory as the docker-compose.yml). Paste the following content into the .env file and input/change variables according to your preferences.
 
 ```bash
 # General / common settings
 PUID=1000
 PGID=1000
-TZ=America/Los_Angeles
+TZ=America/New_York
 USERDIR=/home/pi
 EXTHDD_DIR=/mnt/hdd
 CONFIG_DIR=/mnt/hdd/docker/config
@@ -47,22 +47,36 @@ OPENVPN_PASSWORD=
 
 # Used for OAuth 2 authentication
 # https://pusher.github.io/oauth2_proxy/auth-configuration
+# Just use a random password to encrypt the cookie
 GITHUB_ORG=
 GITHUB_OAUTH_CLIENT_ID=
 GITHUB_OAUTH_CLIENT_SECRET=
-# Just use a random password to encrypt the cookie
 OAUTH2_PROXY_COOKIE_SECRET=
 
+# Bitwarden
+# Use a long random password for the admin token (example: openssl rand -base64 48)
+ADMIN_TOKEN=
+SMTP_SERVER=
+EMAIL_FROM=
+EMAIL_TO=
+EMAIL_PASSWORD=
 
+# Gotify
+GOTIFY_PASSWORD=
+# Gotify Tokens
+GOTIFY_WATCHTOWER=
+
+# Rclone
+RCLONE_CONFIG_REMOTE_CLIENT_ID=
+RCLONE_CONFIG_REMOTE_CLIENT_SECRET=
+RCLONE_CONFIG_REMOTE_TOKEN=
+RCLONE_CONFIG_REMOTE_ROOT_FOLDER_ID=
 
 # Not currently used
-#EMAIL_FROM=
-#EMAIL_TO=
-#EMAIL_PASSWORD=
-#HTTP_USERNAME=
-#HTTP_PASSWORD=
-#TRANSMISSION_USERNAME=
-#TRANSMISSION_PASSWORD=
+HTTP_USERNAME=
+HTTP_PASSWORD=
+TRANSMISSION_USERNAME=
+TRANSMISSION_PASSWORD=
 ```
 
 Ideally you should fully configure Traefik before launching any containers. This is simple, just reference the included Traefik config files (config/traefik) and replace `***INSERT_FQDN***` and `***INSERT_EMAIL***` in `traefik.toml` with your own information.
