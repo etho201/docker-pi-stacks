@@ -447,17 +447,17 @@ services:
 
 
   radarr:
-    image: "linuxserver/radarr"
-    container_name: "radarr"
+    image: ghcr.io/linuxserver/radarr
+    container_name: radarr
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
+      - UMASK_SET=022 #optional
     volumes:
       - ${CONFIG_DIR}/radarr:/config
       - ${EXTHDD_DIR}/downloads:/downloads
       - ${EXTHDD_DIR}/media/movies:/movies
-      - "/etc/localtime:/etc/localtime:ro"
     #ports:
       #- 7878:7878
     restart: unless-stopped
