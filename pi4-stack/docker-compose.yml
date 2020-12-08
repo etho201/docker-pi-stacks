@@ -180,10 +180,11 @@ services:
 ########################################################################################
 
   traefik:
-    image: traefik:chevrotin # the chevrotin tag refers to v2.2.x
+    image: traefik:picodon # the picodon tag refers to v2.3.x
     container_name: traefik
     restart: unless-stopped
     command: # CLI arguments
+      - --pilot.token=${TRAEFIK_PILOT_TOKEN}
       - --global.checkNewVersion=true
       - --global.sendAnonymousUsage=true
       - --entryPoints.web.address=:80 # http
