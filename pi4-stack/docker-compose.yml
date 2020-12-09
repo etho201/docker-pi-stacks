@@ -180,10 +180,11 @@ services:
 ########################################################################################
 
   traefik:
-    image: traefik:chevrotin # the chevrotin tag refers to v2.2.x
+    image: traefik:picodon # the picodon tag refers to v2.3.x
     container_name: traefik
     restart: unless-stopped
     command: # CLI arguments
+      - --pilot.token=${TRAEFIK_PILOT_TOKEN}
       - --global.checkNewVersion=true
       - --global.sendAnonymousUsage=true
       - --entryPoints.web.address=:80 # http
@@ -447,17 +448,17 @@ services:
 
 
   radarr:
-    image: "linuxserver/radarr"
-    container_name: "radarr"
+    image: ghcr.io/linuxserver/radarr
+    container_name: radarr
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
+      - UMASK_SET=022 #optional
     volumes:
       - ${CONFIG_DIR}/radarr:/config
       - ${EXTHDD_DIR}/downloads:/downloads
       - ${EXTHDD_DIR}/media/movies:/movies
-      - "/etc/localtime:/etc/localtime:ro"
     #ports:
       #- 7878:7878
     restart: unless-stopped
