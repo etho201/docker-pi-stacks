@@ -2,7 +2,7 @@
 version: "3.7"
 services:
   wireguard:
-    image: linuxserver/wireguard
+    image: ghcr.io/linuxserver/wireguard
     container_name: wireguard
     cap_add:
       - NET_ADMIN
@@ -29,7 +29,7 @@ services:
     restart: unless-stopped
 
   transmission:
-    image: linuxserver/transmission
+    image: ghcr.io/linuxserver/transmission
     container_name: transmission
     environment:
       - PUID=${PUID}
@@ -63,7 +63,7 @@ services:
       - "traefik.http.services.transmission-svc.loadbalancer.server.port=9091"
 
   qbittorrent:
-    image: linuxserver/qbittorrent
+    image: ghcr.io/linuxserver/qbittorrent
     container_name: qbittorrent
     environment:
       - PUID=${PUID}
