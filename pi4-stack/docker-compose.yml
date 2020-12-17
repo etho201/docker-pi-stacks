@@ -547,8 +547,8 @@ services:
 ########################################################################################
 
   plex:
-    #image: linuxserver/plex
-    image: linuxserver/plex:1.21.0.3616-d87012962-ls4
+    image: ghcr.io/linuxserver/plex
+    #image: linuxserver/plex:1.21.0.3616-d87012962-ls4
     container_name: plex
     network_mode: host
     environment:
