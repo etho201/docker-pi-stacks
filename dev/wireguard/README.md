@@ -1,6 +1,6 @@
 # Implementing a health check
 
-Create a Cron job that calls the `healthcheck.sh` file. If the health check determines that Transmission is down, it will automatically restart the Wireguard, Transmission, and qBitTorrnet containers.
+Create a Cron job that calls the `healthcheck.sh` file. If the health check determines that Transmission is down, it will automatically restart the containers for Wireguard, Transmission, and qBittorrent.
 
 Example of Cron job:
 
