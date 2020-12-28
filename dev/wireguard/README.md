@@ -5,5 +5,5 @@ Create a Cron job that calls the `healthcheck.sh` file. If the health check dete
 Example of Cron job:
 
 ```bash
-*/1 * * * * bash healthcheck.sh -d EXAMPLE.DOMAIN.COM -g GOTIFY_TOKEN
+*/1 * * * * bash /path/to/healthcheck.sh -d EXAMPLE.DOMAIN.COM -g GOTIFY_TOKEN >/dev/null 2>&1
 ```
