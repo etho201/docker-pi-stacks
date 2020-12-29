@@ -1,13 +1,12 @@
 #!/bin/bash
 
-while getopts d:g: flag
+while getopts t: flag
 do
     case "${flag}" in
-        d) FQDN=${OPTARG};;
-        g) GOTIFY_TOKEN=${OPTARG};;
+        t) GOTIFY_TOKEN=${OPTARG};;
     esac
 done
 
-if [[ $(curl -L -s -o /dev/null -w "%{http_code}" transmission.${FQDN}) == "404" ]]
-    then docker restart wireguard transmission qbittorrent && curl "https://gotify.${FQDN}/message?token=${GOTIFY_TOKEN}" -F "title=Transmission" -F "message=Restarted Transmission" -F "priority=5"
+if [[ $(docker run --network=backend --rm curlimages/curl -L -s -o /dev/null -w "%{http_code}" http://wireguard:9091) != "200" ]]
+    then docker restart wireguard transmission qbittorrent && docker run --network=backend --rm curlimages/curl "http://gotify/message?token=${GOTIFY_TOKEN}" -F "title=Transmission" -F "message=Restarted Transmission" -F "priority=5"
 fi
