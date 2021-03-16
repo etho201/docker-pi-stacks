@@ -5,7 +5,7 @@ services:
     image: florider89/joplin-server:latest
     container_name: joplin-server
     environment:
-      - APP_BASE_URL=http://joplin.{FQDN}:22300
+      - APP_BASE_URL=http://joplin.${FQDN}:22300
       - APP_PORT=22300
       - POSTGRES_PASSWORD=${JOPLIN_DB_PASS}
       - POSTGRES_DATABASE=joplin
