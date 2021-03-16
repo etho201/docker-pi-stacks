@@ -1,0 +1,54 @@
+---
+version: "3.7"
+services:
+  joplin:
+    image: florider89/joplin-server:latest
+    container_name: joplin-server
+    environment:
+      - APP_BASE_URL=http://joplin.{FQDN}:22300
+      - APP_PORT=22300
+      - POSTGRES_PASSWORD=${JOPLIN_DB_PASS}
+      - POSTGRES_DATABASE=joplin
+      - POSTGRES_USER=joplin
+      - POSTGRES_PORT=5432
+      - POSTGRES_HOST=joplin-db
+      - DB_CLIENT=pg
+    # ports:
+    #   - 22300:22300
+    restart: unless-stopped
+    networks:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.joplin-rtr.entrypoints=websecure"
+      - "traefik.http.routers.joplin-rtr.rule=HostHeader(`joplin.$FQDN`)"
+      - "traefik.http.routers.joplin-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.joplin-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.joplin-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.joplin-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.joplin-rtr.service=joplin-svc"
+      - "traefik.http.services.joplin-svc.loadbalancer.server.port=22300"
+
+  joplin-db:
+    image: postgres:13.2 # latest as of 3/15/2021
+    container_name: joplin-db
+    environment:
+    # ports:
+    #   - 5432:5432
+    volumes:
+      - ${VOLUME_DIR}/joplin-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${JOPLIN_DB_PASS}
+      - POSTGRES_USER=joplin
+      - POSTGRES_DB=joplin
+    networks:
+      - backend
+
+networks:
+  backend:
+    external:
+      name: backend
+      #run: docker network create --name=backend
