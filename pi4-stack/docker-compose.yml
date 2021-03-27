@@ -11,7 +11,7 @@ services:
   watchtower: # https://github.com/containrrr/watchtower
     container_name: watchtower
     restart: always
-    image: containrrr/watchtower:armhf-latest
+    image: containrrr/watchtower:latest
     environment:
       - TZ=${TZ}
       - WATCHTOWER_NOTIFICATIONS=gotify
@@ -37,7 +37,7 @@ services:
 ########################################################################################
 
   duckdns:
-    image: linuxserver/duckdns
+    image: ghcr.io/linuxserver/duckdns
     container_name: duckdns
     environment:
       - PUID=${PUID}
@@ -349,64 +349,10 @@ services:
 
 ########################################################################################
 # Downloaders
-# https://hub.docker.com/r/haugene/transmission-openvpn/
+# 
+# Look in the Wireguard folder in /dev/wireguard
 ########################################################################################
 
-  transmission-vpn:
-    container_name: transmission-vpn
-    image: haugene/transmission-openvpn:latest-armhf
-    cap_add:
-      - NET_ADMIN
-    devices:
-      - /dev/net/tun
-    restart: unless-stopped
-    #ports:
-    #- "XXXX:9091"
-    dns:
-      - 1.1.1.1
-      - 1.0.0.1
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ${CONFIG_DIR}/transmission-vpn:/data
-      - ${EXTHDD_DIR}/downloads/torrents/watch:/data/watch
-      - ${EXTHDD_DIR}/downloads/torrents/complete:/data/completed
-      - ${EXTHDD_DIR}/downloads/torrents/incomplete:/data/incomplete
-      - ${CONFIG_DIR}/transmission-vpn/openvpn:/etc/openvpn/torguard-custom
-    environment:
-      - OPENVPN_PROVIDER=TORGUARD
-      #- OPENVPN_PROVIDER=TORGUARD-CUSTOM
-      - OPENVPN_USERNAME=${OPENVPN_USERNAME}
-      - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
-      - OPENVPN_CONFIG=USA-ATLANTA
-      #- OPENVPN_CONFIG=TorGuard.USA.Seattle.STATIC
-      - OPENVPN_OPTS=--inactive 3600 --ping 10 --ping-exit 60
-      - LOCAL_NETWORK=192.168.1.0/24
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=false
-      #- TRANSMISSION_RPC_HOST_WHITELIST="127.0.0.1,192.168.*.*"
-      #- TRANSMISSION_RPC_USERNAME=${TRANSMISSION_USERNAME}
-      #- TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_PASSWORD}
-      - TRANSMISSION_UMASK=002
-      - TRANSMISSION_RATIO_LIMIT=0.4999
-      - TRANSMISSION_RATIO_LIMIT_ENABLED=true
-      - TRANSMISSION_WEB_UI=combustion
-    networks:
-      - backend
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.transmission-vpn-rtr.entrypoints=websecure"
-      - "traefik.http.routers.transmission-vpn-rtr.rule=HostHeader(`transmission.$FQDN`)"
-      - "traefik.http.routers.transmission-vpn-rtr.tls=true"
-      ## Middlewares
-      # - "traefik.http.routers.transmission-vpn-rtr.middlewares=chain-no-auth@file" # No Authentication
-      # - "traefik.http.routers.transmission-vpn-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      - "traefik.http.routers.transmission-vpn-rtr.middlewares=chain-oauth@file" # OAuth 2.0
-      ## HTTP Services
-      - "traefik.http.routers.transmission-vpn-rtr.service=transmission-vpn-svc"
-      - "traefik.http.services.transmission-vpn-svc.loadbalancer.server.port=9091"
 
 ########################################################################################
 # Indexers
@@ -416,7 +362,7 @@ services:
 ########################################################################################
 
   sonarr:
-    image: linuxserver/sonarr:preview
+    image: ghcr.io/linuxserver/sonarr:preview
     container_name: sonarr
     environment:
       - PUID=${PUID}
@@ -479,7 +425,7 @@ services:
       - "traefik.http.services.radarr-svc.loadbalancer.server.port=7878"
 
   lidarr:
-    image: linuxserver/lidarr
+    image: ghcr.io/linuxserver/lidarr
     container_name: lidarr
     environment:
       - PUID=${PUID}
@@ -511,7 +457,7 @@ services:
       - "traefik.http.services.lidarr-svc.loadbalancer.server.port=8686"
 
   jackett:
-    image: linuxserver/jackett
+    image: ghcr.io/linuxserver/jackett
     container_name: jackett
     environment:
       - PUID=${PUID}
@@ -566,7 +512,7 @@ services:
     restart: unless-stopped
 
   tautulli:
-    image: linuxserver/tautulli
+    image: ghcr.io/linuxserver/tautulli
     container_name: tautulli
     environment:
       - PUID=${PUID}
@@ -600,7 +546,7 @@ services:
 ########################################################################################
 
   heimdall:
-    image: linuxserver/heimdall
+    image: ghcr.io/linuxserver/heimdall
     container_name: heimdall
     environment:
       - PUID=${PUID}
@@ -790,7 +736,7 @@ services:
       - "traefik.http.services.nextcloud-svc.loadbalancer.server.port=80"
 
   duplicati:
-    image: duplicati/duplicati:linux-arm32v7-latest
+    image: duplicati/duplicati
     container_name: duplicati
     environment:
       - PUID=${PUID}
