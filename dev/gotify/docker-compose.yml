@@ -8,8 +8,7 @@ services:
 ########################################################################################
 
   gotify:
-    image: gotify/server
-    # image: gotify/server-arm7 # for Raspberry Pi Arm-v7
+    image: gotify/server-arm7 # for Raspberry Pi Arm-v7
     container_name: gotify
     restart: unless-stopped
     volumes:
