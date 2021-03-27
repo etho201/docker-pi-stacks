@@ -765,10 +765,10 @@ services:
       - "traefik.http.routers.duplicati-rtr.service=duplicati-svc"
       - "traefik.http.services.duplicati-svc.loadbalancer.server.port=8200"
 
-volumes:
-  db1:
-    external: true
-    name: db1
+# volumes:
+#   db1:
+#     external: true
+#     name: db1
     #run: docker volume create --name=db1
 
 networks:
