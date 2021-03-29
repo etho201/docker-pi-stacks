@@ -681,59 +681,59 @@ services:
 #      - MYSQL_DATABASE=nextcloud
 #      - MYSQL_USER=nextcloud
 
-  # db1:
-  #   image: postgres:11.5
-  #   container_name: postgres1
-  #   restart: unless-stopped
-  #   volumes:
-  #     - db1:/var/lib/postgresql/data
-  #   environment:
-  #     - POSTGRES_DB=whatever
-  #     - POSTGRES_DB=guacamole_db
-  #     # Do not create the 'nextcloud' database here. Doing so will cause the Nextcloud installation to fail. The nextcloud container handles this automatically; however, you must create at least one other database first (for example: whatever).
-  #     #- POSTGRES_DB=nextcloud
-  #     - POSTGRES_USER=${POSTGRES_USER}
-  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-  #   networks:
-  #     - backend
+  nextcloud-db:
+    image: postgres:13.2 # latest as of 3/15/2021
+    container_name: nextcloud-db
+    # ports:
+    #   - 5432:5432
+    volumes:
+      - ${VOLUME_DIR}/nextcloud-db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=${NEXTCLOUD_DB_PASS}
+      # Do not create the 'nextcloud' database here. Doing so will cause the Nextcloud installation to fail. The nextcloud container handles this automatically; however, you must create at least one other database first (for example: whatever).
+      # - POSTGRES_DB=nextcloud
+      - POSTGRES_DB=whatever
+    networks:
+      - backend
 
-  # nextcloud:
-  #   image: nextcloud:latest
-  #   container_name: nextcloud
-  #   #ports:
-  #     #- 8081:80
-  #   links:
-  #     - db1
-  #   volumes:
-  #     - ${CONFIG_DIR}/nextcloud:/var/www/html #config directory
-  #     - ${VOLUME_DIR}/nextcloud:/var/www/html/data:rw #data directory
-  #   restart: unless-stopped
-  #   environment:
-  #     - PUID=${PUID}
-  #     - PGID=${PGID}
-  #     - POSTGRES_HOST=db1
-  #     - POSTGRES_DB=nextcloud
-  #     - POSTGRES_USER=${POSTGRES_USER}
-  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-  #     - NEXTCLOUD_ADMIN_USER=${USERNAME}
-  #     - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_PASSWORD}
-  #     - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.${FQDN}
-  #   domainname: nextcloud.${FQDN}
-  #   networks:
-  #     - backend
-  #   labels:
-  #     - "traefik.enable=true"
-  #     ## HTTP Routers
-  #     - "traefik.http.routers.nextcloud-rtr.entrypoints=websecure"
-  #     - "traefik.http.routers.nextcloud-rtr.rule=HostHeader(`nextcloud.$FQDN`)"
-  #     - "traefik.http.routers.nextcloud-rtr.tls=true"
-  #     ## Middlewares
-  #     - "traefik.http.routers.nextcloud-rtr.middlewares=chain-no-auth@file" # No Authentication
-  #     # - "traefik.http.routers.nextcloud-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-  #     # - "traefik.http.routers.nextcloud-rtr.middlewares=chain-oauth@file" # OAuth 2.0
-  #     ## HTTP Services
-  #     - "traefik.http.routers.nextcloud-rtr.service=nextcloud-svc"
-  #     - "traefik.http.services.nextcloud-svc.loadbalancer.server.port=80"
+  nextcloud:
+    image: nextcloud:latest
+    container_name: nextcloud
+    #ports:
+      #- 8081:80
+    links:
+      - nextcloud-db
+    volumes:
+      - ${CONFIG_DIR}/nextcloud:/var/www/html #config directory
+      - ${VOLUME_DIR}/nextcloud:/var/www/html/data:rw #data directory
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - POSTGRES_HOST=nextcloud-db
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=${NEXTCLOUD_DB_PASS}
+      - NEXTCLOUD_ADMIN_USER=${USERNAME}
+      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_PASSWORD}
+      - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.${FQDN}
+    domainname: nextcloud.${FQDN}
+    networks:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.nextcloud-rtr.entrypoints=websecure"
+      - "traefik.http.routers.nextcloud-rtr.rule=HostHeader(`nextcloud.$FQDN`)"
+      - "traefik.http.routers.nextcloud-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.nextcloud-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.nextcloud-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.nextcloud-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.nextcloud-rtr.service=nextcloud-svc"
+      - "traefik.http.services.nextcloud-svc.loadbalancer.server.port=80"
 
   duplicati:
     image: duplicati/duplicati
@@ -764,12 +764,6 @@ services:
       ## HTTP Services
       - "traefik.http.routers.duplicati-rtr.service=duplicati-svc"
       - "traefik.http.services.duplicati-svc.loadbalancer.server.port=8200"
-
-# volumes:
-#   db1:
-#     external: true
-#     name: db1
-    #run: docker volume create --name=db1
 
 networks:
   frontend:
