@@ -1,0 +1,39 @@
+---
+version: '3.7'
+services:
+
+  duplicati:
+    image: duplicati/duplicati
+    container_name: duplicati
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_DIR}/duplicati:/data #config directory
+      - ${VOLUME_DIR}/duplicati:/backups #local backups
+      - ${EXTHDD_DIR}:/source #backup source directory
+    #ports:
+      #- 8200:8200
+    restart: unless-stopped
+    networks:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.duplicati-rtr.entrypoints=websecure"
+      - "traefik.http.routers.duplicati-rtr.rule=HostHeader(`duplicati.$FQDN`)"
+      - "traefik.http.routers.duplicati-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.duplicati-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.duplicati-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.duplicati-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.duplicati-rtr.service=duplicati-svc"
+      - "traefik.http.services.duplicati-svc.loadbalancer.server.port=8200"
+
+networks:
+  backend:
+    external:
+      name: backend
+      #run: docker network create backend
