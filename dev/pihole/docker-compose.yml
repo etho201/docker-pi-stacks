@@ -1,8 +1,15 @@
 ---
-version: "2"
+version: "3.7"
 services:
 
-# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+########################################################################################
+# Pihole
+# https://github.com/pi-hole/docker-pi-hole/
+# https://docs.pi-hole.net/
+#
+# Note: Once running, navigate to https://pihole.${FQDN}/admin
+########################################################################################
+
   pihole:
     container_name: pihole
     domainname: docker
@@ -16,46 +23,41 @@ services:
       #- 'YYYY:443'
     restart: unless-stopped
     volumes:
-      - /home/pi/containers/config/pihole/pihole:/etc/pihole
-      - /home/pi/containers/config/pihole/pihole.log:/var/log/pihole.log
-      - /home/pi/containers/config/pihole/dnsmask.d:/etc/dnsmasq.d
+      - ${CONFIG_DIR}/pihole/pihole:/etc/pihole
+      - ${CONFIG_DIR}/pihole/pihole.log:/var/log/pihole.log
+      - ${CONFIG_DIR}/pihole/dnsmask.d:/etc/dnsmasq.d
     # Recommended but not required (DHCP needs NET_ADMIN)
     #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
     cap_add:
       - NET_ADMIN
     networks:
-      - traefik_proxy
+      - backend
     environment:
       - ServerIP=192.168.1.15
       - PROXY_LOCATION=pihole
-      - VIRTUAL_HOST=***REMOVED***.duckdns.org/pihole
+      - VIRTUAL_HOST=${FQDN}/pihole
       - VIRTUAL_PORT=80
-      - TZ=America/Los_Angeles
+      - TZ=${TZ}
       #- WEBPASSWORD=RandomWhenCommentedOut
       - DNS1=127.0.0.1
       - DNS2=1.1.1.1
       #- DNS2=1.0.0.1
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=pihole"
-      - "traefik.port=80"
-      - "traefik.docker.network=traefik_proxy"
-      #- "traefik.frontend.rule=HostRegexp:pihole.${DOMAINNAME},{catchall:.*}"
-      - "traefik.frontend.rule=Host:***REMOVED***.duckdns.org; PathPrefixStrip: /pihole"
-      - "traefik.frontend.priority=1"
-      - traefik.frontend.headers.SSLRedirect=true
-      - traefik.frontend.headers.STSSeconds=315360000
-      - traefik.frontend.headers.browserXSSFilter=true
-      - traefik.frontend.headers.contentTypeNosniff=true
-      - traefik.frontend.headers.forceSTSHeader=true
-      - traefik.frontend.headers.SSLHost=duckdns.org
-      - traefik.frontend.headers.STSIncludeSubdomains=true
-      - traefik.frontend.headers.STSPreload=true
-      - traefik.frontend.headers.frameDeny=true
-      
+      ## HTTP Routers
+      - "traefik.http.routers.pihole-rtr.entrypoints=websecure"
+      - "traefik.http.routers.pihole-rtr.rule=HostHeader(`pihole.$FQDN`)"
+      - "traefik.http.routers.pihole-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.pihole-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.pihole-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.pihole-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.pihole-rtr.service=pihole-svc"
+      - "traefik.http.services.pihole-svc.loadbalancer.server.port=80"
+
 networks:
-  traefik_proxy:
+  backend:
     external:
-      name: traefik_proxy
-  default:
-    driver: bridge
+      name: backend
+      #run: docker network create backend
