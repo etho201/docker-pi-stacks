@@ -8,7 +8,7 @@ services:
 ########################################################################################
 
   unifi-controller:
-    image: linuxserver/unifi-controller
+    image: ghcr.io/linuxserver/unifi-controller
     container_name: unifi-controller
     environment:
       - PUID=${PUID}
