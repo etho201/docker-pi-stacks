@@ -1,0 +1,49 @@
+---
+version: '3.7'
+services:
+
+########################################################################################
+# netdata
+# https://hub.docker.com/r/netdata/netdata
+########################################################################################
+
+  netdata:
+    image: netdata/netdata:latest
+    container_name: netdata
+    hostname: ${FQDN} # set to fqdn of host
+    environment:
+      - PUID=${PUID}
+      #- PGID=${PGID}
+      - PGID=995 #`grep docker /etc/group | cut -d ':' -f 3`
+    #ports:
+      #- 19999:19999
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    networks:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.netdata-rtr.entrypoints=websecure"
+      - "traefik.http.routers.netdata-rtr.rule=HostHeader(`netdata.${FQDN}`)"
+      - "traefik.http.routers.netdata-rtr.tls=true"
+      ## Middlewares
+#      - "traefik.http.routers.netdata-rtr.middlewares=chain-no-auth@file" # No Authentication
+#      - "traefik.http.routers.netdata-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.netdata-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.netdata-rtr.service=netdata-svc"
+      - "traefik.http.services.netdata-svc.loadbalancer.server.port=19999"
+
+networks:
+  backend:
+    external:
+      name: backend
+      #run: docker network create backend
