@@ -44,6 +44,7 @@ services:
       - POSTGRES_PASSWORD=${JOPLIN_DB_PASS}
       - POSTGRES_USER=joplin
       - POSTGRES_DB=joplin
+    restart: unless-stopped
     networks:
       - backend
 
