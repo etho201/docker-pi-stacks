@@ -1,0 +1,140 @@
+---
+version: '3.7'
+services:
+
+########################################################################################
+# Indexers
+# https://hub.docker.com/r/linuxserver/jackett
+# https://hub.docker.com/r/linuxserver/radarr
+# https://hub.docker.com/r/linuxserver/sonarr
+########################################################################################
+
+  sonarr:
+    image: ghcr.io/linuxserver/sonarr:preview
+    container_name: sonarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_DIR}/sonarr:/config
+      - ${EXTHDD_DIR}/media/tv:/tv
+      - ${EXTHDD_DIR}/downloads:/downloads
+      - "/etc/localtime:/etc/localtime:ro"
+    #ports:
+      #- 8989:8989
+    restart: unless-stopped
+    networks:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.sonarr-rtr.entrypoints=websecure"
+      - "traefik.http.routers.sonarr-rtr.rule=HostHeader(`sonarr.$FQDN`)"
+      - "traefik.http.routers.sonarr-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.sonarr-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.sonarr-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.sonarr-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.sonarr-rtr.service=sonarr-svc"
+      - "traefik.http.services.sonarr-svc.loadbalancer.server.port=8989"
+
+  radarr:
+    image: ghcr.io/linuxserver/radarr
+    container_name: radarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK_SET=022 #optional
+    volumes:
+      - ${CONFIG_DIR}/radarr:/config
+      - ${EXTHDD_DIR}/downloads:/downloads
+      - ${EXTHDD_DIR}/media/movies:/movies
+    #ports:
+      #- 7878:7878
+    restart: unless-stopped
+    networks:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.radarr-rtr.entrypoints=websecure"
+      - "traefik.http.routers.radarr-rtr.rule=HostHeader(`radarr.$FQDN`)"
+      - "traefik.http.routers.radarr-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.radarr-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.radarr-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.radarr-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.radarr-rtr.service=radarr-svc"
+      - "traefik.http.services.radarr-svc.loadbalancer.server.port=7878"
+
+  lidarr:
+    image: ghcr.io/linuxserver/lidarr
+    container_name: lidarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK_SET=022 #optional
+    volumes:
+      - ${CONFIG_DIR}/lidarr:/config
+      - ${EXTHDD_DIR}/downloads:/downloads
+      - ${EXTHDD_DIR}/media/music:/music
+      #- "/etc/localtime:/etc/localtime:ro"
+    #ports:
+      #- 8686:8686
+    restart: unless-stopped
+    networks:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.lidarr-rtr.entrypoints=websecure"
+      - "traefik.http.routers.lidarr-rtr.rule=HostHeader(`lidarr.$FQDN`)"
+      - "traefik.http.routers.lidarr-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.lidarr-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.lidarr-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.lidarr-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.lidarr-rtr.service=lidarr-svc"
+      - "traefik.http.services.lidarr-svc.loadbalancer.server.port=8686"
+
+  jackett:
+    image: ghcr.io/linuxserver/jackett
+    container_name: jackett
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_DIR}/jackett:/config
+      - ${VOLUME_DIR}/jackett:/downloads
+      - "/etc/localtime:/etc/localtime:ro"
+    #ports:
+      #- 9117:9117
+    restart: unless-stopped
+    networks:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.jackett-rtr.entrypoints=websecure"
+      - "traefik.http.routers.jackett-rtr.rule=HostHeader(`jackett.${FQDN}`)"
+      - "traefik.http.routers.jackett-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.jackett-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.jackett-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      #- "traefik.http.routers.jackett-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.jackett-rtr.service=jackett-svc"
+      - "traefik.http.services.jackett-svc.loadbalancer.server.port=9117"
+
+networks:
+  backend:
+    external:
+      name: backend
+      #run: docker network create backend
