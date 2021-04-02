@@ -48,7 +48,7 @@ services:
     container_name: Guacamole
     depends_on:
       - guacd
-      - postgres
+      - guacamole-db
     restart: unless-stopped
     volumes:
       - guacamole_db:/var/lib/postgresql/data
