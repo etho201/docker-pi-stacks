@@ -45,7 +45,7 @@ services:
 
   guacamole:
     image: guacamole/guacamole
-    container_name: Guacamole
+    container_name: guacamole
     depends_on:
       - guacd
       - guacamole-db
