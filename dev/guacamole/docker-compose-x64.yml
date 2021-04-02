@@ -13,17 +13,17 @@ version: '3.7'
 
 services:
 
-  postgres:
+  guacamole-db:
     image: postgres
-    container_name: PostgreSQL
+    container_name: guacamole-db
     hostname: postgres
     restart: unless-stopped
     volumes:
       - guacamole_db:/var/lib/postgresql/data
       - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql:ro
     environment:
-      - POSTGRES_DB=guacamole_db
-      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=guacamole
+      - POSTGRES_USER=guacamole
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     networks:
       - backend
@@ -53,16 +53,16 @@ services:
     volumes:
       - guacamole_db:/var/lib/postgresql/data
     environment:
-      - POSTGRES_HOSTNAME=postgres
+      - POSTGRES_HOSTNAME=guacamole-db
       - GUACD_HOSTNAME=guacd
-      - POSTGRES_DATABASE=guacamole_db
-      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DATABASE=guacamole
+      - POSTGRES_USER=guacamole
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     networks:
       - backend
       - frontend
     ports:
-      - 8080:8080
+      - 8080:8080 # http://localhost:8080/guacamole/
       - 8443:443
 
 volumes:
