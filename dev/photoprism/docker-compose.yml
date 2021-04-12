@@ -32,6 +32,7 @@ services:
   photoprism:
     # Use photoprism/photoprism-arm64:preview instead for testing preview builds:
     image: photoprism/photoprism-arm64:latest
+    container_name: photoprism
     # Only enable automatic restarts once your installation is properly
     # configured as it otherwise may get stuck in a restart loop:
     # https://docs.photoprism.org/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
@@ -64,7 +65,7 @@ services:
       PHOTOPRISM_DATABASE_NAME: "photoprism"                     # MariaDB database schema name
       PHOTOPRISM_DATABASE_USER: "photoprism"                     # MariaDB database user name
       PHOTOPRISM_DATABASE_PASSWORD: ${PHOTOPRISM_DB_PASSWORD}    # MariaDB database user password
-      PHOTOPRISM_SITE_URL: "http://localhost:2342/"              # Public PhotoPrism URL
+      PHOTOPRISM_SITE_URL: "https://photoprism.${FQDN}"          # Public PhotoPrism URL
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: ""
@@ -81,14 +82,14 @@ services:
     #  - "/dev/video11:/dev/video11"
     volumes:
       # Your photo and video files ([local path]:[container path]):
-      - "~/Pictures:/photoprism/originals"
+      - ${VOLUME_DIR}/nextcloud:/photoprism/originals
       # Multiple folders can be indexed by mounting them as sub-folders of /photoprism/originals:
       # - "/mnt/Family:/photoprism/originals/Family"    # [folder_1]:/photoprism/originals/[folder_1]
       # - "/mnt/Friends:/photoprism/originals/Friends"  # [folder_2]:/photoprism/originals/[folder_2]
       # Mounting an import folder is optional (see docs):
       # - "~/Import:/photoprism/import"
       # Permanent storage for settings, index & sidecar files (DON'T REMOVE):
-      - "./storage:/photoprism/storage"
+      - "${CONFIG_DIR}/photoprism:/photoprism/storage"
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -105,6 +106,7 @@ services:
 
   photoprism-db:
     image: arm64v8/mariadb:10.5
+    container_name: photoprism-db
     restart: unless-stopped
     security_opt:
       - seccomp:unconfined
