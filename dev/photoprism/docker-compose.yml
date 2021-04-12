@@ -40,8 +40,9 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    ports:
-      - 2342:2342 # [local port]:[container port]
+    # ports:
+      # - 2342:2342 # [local port]:[container port]
+    network: backend
     environment:
       PHOTOPRISM_ADMIN_PASSWORD: ${PHOTOPRISM_PASSWORD}          # PLEASE CHANGE: Your initial admin password (min 4 characters)
       PHOTOPRISM_HTTP_PORT: 2342                                 # Built-in Web server port
@@ -114,8 +115,15 @@ services:
     command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
     volumes: # Don't remove permanent storage for index database files!
       - "./database:/var/lib/mysql"
+    network: backend
     environment:
       MYSQL_ROOT_PASSWORD: ${PHOTOPRISM_DB_PASSWORD}
       MYSQL_DATABASE: photoprism
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: ${PHOTOPRISM_DB_PASSWORD}
+
+networks:
+  backend:
+    external:
+      name: backend
+      #run: docker network create backend
