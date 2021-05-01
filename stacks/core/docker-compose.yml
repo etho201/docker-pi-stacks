@@ -287,6 +287,7 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - VERSION=docker
+      - PLEX_CLAIM=${PLEX_CLAIM} # Optionally you can obtain a claim token from https://plex.tv/claim and input here. Keep in mind that the claim tokens expire within 4 minutes.
     volumes:
       - ${CONFIG_DIR}/plex:/config
       - ${EXTHDD_DIR}/media:/data
