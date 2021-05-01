@@ -288,13 +288,13 @@ services:
       - PGID=${PGID}
       - VERSION=docker
     volumes:
-      - ${CONFIG_DIR}/plex/config:/config
+      - ${CONFIG_DIR}/plex:/config
       - ${EXTHDD_DIR}/media:/data
       #- ${EXTHDD_DIR}/media/tv:/data/tvshows
       #- ${EXTHDD_DIR}/media/movies:/data/movies
       #- ${EXTHDD_DIR}/media/music:/data/music
       #- ${EXTHDD_DIR}/media/other:/data/other
-      - ${CONFIG_DIR}/plex/transcode:/transcode
+      - ${VOLUME_DIR}/plex/transcode:/transcode
     restart: unless-stopped
 
   tautulli:
@@ -305,8 +305,8 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - ${CONFIG_DIR}/plex/tautulli:/config
-      - ${CONFIG_DIR}/plex/Config/Library/Application Support/Plex Media Server/Logs:/logs:ro #Map this to Plex log directory - recommended RO.
+      - ${CONFIG_DIR}/tautulli:/config
+      - ${CONFIG_DIR}/plex/Library/Application Support/Plex Media Server/Logs:/logs:ro #Map this to Plex log directory - recommended RO.
     #ports:
       #- 8181:8181
     restart: unless-stopped
