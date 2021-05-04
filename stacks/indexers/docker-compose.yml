@@ -10,7 +10,7 @@ services:
 ########################################################################################
 
   sonarr:
-    image: ghcr.io/linuxserver/sonarr:preview
+    image: ghcr.io/linuxserver/sonarr
     container_name: sonarr
     environment:
       - PUID=${PUID}
