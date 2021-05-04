@@ -10,7 +10,7 @@ services:
 ########################################################################################
 
   sonarr:
-    image: ghcr.io/linuxserver/sonarr
+    image: ghcr.io/linuxserver/sonarr:latest
     container_name: sonarr
     environment:
       - PUID=${PUID}
@@ -41,7 +41,7 @@ services:
       - "traefik.http.services.sonarr-svc.loadbalancer.server.port=8989"
 
   radarr:
-    image: ghcr.io/linuxserver/radarr
+    image: ghcr.io/linuxserver/radarr:latest
     container_name: radarr
     environment:
       - PUID=${PUID}
@@ -72,7 +72,7 @@ services:
       - "traefik.http.services.radarr-svc.loadbalancer.server.port=7878"
 
   lidarr:
-    image: ghcr.io/linuxserver/lidarr
+    image: ghcr.io/linuxserver/lidarr:latest
     container_name: lidarr
     environment:
       - PUID=${PUID}
