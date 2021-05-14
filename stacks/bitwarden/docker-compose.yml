@@ -4,11 +4,11 @@ services:
 
 ########################################################################################
 # Bitwarden_rs - Bitwarden server API implementation written in Rust compatible with upstream Bitwarden clients
-# https://github.com/dani-garcia/bitwarden_rs/wiki/Using-Docker-Compose
+# https://github.com/dani-garcia/vaultwarden/wiki/Using-Docker-Compose
 ########################################################################################
 
   bitwarden:
-    image: bitwardenrs/server:latest
+    image: vaultwarden/server:latest
     container_name: bitwarden
     restart: unless-stopped
     volumes:
