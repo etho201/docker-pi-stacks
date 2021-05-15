@@ -2,7 +2,7 @@
 version: "3.7"
 services:
   joplin:
-    image: florider89/joplin-server:latest
+    image: florider89/joplin-server:2.0.1-beta
     container_name: joplin-server
     environment:
       - APP_BASE_URL=https://joplin.${FQDN}
@@ -33,7 +33,7 @@ services:
       - "traefik.http.services.joplin-svc.loadbalancer.server.port=22300"
 
   joplin-db:
-    image: postgres:13.2 # latest as of 3/15/2021
+    image: postgres:13.3 # latest as of 5/15/2021
     container_name: joplin-db
     environment:
     # ports:
