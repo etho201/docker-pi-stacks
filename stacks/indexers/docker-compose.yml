@@ -4,10 +4,37 @@ services:
 
 ########################################################################################
 # Indexers
+# https://hub.docker.com/r/linuxserver/ombi
 # https://hub.docker.com/r/linuxserver/jackett
 # https://hub.docker.com/r/linuxserver/radarr
 # https://hub.docker.com/r/linuxserver/sonarr
 ########################################################################################
+
+  ombi:
+    image: ghcr.io/linuxserver/ombi
+    container_name: ombi
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_DIR}/ombi:/config
+    # ports:
+    #   - 3579:3579
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.ombi-rtr.entrypoints=websecure"
+      - "traefik.http.routers.ombi-rtr.rule=HostHeader(`ombi.$FQDN`)"
+      - "traefik.http.routers.ombi-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.ombi-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.ombi-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.ombi-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.ombi-rtr.service=ombi-svc"
+      - "traefik.http.services.ombi-svc.loadbalancer.server.port=8989"
 
   sonarr:
     image: ghcr.io/linuxserver/sonarr:latest
