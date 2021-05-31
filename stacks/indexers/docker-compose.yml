@@ -17,10 +17,11 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
+      - BASE_URL=/
     volumes:
       - ${CONFIG_DIR}/ombi:/config
     # ports:
-    #   - 3579:3579
+    #  - 3579:3579
     restart: unless-stopped
     networks:
       - backend
@@ -28,7 +29,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.ombi-rtr.entrypoints=websecure"
-      - "traefik.http.routers.ombi-rtr.rule=HostHeader(`ombi.$FQDN`)"
+      - "traefik.http.routers.ombi-rtr.rule=Host(`ombi.$FQDN`)"
       - "traefik.http.routers.ombi-rtr.tls=true"
       ## Middlewares
       # - "traefik.http.routers.ombi-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -36,7 +37,7 @@ services:
       - "traefik.http.routers.ombi-rtr.middlewares=chain-oauth@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.ombi-rtr.service=ombi-svc"
-      - "traefik.http.services.ombi-svc.loadbalancer.server.port=8989"
+      - "traefik.http.services.ombi-svc.loadbalancer.server.port=3579"
 
   sonarr:
     image: ghcr.io/linuxserver/sonarr:latest
