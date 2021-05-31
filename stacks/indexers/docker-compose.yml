@@ -22,6 +22,8 @@ services:
     # ports:
     #   - 3579:3579
     restart: unless-stopped
+    networks:
+      - backend
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
