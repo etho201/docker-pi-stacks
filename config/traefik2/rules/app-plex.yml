@@ -1,7 +1,7 @@
 http:
   routers:
     plex-rtr:
-      rule: "HostHeader(`plex.***FQDN***`)"
+      rule: "Host(`plex.***FQDN***`)"
       entryPoints:
         - websecure # https
       middlewares:

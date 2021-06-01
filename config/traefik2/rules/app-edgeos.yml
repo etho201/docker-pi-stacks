@@ -1,0 +1,16 @@
+http:
+  routers:
+    edgeos-rtr:
+      rule: "Host(`edgeos.***FQDN***`)" # need to use HostHeader if using Traefik 2.2.2
+      entryPoints:
+        - websecure # https
+      middlewares:
+        - chain-no-auth@file
+      service: edgeos-svc
+      #tls:
+        #certResolver: dns-duckdns
+  services:
+    edgeos-svc:
+      loadBalancer:
+        servers:
+          - url: "https://192.168.1.1" # some routers may need to specify "http" instead of "https"

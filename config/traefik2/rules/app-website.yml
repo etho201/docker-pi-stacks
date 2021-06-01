@@ -1,7 +1,7 @@
 http:
   routers:
     website-rtr:
-      rule: "HostHeader(`***domain***.com`)" # need to use HostHeader if using Traefik 2.2.2
+      rule: "Host(`***domain***.com`)" # need to use HostHeader if using Traefik 2.2.2
       entryPoints:
         - websecure # https
       middlewares:
