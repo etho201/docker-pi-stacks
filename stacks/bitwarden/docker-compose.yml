@@ -36,7 +36,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.bitwarden-rtr.entrypoints=websecure"
-      - "traefik.http.routers.bitwarden-rtr.rule=HostHeader(`bitwarden.$FQDN`)"
+      - "traefik.http.routers.bitwarden-rtr.rule=Host(`bitwarden.$FQDN`)"
       - "traefik.http.routers.bitwarden-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.bitwarden-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -50,7 +50,7 @@ services:
       #---------------------------------
       ## HTTP Routers
       - "traefik.http.routers.bitwarden-websocket-rtr.entrypoints=websecure"
-      - "traefik.http.routers.bitwarden-websocket-rtr.rule=HostHeader(`bitwarden.$FQDN`) && Path(`/notifications/hub`)"
+      - "traefik.http.routers.bitwarden-websocket-rtr.rule=Host(`bitwarden.$FQDN`) && Path(`/notifications/hub`)"
       - "traefik.http.routers.bitwarden-websocket-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.bitwarden-websocket-rtr.middlewares=chain-no-auth@file" # No Authentication

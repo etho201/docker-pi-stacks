@@ -36,7 +36,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.unifi-controller-rtr.entrypoints=websecure"
-      - "traefik.http.routers.unifi-controller-rtr.rule=HostHeader(`unifi.${FQDN}`)"
+      - "traefik.http.routers.unifi-controller-rtr.rule=Host(`unifi.${FQDN}`)"
       - "traefik.http.routers.unifi-controller-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.unifi-controller-rtr.middlewares=chain-no-auth@file" # No Authentication

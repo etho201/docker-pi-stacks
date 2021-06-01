@@ -52,7 +52,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.transmission-rtr.entrypoints=websecure"
-      - "traefik.http.routers.transmission-rtr.rule=HostHeader(`transmission.$FQDN`)"
+      - "traefik.http.routers.transmission-rtr.rule=Host(`transmission.$FQDN`)"
       - "traefik.http.routers.transmission-rtr.tls=true"
       ## Middlewares
       # - "traefik.http.routers.transmission-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -86,7 +86,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.qbittorrent-rtr.entrypoints=websecure"
-      - "traefik.http.routers.qbittorrent-rtr.rule=HostHeader(`qbittorrent.$FQDN`)"
+      - "traefik.http.routers.qbittorrent-rtr.rule=Host(`qbittorrent.$FQDN`)"
       - "traefik.http.routers.qbittorrent-rtr.tls=true"
       ## Middlewares
       # - "traefik.http.routers.qbittorrent-rtr.middlewares=chain-no-auth@file" # No Authentication

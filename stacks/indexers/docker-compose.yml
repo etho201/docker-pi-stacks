@@ -60,7 +60,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.sonarr-rtr.entrypoints=websecure"
-      - "traefik.http.routers.sonarr-rtr.rule=HostHeader(`sonarr.$FQDN`)"
+      - "traefik.http.routers.sonarr-rtr.rule=Host(`sonarr.$FQDN`)"
       - "traefik.http.routers.sonarr-rtr.tls=true"
       ## Middlewares
       # - "traefik.http.routers.sonarr-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -91,7 +91,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.radarr-rtr.entrypoints=websecure"
-      - "traefik.http.routers.radarr-rtr.rule=HostHeader(`radarr.$FQDN`)"
+      - "traefik.http.routers.radarr-rtr.rule=Host(`radarr.$FQDN`)"
       - "traefik.http.routers.radarr-rtr.tls=true"
       ## Middlewares
       # - "traefik.http.routers.radarr-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -123,7 +123,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.lidarr-rtr.entrypoints=websecure"
-      - "traefik.http.routers.lidarr-rtr.rule=HostHeader(`lidarr.$FQDN`)"
+      - "traefik.http.routers.lidarr-rtr.rule=Host(`lidarr.$FQDN`)"
       - "traefik.http.routers.lidarr-rtr.tls=true"
       ## Middlewares
       # - "traefik.http.routers.lidarr-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -153,7 +153,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.jackett-rtr.entrypoints=websecure"
-      - "traefik.http.routers.jackett-rtr.rule=HostHeader(`jackett.${FQDN}`)"
+      - "traefik.http.routers.jackett-rtr.rule=Host(`jackett.${FQDN}`)"
       - "traefik.http.routers.jackett-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.jackett-rtr.middlewares=chain-no-auth@file" # No Authentication

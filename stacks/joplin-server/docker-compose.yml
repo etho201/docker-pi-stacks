@@ -22,7 +22,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.joplin-rtr.entrypoints=websecure"
-      - "traefik.http.routers.joplin-rtr.rule=HostHeader(`joplin.$FQDN`)"
+      - "traefik.http.routers.joplin-rtr.rule=Host(`joplin.$FQDN`)"
       - "traefik.http.routers.joplin-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.joplin-rtr.middlewares=chain-no-auth@file" # No Authentication
