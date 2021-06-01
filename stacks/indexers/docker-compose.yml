@@ -32,9 +32,9 @@ services:
       - "traefik.http.routers.ombi-rtr.rule=Host(`ombi.$FQDN`)"
       - "traefik.http.routers.ombi-rtr.tls=true"
       ## Middlewares
-      # - "traefik.http.routers.ombi-rtr.middlewares=chain-no-auth@file" # No Authentication
+      - "traefik.http.routers.ombi-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.ombi-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      - "traefik.http.routers.ombi-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      # - "traefik.http.routers.ombi-rtr.middlewares=chain-oauth@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.ombi-rtr.service=ombi-svc"
       - "traefik.http.services.ombi-svc.loadbalancer.server.port=3579"
