@@ -15,3 +15,9 @@ Example of Cron job:
 |`-t`|Gotify **T**oken|`True`|
 
 > **Example:** This will run the health check **every 5 minutes**. See [https://crontab.guru](https://crontab.guru/#*/5_*_*_*_*) for help creating cron expressions.
+
+---
+
+# TorGuard &ndash; Check My IP Torrent
+
+magnet:?xt=urn:btih:ba4705c2c04e3b8c720f1b7ed9949f735bccb631&dn=TorGuard%20<-->%20checkmyiptorrent
