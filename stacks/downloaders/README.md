@@ -20,4 +20,6 @@ Example of Cron job:
 
 # TorGuard &ndash; Check My IP Torrent
 
-magnet:?xt=urn:btih:ba4705c2c04e3b8c720f1b7ed9949f735bccb631&dn=TorGuard%20<-->%20checkmyiptorrent
+Get link from here: https://torguard.net/checkmytorrentipaddress.php
+
+In the magnet URL, replace `checkmyiptorrent+Tracking+Link` with `TorGuard%20<--->%20checkmyiptorrent`.
