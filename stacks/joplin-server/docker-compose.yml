@@ -2,7 +2,7 @@
 version: "3.7"
 services:
   joplin:
-    image: etechonomy/joplin-server:2.2.10
+    image: etechonomy/joplin-server:latest
     container_name: joplin-server
     environment:
       - APP_BASE_URL=https://joplin.${FQDN}
