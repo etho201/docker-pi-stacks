@@ -41,12 +41,20 @@ http:
           X-Robots-Tag: "none,noarchive,nosnippet,notranslate,noimageindex,"
           server: ""
 
-    middlewares-oauth:
+    middlewares-oauth: # thomseddon/traefik-forward-auth
       forwardAuth:
         address: "http://oauth:4181" # Make sure you have the OAuth service in docker-compose.yml
         trustForwardHeader: true
         authResponseHeaders:
           - "X-Forwarded-User"
+
+    middlewares-oauth2: # oauth2-proxy/oauth2-proxy
+      forwardAuth:
+        address: https://oauth.***FQDN***.com/oauth2/auth
+        trustForwardHeader: true
+        authResponseHeaders:
+          - X-Auth-Request-Access-Token
+          - Authorization
 
     middlewares-authelia:
       forwardAuth:
