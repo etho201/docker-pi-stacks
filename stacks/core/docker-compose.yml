@@ -100,7 +100,7 @@ services:
 ########################################################################################
 
   traefik:
-    image: traefik:livarot # the livarot tag refers to v2.4.x
+    image: traefik:livarot # the livarot tag refers to v2.4.x (brie is v2.5)
     container_name: traefik
     restart: unless-stopped
     command: # CLI arguments
