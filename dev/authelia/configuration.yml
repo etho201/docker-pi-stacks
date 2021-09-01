@@ -7,7 +7,7 @@ port: 9091
 log_level: debug
 # This secret can also be set using the env variables AUTHELIA_JWT_SECRET_FILE
 jwt_secret: ${AUTHELIA_JWT_SECRET_FILE}
-default_redirection_url: https://authelia.{FQDN}
+default_redirection_url: https://authelia.${FQDN}
 totp:
   issuer: authelia.com
   period: 30
