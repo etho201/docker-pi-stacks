@@ -33,7 +33,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.authelia-rtr.entrypoints=websecure"
-      - "traefik.http.routers.authelia-rtr.rule=HostHeader(`authelia.${FQDN}`)"
+      - "traefik.http.routers.authelia-rtr.rule=Host(`authelia.${FQDN}`)"
       ## Middlewares
       - "traefik.http.routers.authelia-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
