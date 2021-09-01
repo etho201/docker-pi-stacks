@@ -1,8 +1,13 @@
 ---
 version: '3.7'
+
+secrets:
+  authelia_jwt_secret:
+    file: ${CONFIG_DIR}/authelia/secrets/authelia_jwt_secret
+  authelia_session_secret:
+    file: ${CONFIG_DIR}/authelia/secrets/authelia_session_secret
+
 services:
-
-
   # Authelia (Lite) - Self-Hosted Single Sign-On and Two-Factor Authentication
   authelia:
     container_name: authelia
@@ -19,8 +24,11 @@ services:
     environment:
       - TZ=${TZ}
       - FQDN=${FQDN}
-      - AUTHELIA_JWT_SECRET_FILE=${AUTHELIA_JWT_SECRET}
-      - AUTHELIA_SESSION_SECRET_FILE=${AUTHELIA_SESSION_SECRET}
+      - AUTHELIA_JWT_SECRET_FILE=/run/secrets/authelia_jwt_secret
+      - AUTHELIA_SESSION_SECRET_FILE=/run/secrets/authelia_session_secret
+    secrets:
+      - authelia_jwt_secret
+      - authelia_session_secret
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
