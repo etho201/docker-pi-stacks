@@ -11,12 +11,12 @@ services:
 
   oauth2:
     container_name: oauth2
-    image: quay.io/pusher/oauth2_proxy:latest-armv6
+    image: quay.io/oauth2-proxy/oauth2-proxy:latest
     command:
       - "-cookie-domain=${FQDN}"
       - "-cookie-secure=true"
       - "-email-domain=*"
-      - "-github-org=${GITHUB_ORG}"
+      - "-github-user=${GITHUB_USER}" # allow logins by username, separated by a comma
       - "-http-address=0.0.0.0:4180"
       - "-pass-access-token"
       - "-provider=github"
@@ -35,26 +35,26 @@ services:
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
-      - "traefik.http.routers.oauth-rtr.entrypoints=websecure"
-      #- "traefik.http.routers.oauth-rtr.rule=HostHeader(`oauth.${FQDN}`)"
-      - "traefik.http.routers.oauth-rtr.rule=HostHeader(`oauth.${FQDN?err}`) || PathPrefix(`/oauth2`)"
-      - "traefik.http.routers.oauth-rtr.tls=true"
+      - "traefik.http.routers.oauth2-rtr.entrypoints=websecure"
+      #- "traefik.http.routers.oauth2-rtr.rule=Host(`oauth2.${FQDN}`)"
+      - "traefik.http.routers.oauth2-rtr.rule=Host(`oauth2.${FQDN?err}`) || PathPrefix(`/oauth2`)"
+      - "traefik.http.routers.oauth2-rtr.tls=true"
       ## Middlewares
-      - "traefik.http.routers.oauth-rtr.middlewares=chain-oauth@file"
+      - "traefik.http.routers.oauth2-rtr.middlewares=chain-oauth2@file"
       ## HTTP Services
-      - "traefik.http.routers.oauth-rtr.service=oauth-svc"
-      - "traefik.http.services.oauth-svc.loadbalancer.server.port=4180"
+      - "traefik.http.routers.oauth2-rtr.service=oauth2-svc"
+      - "traefik.http.services.oauth2-svc.loadbalancer.server.port=4180"
       ## Other labels
-      - "traefik.http.middlewares.oauth-verify.forwardAuth.address=http://oauth:4180/oauth2/auth"
-      - "traefik.http.middlewares.oauth-verify.forwardAuth.trustForwardHeader=true"
-      - "traefik.http.middlewares.oauth-verify.forwardAuth.authResponseHeaders=X-Auth-Request-User,X-Auth-Request-Email,Set-Cookie"
-      - "traefik.http.middlewares.oauth-signin.errors.service=oauth@file"
-      - "traefik.http.middlewares.oauth-signin.errors.status=401"
-      - "traefik.http.middlewares.oauth-signin.errors.query=/oauth2/sign_in"
-      - "traefik.http.routers.oauth.entrypoints=websecure"
-      - "traefik.http.routers.oauth.tls.certResolver=default"
-      - "traefik.http.routers.oauth.service=oauth@file"
-      - "traefik.http.services.oauth.loadbalancer.server.port=4180"
+      # - "traefik.http.middlewares.oauth2-verify.forwardAuth.address=http://oauth2:4180/oauth2/auth"
+      # - "traefik.http.middlewares.oauth2-verify.forwardAuth.trustForwardHeader=true"
+      # - "traefik.http.middlewares.oauth2-verify.forwardAuth.authResponseHeaders=X-Auth-Request-User,X-Auth-Request-Email,Set-Cookie"
+      # - "traefik.http.middlewares.oauth2-signin.errors.service=oauth2@file"
+      # - "traefik.http.middlewares.oauth2-signin.errors.status=401"
+      # - "traefik.http.middlewares.oauth2-signin.errors.query=/oauth2/sign_in"
+      # - "traefik.http.routers.oauth2.entrypoints=websecure"
+      # - "traefik.http.routers.oauth2.tls.certResolver=default"
+      # - "traefik.http.routers.oauth2.service=oauth2@file"
+      # - "traefik.http.services.oauth2.loadbalancer.server.port=4180"
     networks:
       - backend
     restart: unless-stopped
