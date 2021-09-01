@@ -10,7 +10,11 @@ jwt_secret: ${AUTHELIA_JWT_SECRET_FILE}
 default_redirection_url: https://{FQDN}
 totp:
   issuer: authelia.com
+  period: 30
+  skew: 1
 
+# Enable the following for Duo Push Notification support
+# https://www.authelia.com/docs/features/2fa/push-notifications.html
 #duo_api:
 #  hostname: api-123456789.example.com
 #  integration_key: ABCDEF
@@ -28,6 +32,7 @@ authentication_backend:
       parallelism: 8
       memory: 1024
 
+# https://docs.authelia.com/configuration/access-control.html
 access_control:
   default_policy: deny
   rules:
