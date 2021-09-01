@@ -36,7 +36,8 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.oauth2-rtr.entrypoints=websecure"
-      - "traefik.http.routers.oauth2-rtr.rule=Host(`oauth2.${FQDN}`)"
+      # - "traefik.http.routers.oauth2-rtr.rule=Host(`oauth2.${FQDN}`)"
+      - "traefik.http.routers.oauth2-rtr.rule=Host(`${FQDN}`); PathPrefixStrip: /oauth2"
       # - "traefik.http.routers.oauth2-rtr.rule=Host(`oauth2.${FQDN?err}`) || PathPrefix(`/oauth2`)"
       - "traefik.http.routers.oauth2-rtr.tls=true"
       ## Middlewares
