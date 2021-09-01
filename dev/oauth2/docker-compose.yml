@@ -13,17 +13,17 @@ services:
     container_name: oauth2
     image: quay.io/oauth2-proxy/oauth2-proxy:latest-arm64
     command:
-      - "-cookie-domain=${FQDN}"
-      - "-cookie-secure=true"
-      - "-email-domain=*"
-      - "-github-user=${GITHUB_USER}" # allow logins by username, separated by a comma
-      - "-http-address=0.0.0.0:4180"
-      - "-pass-access-token"
-      - "-provider=github"
-      - "-redirect-url=https://${FQDN}/oauth2/callback"
-      - "-set-authorization-header"
-      - "-set-xauthrequest"
-      - "-whitelist-domain=.${FQDN}"
+      - "--cookie-domain=${FQDN}"
+      - "--cookie-secure=true"
+      - "--email-domain=*"
+      - "--github-user=${GITHUB_USER}" # allow logins by username, separated by a comma
+      - "--http-address=0.0.0.0:4180"
+      - "--pass-access-token"
+      - "--provider=github"
+      - "--redirect-url=https://${FQDN}/oauth2/callback"
+      - "--set-authorization-header"
+      - "--set-xauthrequest"
+      - "--whitelist-domain=.${FQDN}"
     environment:
       - "OAUTH2_PROXY_CLIENT_ID=${GITHUB_OAUTH_CLIENT_ID}"
       - "OAUTH2_PROXY_CLIENT_SECRET=${GITHUB_OAUTH_CLIENT_SECRET}"
