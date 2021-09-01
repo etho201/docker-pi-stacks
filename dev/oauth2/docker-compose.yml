@@ -11,7 +11,7 @@ services:
 
   oauth2:
     container_name: oauth2
-    image: quay.io/oauth2-proxy/oauth2-proxy:latest
+    image: quay.io/oauth2-proxy/oauth2-proxy:latest-arm64
     command:
       - "-cookie-domain=${FQDN}"
       - "-cookie-secure=true"
