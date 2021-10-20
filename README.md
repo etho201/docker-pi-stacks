@@ -112,7 +112,16 @@ Ideally you should fully configure Traefik before launching any containers. This
 ## Troubleshooting:
 
 If things stop working, make sure Traefik is running.
-```
+
+```bash
 docker container ls | grep traefik
 docker-compose up -d traefik
+```
+
+If you wish to force Traefik to refresh its certs, you can run:
+
+```bash
+cd /mnt/hdd/docker/config/traefik2/acme
+: > acme.json
+docker restart traefik
 ```
