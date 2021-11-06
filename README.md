@@ -111,17 +111,48 @@ Ideally you should fully configure Traefik before launching any containers. This
 
 ## Troubleshooting:
 
-If things stop working, make sure Traefik is running.
+### Check if Traefik is running:
 
-```bash
-docker container ls | grep traefik
-docker-compose up -d traefik
-```
+- If things stop working, make sure Traefik is running.
 
-If you wish to force Traefik to refresh its certs, you can run:
+    ```bash
+    docker container ls | grep traefik
+    docker-compose up -d traefik
+    ```
 
-```bash
-cd /mnt/hdd/docker/config/traefik2/acme
-: > acme.json
-docker restart traefik
-```
+### Starting Traefik results in an error:
+
+- If you receive an error that port binding failed:
+
+    ```
+    Starting traefik ... error
+    ERROR: for traefik  Cannot start service traefik: driver failed programming external connectivity on endpoint traefik: Bind for 0.0.0.0:443 failed: port is already allocated
+    ```
+
+- You can try to resolve this by running:
+
+    ```bash
+    sudo systemctl restart docker
+    ```
+
+    > **NOTE:** If that doesn't fix it, first try the following and then restart Docker:
+    > ```
+    > ❯ sudo fuser 443/tcp
+    > 443/tcp:              2586  2594
+    > ❯ ps -p 2586
+    >     PID TTY          TIME CMD
+    >     2586 ?        00:00:00 docker-proxy
+    > ❯ ps -p 2381
+    >     PID TTY          TIME CMD
+    > ❯ sudo kill 2586 2594
+    > ```
+
+### Refresh Let's Encrypt certs:
+
+- If you wish to force Traefik to refresh its certs, you can run:
+
+    ```bash
+    cd /mnt/hdd/docker/config/traefik2/acme
+    : > acme.json
+    docker restart traefik
+    ```
