@@ -23,16 +23,3 @@ services:
     network_mode: host
     devices:
       - /dev/ttyUSB0:/dev/ttyUSB0
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.home-assistant-rtr.entrypoints=websecure"
-      - "traefik.http.routers.home-assistant-rtr.rule=Host(`home-assistant.$FQDN`)"
-      - "traefik.http.routers.home-assistant-rtr.tls=true"
-      ## Middlewares
-      - "traefik.http.routers.home-assistant-rtr.middlewares=chain-no-auth@file" # No Authentication
-      # - "traefik.http.routers.home-assistant-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      # - "traefik.http.routers.home-assistant-rtr.middlewares=chain-oauth@file" # OAuth 2.0
-      ## HTTP Services
-      - "traefik.http.routers.home-assistant-rtr.service=home-assistant-svc"
-      - "traefik.http.services.home-assistant-svc.loadbalancer.server.port=8123"
