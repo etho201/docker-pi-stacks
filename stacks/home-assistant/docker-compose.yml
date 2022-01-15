@@ -42,9 +42,9 @@ services:
       - '/dev/serial/by-id/${ZWAVE_DEVICE_ID}:/dev/zwave'
     volumes:
       - ${CONFIG_DIR}/zwavejs2mqtt:/usr/src/app/store
-    # ports:
-    #   - '8091:8091' # port for web interface
-    #   - '3000:3000' # port for Z-Wave JS websocket server
+    ports:
+      - '3000:3000' # port for Z-Wave JS websocket server
+      # - '8091:8091' # port for web interface
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -52,9 +52,9 @@ services:
       - "traefik.http.routers.zwavejs2mqtt-rtr.rule=Host(`zwavejs2mqtt.$FQDN`)"
       - "traefik.http.routers.zwavejs2mqtt-rtr.tls=true"
       ## Middlewares
-      - "traefik.http.routers.zwavejs2mqtt-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.zwavejs2mqtt-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.zwavejs2mqtt-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      # - "traefik.http.routers.zwavejs2mqtt-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      - "traefik.http.routers.zwavejs2mqtt-rtr.middlewares=chain-oauth@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.zwavejs2mqtt-rtr.service=zwavejs2mqtt-svc"
       - "traefik.http.services.zwavejs2mqtt-svc.loadbalancer.server.port=8091"
