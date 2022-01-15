@@ -1,0 +1,36 @@
+---
+version: '3.7'
+services:
+
+########################################################################################
+# Home Assistant
+# https://www.home-assistant.io/installation/raspberrypi#docker-compose
+########################################################################################
+
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: homeassistant
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - ${CONFIG_DIR}/home-assistant:/config
+      - /etc/localtime:/etc/localtime:ro
+    # ports:
+    #   - 8123:8123
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.home-assistant-rtr.entrypoints=websecure"
+      - "traefik.http.routers.home-assistant-rtr.rule=Host(`home-assistant.$FQDN`)"
+      - "traefik.http.routers.home-assistant-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.home-assistant-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.home-assistant-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.home-assistant-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.home-assistant-rtr.service=home-assistant-svc"
+      - "traefik.http.services.home-assistant-svc.loadbalancer.server.port=8123"
