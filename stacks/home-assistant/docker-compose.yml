@@ -21,6 +21,8 @@ services:
     restart: unless-stopped
     privileged: true
     network_mode: host
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
