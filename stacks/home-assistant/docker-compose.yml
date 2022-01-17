@@ -59,6 +59,31 @@ services:
       - "traefik.http.routers.zwavejs2mqtt-rtr.service=zwavejs2mqtt-svc"
       - "traefik.http.services.zwavejs2mqtt-svc.loadbalancer.server.port=8091"
 
+  ring-mqtt:
+    container_name: ring-mqtt
+    restart: unless-stopped
+    image: tsightler/ring-mqtt
+    networks:
+      - backend
+    # ports:
+    #   - 8554:8554                      # Enable RTSP port for external media player access
+    volumes:
+      - ${VOLUME_DIR}/ring-mqtt:/data  # Mapping of local folder to provide persistant storage
+    environment:                       
+      - RINGTOKEN=${RINGTOKEN}         # Required for initial startup, see: https://github.com/tsightler/ring-mqtt/blob/main/docs/DOCKER.md#authentication
+      - MQTTHOST=localhost             # Hostname or IP of MQTT Broker
+      - MQTTPORT=1883                  # TCP port for MQTT Broker
+      - MQTTUSER=${USERNAME}           # CHANGE ME -- Username for MQTT Broker (remove for anonymous)
+      - MQTTPASSWORD=${RINGMQTTPW}     # CHANGE ME -- Password for MQTT Broker (remove for anonymous)
+      - ENABLECAMERAS=false            # Enable camera support
+      - SNAPSHOTMODE=disabled          # Snapshot options (see: https://github.com/tsightler/ring-mqtt#snapshot-options)
+      # - LIVESTREAMUSER=stream_user     # CHANGE ME -- Highly recommended if RTSP server is exposed
+      # - LIVESTREAMPASSWORD=stream_pass # CHANGE ME -- Highly recommended if RTSP server is exposed
+    logging:                           #limit logs to 10m and 3 files
+      options:
+        max-size: 10m
+        max-file: "3"
+
 networks:
   backend:
     external:
