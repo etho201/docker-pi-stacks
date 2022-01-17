@@ -93,8 +93,8 @@ services:
       - TZ=${TZ}
       - MOSQUITTO_USERNAME=${USERNAME}
       - MOSQUITTO_PASSWORD=${MOSQUITTO_PASSWORD}
-    # ports:
-      # - 1883:1883
+    ports:
+      - 1883:1883
       # - 8883:8883
     volumes:
       - ${VOLUME_DIR}/mosquitto/data:/mosquitto/data
