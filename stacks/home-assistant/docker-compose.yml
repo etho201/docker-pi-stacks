@@ -99,7 +99,7 @@ services:
     volumes:
       - ${VOLUME_DIR}/mosquitto/data:/mosquitto/data
       - ${VOLUME_DIR}/mosquitto/logs:/mosquitto/log
-      - ${DOCKER_DIR}/mosquitto:/mosquitto/config
+      - ${CONFIG_DIR}/mosquitto:/mosquitto/config
     restart: unless-stopped
     networks:
       - backend
