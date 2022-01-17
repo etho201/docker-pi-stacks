@@ -71,10 +71,10 @@ services:
       - ${VOLUME_DIR}/ring-mqtt:/data  # Mapping of local folder to provide persistant storage
     environment:                       
       - RINGTOKEN=${RINGTOKEN}         # Required for initial startup, see: https://github.com/tsightler/ring-mqtt/blob/main/docs/DOCKER.md#authentication
-      - MQTTHOST=localhost             # Hostname or IP of MQTT Broker
+      - MQTTHOST=mosquitto             # Hostname or IP of MQTT Broker
       - MQTTPORT=1883                  # TCP port for MQTT Broker
       - MQTTUSER=${USERNAME}           # CHANGE ME -- Username for MQTT Broker (remove for anonymous)
-      - MQTTPASSWORD=${RINGMQTTPW}     # CHANGE ME -- Password for MQTT Broker (remove for anonymous)
+      - MQTTPASSWORD=${MOSQUITTO_PASSWORD}     # CHANGE ME -- Password for MQTT Broker (remove for anonymous)
       - ENABLECAMERAS=false            # Enable camera support
       - SNAPSHOTMODE=disabled          # Snapshot options (see: https://github.com/tsightler/ring-mqtt#snapshot-options)
       # - LIVESTREAMUSER=stream_user     # CHANGE ME -- Highly recommended if RTSP server is exposed
