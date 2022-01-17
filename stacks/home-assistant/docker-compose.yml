@@ -84,6 +84,26 @@ services:
         max-size: 10m
         max-file: "3"
 
+  mosquitto:
+    image: eclipse-mosquitto
+    container_name: mosquitto
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - MOSQUITTO_USERNAME=${USERNAME}
+      - MOSQUITTO_PASSWORD=${MOSQUITTO_PASSWORD}
+    # ports:
+      # - 1883:1883
+      # - 8883:8883
+    volumes:
+      - ${VOLUME_DIR}/mosquitto/data:/mosquitto/data
+      - ${VOLUME_DIR}/mosquitto/logs:/mosquitto/log
+      - ${DOCKER_DIR}/mosquitto:/mosquitto/config
+    restart: unless-stopped
+    networks:
+      - backend
+
 networks:
   backend:
     external:
