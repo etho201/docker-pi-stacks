@@ -131,6 +131,9 @@ services:
       - --entrypoints.websecure.http.tls.certresolver=letsencrypt # Comment out this line after first run of traefik to force the use of wildcard certs
       - --entrypoints.websecure.http.tls.domains[0].main=${FQDN}
       - --entrypoints.websecure.http.tls.domains[0].sans=*.${FQDN}
+      # Comment out the below 2 entries if only using one domain
+      - --entrypoints.websecure.http.tls.domains[1].main=${FQDN2}
+      - --entrypoints.websecure.http.tls.domains[1].sans=*.${FQDN2}
       # - --entrypoints.websecure.http.tls.domains[1].main=$DOMAIN # Pulls main cert for second domain
       # - --entrypoints.websecure.http.tls.domains[1].sans=*.$DOMAIN # Pulls wildcard cert for second domain
       # - --providers.docker.network=backend # Defines a default docker network to use for connections to all containers. Setting this will cause issues if a container uses network_mode
@@ -141,9 +144,13 @@ services:
       # - --certificatesResolvers.letsencrypt.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
       - --certificatesResolvers.letsencrypt.acme.email=${EMAIL}
       - --certificatesResolvers.letsencrypt.acme.storage=/etc/traefik/acme/acme.json
-      - --certificatesResolvers.letsencrypt.acme.dnsChallenge.provider=duckdns
-      - --certificatesResolvers.letsencrypt.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53
-      - --certificatesResolvers.letsencrypt.acme.dnsChallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
+      - --certificatesResolvers.domain1.letsencrypt.acme.dnsChallenge.provider=duckdns
+      - --certificatesResolvers.domain1.letsencrypt.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53
+      - --certificatesResolvers.domain1.letsencrypt.acme.dnsChallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
+      # Comment out the below 3 entries if not using Cloudflare
+      - --certificatesResolvers.domain2.letsencrypt.acme.dnsChallenge.provider=cloudflare
+      - --certificatesResolvers.domain2.letsencrypt.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53
+      - --certificatesResolvers.domain2.letsencrypt.acme.dnsChallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
     networks:
       - frontend
       - backend
@@ -183,6 +190,8 @@ services:
       # svn export https://github.com/etho201/docker-pi-stacks/trunk/config/traefik2
     environment:
       - DUCKDNS_TOKEN=${DUCKDNS_TOKEN}
+      - CF_API_EMAIL=${CF_API_EMAIL} # Comment out if not using Cloudflare
+      - CF_API_KEY=${CF_API_KEY} # Comment out if not using Cloudflare
     labels:
       - "traefik.enable=true"
       # HTTP-to-HTTPS Redirect
