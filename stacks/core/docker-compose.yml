@@ -128,7 +128,7 @@ services:
       - --providers.docker.exposedByDefault=false
       # - --entrypoints.websecure.http.middlewares=chain-authelia@file
       # Add dns-cloudflare as default certresolver for all services. Also enables TLS and no need to specify on individual services
-      - --entrypoints.websecure.http.tls.certresolver=letsencrypt # Comment out this line after first run of traefik to force the use of wildcard certs
+      - --entrypoints.websecure.http.tls.certresolver=duckdns # Comment out this line after first run of traefik to force the use of wildcard certs
       - --entrypoints.websecure.http.tls.domains[0].main=${FQDN}
       - --entrypoints.websecure.http.tls.domains[0].sans=*.${FQDN}
       # Comment out the below 2 entries if only using one domain
@@ -148,7 +148,7 @@ services:
       - --certificatesResolvers.duckdns.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53
       - --certificatesResolvers.duckdns.acme.dnsChallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
       # Comment out the below 5 entries if not using Cloudflare
-      - --certificatesResolvers.cloudflare.acme.email=${CF_API_EMAIL}
+      - --certificatesResolvers.cloudflare.acme.email=${EMAIL}
       - --certificatesResolvers.cloudflare.acme.storage=/etc/traefik/acme/acme.json
       - --certificatesResolvers.cloudflare.acme.dnsChallenge.provider=cloudflare
       - --certificatesResolvers.cloudflare.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53
