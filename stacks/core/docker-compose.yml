@@ -142,15 +142,17 @@ services:
       # - --providers.file.filename=/path/to/file # Load dynamic configuration from a file
       - --providers.file.watch=true # Only works on top level files in the rules folder
       # - --certificatesResolvers.letsencrypt.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
-      - --certificatesResolvers.letsencrypt.acme.email=${EMAIL}
-      - --certificatesResolvers.letsencrypt.acme.storage=/etc/traefik/acme/acme.json
-      - --certificatesResolvers.domain1.acme.dnsChallenge.provider=duckdns
-      - --certificatesResolvers.domain1.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53
-      - --certificatesResolvers.domain1.acme.dnsChallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
+      - --certificatesResolvers.duckdns.acme.email=${EMAIL}
+      - --certificatesResolvers.duckdns.acme.storage=/etc/traefik/acme/acme.json
+      - --certificatesResolvers.duckdns.acme.dnsChallenge.provider=duckdns
+      - --certificatesResolvers.duckdns.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53
+      - --certificatesResolvers.duckdns.acme.dnsChallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
       # Comment out the below 3 entries if not using Cloudflare
-      - --certificatesResolvers.domain2.acme.dnsChallenge.provider=cloudflare
-      - --certificatesResolvers.domain2.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53
-      - --certificatesResolvers.domain2.acme.dnsChallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
+      - --certificatesResolvers.cloudflare.acme.email=${CF_API_EMAIL}
+      - --certificatesResolvers.cloudflare.acme.storage=/etc/traefik/acme/acme.json
+      - --certificatesResolvers.cloudflare.acme.dnsChallenge.provider=cloudflare
+      - --certificatesResolvers.cloudflare.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53
+      - --certificatesResolvers.cloudflare.acme.dnsChallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
     networks:
       - frontend
       - backend
