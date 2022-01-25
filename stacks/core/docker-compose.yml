@@ -147,7 +147,7 @@ services:
       - --certificatesResolvers.duckdns.acme.dnsChallenge.provider=duckdns
       - --certificatesResolvers.duckdns.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53
       - --certificatesResolvers.duckdns.acme.dnsChallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
-      # Comment out the below 3 entries if not using Cloudflare
+      # Comment out the below 5 entries if not using Cloudflare
       - --certificatesResolvers.cloudflare.acme.email=${CF_API_EMAIL}
       - --certificatesResolvers.cloudflare.acme.storage=/etc/traefik/acme/acme.json
       - --certificatesResolvers.cloudflare.acme.dnsChallenge.provider=cloudflare
