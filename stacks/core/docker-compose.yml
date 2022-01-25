@@ -144,13 +144,13 @@ services:
       # - --certificatesResolvers.letsencrypt.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
       - --certificatesResolvers.letsencrypt.acme.email=${EMAIL}
       - --certificatesResolvers.letsencrypt.acme.storage=/etc/traefik/acme/acme.json
-      - --certificatesResolvers.domain1.letsencrypt.acme.dnsChallenge.provider=duckdns
-      - --certificatesResolvers.domain1.letsencrypt.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53
-      - --certificatesResolvers.domain1.letsencrypt.acme.dnsChallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
+      - --certificatesResolvers.domain1.acme.dnsChallenge.provider=duckdns
+      - --certificatesResolvers.domain1.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53
+      - --certificatesResolvers.domain1.acme.dnsChallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
       # Comment out the below 3 entries if not using Cloudflare
-      - --certificatesResolvers.domain2.letsencrypt.acme.dnsChallenge.provider=cloudflare
-      - --certificatesResolvers.domain2.letsencrypt.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53
-      - --certificatesResolvers.domain2.letsencrypt.acme.dnsChallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
+      - --certificatesResolvers.domain2.acme.dnsChallenge.provider=cloudflare
+      - --certificatesResolvers.domain2.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53
+      - --certificatesResolvers.domain2.acme.dnsChallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
     networks:
       - frontend
       - backend
