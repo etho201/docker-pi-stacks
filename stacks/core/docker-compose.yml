@@ -132,8 +132,9 @@ services:
       - --entrypoints.websecure.http.tls.domains[0].main=${FQDN}
       - --entrypoints.websecure.http.tls.domains[0].sans=*.${FQDN}
       # Comment out the below 2 entries if only using one domain
-      - --entrypoints.websecure.http.tls.domains[1].main=${FQDN2}
-      - --entrypoints.websecure.http.tls.domains[1].sans=*.${FQDN2}
+      - --entrypoints.websecure2.http.tls.certresolver=cloudflare
+      - --entrypoints.websecure2.http.tls.domains[0].main=${FQDN2}
+      - --entrypoints.websecure2.http.tls.domains[0].sans=*.${FQDN2}
       # - --entrypoints.websecure.http.tls.domains[1].main=$DOMAIN # Pulls main cert for second domain
       # - --entrypoints.websecure.http.tls.domains[1].sans=*.$DOMAIN # Pulls wildcard cert for second domain
       # - --providers.docker.network=backend # Defines a default docker network to use for connections to all containers. Setting this will cause issues if a container uses network_mode
