@@ -165,7 +165,7 @@ services:
       - "traefik.http.services.jackett-svc.loadbalancer.server.port=9117"
 
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr
+    image: lscr.io/linuxserver/prowlarr:develop
     container_name: prowlarr
     environment:
       - PUID=${PUID}
