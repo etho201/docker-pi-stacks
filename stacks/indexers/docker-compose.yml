@@ -185,9 +185,9 @@ services:
       - "traefik.http.routers.prowlarr-rtr.rule=Host(`prowlarr.${FQDN}`)"
       - "traefik.http.routers.prowlarr-rtr.tls=true"
       ## Middlewares
-      - "traefik.http.routers.prowlarr-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.prowlarr-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.prowlarr-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      #- "traefik.http.routers.prowlarr-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      - "traefik.http.routers.prowlarr-rtr.middlewares=chain-oauth@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.prowlarr-rtr.service=prowlarr-svc"
       - "traefik.http.services.prowlarr-svc.loadbalancer.server.port=9696"
