@@ -8,6 +8,7 @@ services:
 # https://hub.docker.com/r/linuxserver/jackett
 # https://hub.docker.com/r/linuxserver/radarr
 # https://hub.docker.com/r/linuxserver/sonarr
+# https://hub.docker.com/r/linuxserver/prowlarr
 ########################################################################################
 
   ombi:
@@ -162,6 +163,34 @@ services:
       ## HTTP Services
       - "traefik.http.routers.jackett-rtr.service=jackett-svc"
       - "traefik.http.services.jackett-svc.loadbalancer.server.port=9117"
+
+  prowlarr:
+    image: ghcr.io/linuxserver/prowlarr
+    container_name: prowlarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_DIR}/prowlarr:/config
+    #ports:
+      #- 9696:9696
+    restart: unless-stopped
+    networks:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.prowlarr-rtr.entrypoints=websecure"
+      - "traefik.http.routers.prowlarr-rtr.rule=Host(`prowlarr.${FQDN}`)"
+      - "traefik.http.routers.prowlarr-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.prowlarr-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.prowlarr-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      #- "traefik.http.routers.prowlarr-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.prowlarr-rtr.service=prowlarr-svc"
+      - "traefik.http.services.prowlarr-svc.loadbalancer.server.port=9117"
 
 networks:
   backend:
