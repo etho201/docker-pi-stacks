@@ -190,7 +190,7 @@ services:
       #- "traefik.http.routers.prowlarr-rtr.middlewares=chain-oauth@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.prowlarr-rtr.service=prowlarr-svc"
-      - "traefik.http.services.prowlarr-svc.loadbalancer.server.port=9117"
+      - "traefik.http.services.prowlarr-svc.loadbalancer.server.port=9696"
 
 networks:
   backend:
