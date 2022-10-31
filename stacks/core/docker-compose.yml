@@ -99,12 +99,31 @@ services:
 # https://hub.docker.com/_/traefik
 ########################################################################################
 
+  traefik-hub-agent:
+    image: ghcr.io/traefik/hub-agent-traefik:v1.0.0
+    pull_policy: always
+    container_name: treafik-hub-agent
+    restart: "on-failure"
+    command:
+      - run
+      - --hub.token=${TRAEFIK_HUB_TOKEN}
+      - --auth-server.advertise-url=http://hub-agent
+      - --traefik.host=traefik
+      - --traefik.tls.insecure=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - traefik
+
   traefik:
     image: traefik:vacherin # the vacherin tag refers to v2.8.x
     container_name: traefik
     restart: unless-stopped
     command: # CLI arguments
-      - --pilot.token=${TRAEFIK_PILOT_TOKEN}
+      # Enable Hub communication (open the port 9900 and 9901 by default)
+      - --experimental.hub=true
+      - --hub.tls.insecure=true
+      - --metrics.prometheus.addrouterslabels=true
       - --global.checkNewVersion=true
       - --global.sendAnonymousUsage=true
       - --entryPoints.web.address=:80 # http
