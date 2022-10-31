@@ -104,6 +104,8 @@ services:
     pull_policy: always
     container_name: treafik-hub-agent
     restart: "on-failure"
+    networks:
+      - backend
     command:
       - run
       - --hub.token=${TRAEFIK_HUB_TOKEN}
