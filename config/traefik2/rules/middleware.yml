@@ -21,7 +21,7 @@ http:
         accessControlMaxAge: 100
         hostsProxyHeaders:
           - "X-Forwarded-Host"
-        sslRedirect: true
+        # sslRedirect: true # deprecated in Traefik 2.1
         stsSeconds: 63072000
         stsIncludeSubdomains: true
         stsPreload: true
