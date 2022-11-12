@@ -118,7 +118,7 @@ services:
       - traefik
 
   traefik:
-    image: traefik:vacherin # the vacherin tag refers to v2.8.x
+    image: traefik:banon # the banon tag refers to v2.9.x
     container_name: traefik
     restart: unless-stopped
     command: # CLI arguments
