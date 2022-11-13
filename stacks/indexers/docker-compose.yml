@@ -134,35 +134,35 @@ services:
       - "traefik.http.routers.lidarr-rtr.service=lidarr-svc"
       - "traefik.http.services.lidarr-svc.loadbalancer.server.port=8686"
 
-  jackett:
-    image: ghcr.io/linuxserver/jackett
-    container_name: jackett
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    volumes:
-      - ${CONFIG_DIR}/jackett:/config
-      - ${VOLUME_DIR}/jackett:/downloads
-      - "/etc/localtime:/etc/localtime:ro"
-    #ports:
-      #- 9117:9117
-    restart: unless-stopped
-    networks:
-      - backend
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.jackett-rtr.entrypoints=websecure"
-      - "traefik.http.routers.jackett-rtr.rule=Host(`jackett.${FQDN}`)"
-      - "traefik.http.routers.jackett-rtr.tls=true"
-      ## Middlewares
-      - "traefik.http.routers.jackett-rtr.middlewares=chain-no-auth@file" # No Authentication
-      # - "traefik.http.routers.jackett-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      #- "traefik.http.routers.jackett-rtr.middlewares=chain-oauth@file" # OAuth 2.0
-      ## HTTP Services
-      - "traefik.http.routers.jackett-rtr.service=jackett-svc"
-      - "traefik.http.services.jackett-svc.loadbalancer.server.port=9117"
+  # jackett:
+  #   image: ghcr.io/linuxserver/jackett
+  #   container_name: jackett
+  #   environment:
+  #     - PUID=${PUID}
+  #     - PGID=${PGID}
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ${CONFIG_DIR}/jackett:/config
+  #     - ${VOLUME_DIR}/jackett:/downloads
+  #     - "/etc/localtime:/etc/localtime:ro"
+  #   #ports:
+  #     #- 9117:9117
+  #   restart: unless-stopped
+  #   networks:
+  #     - backend
+  #   labels:
+  #     - "traefik.enable=true"
+  #     ## HTTP Routers
+  #     - "traefik.http.routers.jackett-rtr.entrypoints=websecure"
+  #     - "traefik.http.routers.jackett-rtr.rule=Host(`jackett.${FQDN}`)"
+  #     - "traefik.http.routers.jackett-rtr.tls=true"
+  #     ## Middlewares
+  #     - "traefik.http.routers.jackett-rtr.middlewares=chain-no-auth@file" # No Authentication
+  #     # - "traefik.http.routers.jackett-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+  #     #- "traefik.http.routers.jackett-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+  #     ## HTTP Services
+  #     - "traefik.http.routers.jackett-rtr.service=jackett-svc"
+  #     - "traefik.http.services.jackett-svc.loadbalancer.server.port=9117"
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:develop
