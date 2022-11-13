@@ -475,8 +475,6 @@ services:
     container_name: nextcloud
     #ports:
       #- 8081:80
-    links:
-      - nextcloud-db
     volumes:
       - ${CONFIG_DIR}/nextcloud:/var/www/html #config directory
       - ${VOLUME_DIR}/nextcloud:/var/www/html/data:rw #data directory
