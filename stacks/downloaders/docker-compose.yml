@@ -1,7 +1,7 @@
 ---
 version: "3.7"
 services:
-  wireguard:
+  wireguard: # for rootless operation (Podman), need to first run `sudo modprobe ip_tables`
     image: ghcr.io/linuxserver/wireguard
     container_name: wireguard
     cap_add:
