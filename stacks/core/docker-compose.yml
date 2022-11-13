@@ -510,10 +510,10 @@ services:
 
 networks:
   frontend:
-    external:
-      name: frontend
-      #run: docker network create frontend
+    name: frontend
+    external: true
+    #run: docker network create frontend
   backend:
-    external:
-      name: backend
-      #run: docker network create backend
+    name: backend
+    external: true
+    #run: docker network create backend
