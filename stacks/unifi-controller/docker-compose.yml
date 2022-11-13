@@ -55,11 +55,7 @@ services:
       # - "traefik.tcp.services.unifi-controller-tcp-svc.loadbalancer.server.port=8443"
 
 networks:
-  # frontend:
-    # external:
-      # name: frontend
-      # run: docker network create --name=frontend
   backend:
-    external:
-      name: backend
-      # run: docker network create --name=backend
+    name: backend
+    external: true
+    #run: docker network create backend

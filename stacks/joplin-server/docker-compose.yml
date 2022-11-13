@@ -50,6 +50,6 @@ services:
 
 networks:
   backend:
-    external:
-      name: backend
-      #run: docker network create --name=backend
+    name: backend
+    external: true
+    #run: docker network create backend
