@@ -24,8 +24,7 @@ services:
       #- WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER=${EMAIL_FROM}
       #- WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD=${EMAIL_PASSWORD}
     volumes:
-      # - /var/run/docker.sock:/var/run/docker.sock # Docker
-      - /run/user/1000/podman/podman.sock:/var/run/docker.sock # Podman
+      - ${DOCKER_SOCK}:/var/run/docker.sock # Docker
     networks:
       - backend
     # Cron Expression of 6 fields: <second> <minute> <hour> <day-of-month> <month> <day-of-week>
@@ -114,8 +113,7 @@ services:
       - --traefik.host=traefik
       - --traefik.tls.insecure=true
     volumes:
-      # - /var/run/docker.sock:/var/run/docker.sock # Docker
-      - /run/user/1000/podman/podman.sock:/var/run/docker.sock # Podman
+      - ${DOCKER_SOCK}:/var/run/docker.sock
     depends_on:
       - traefik
 
@@ -203,8 +201,7 @@ services:
       #   protocol: tcp
       #   mode: host
     volumes:
-      # - /var/run/docker.sock:/var/run/docker.sock:ro # Docker
-      - /run/user/1000/podman/podman.sock:/var/run/docker.sock:ro # Podman
+      - ${DOCKER_SOCK}:/var/run/docker.sock:ro
       - ${CONFIG_DIR}/shared:/shared # for use with basic auth
       - ${CONFIG_DIR}/traefik2:/etc/traefik
       # traefik2
@@ -409,8 +406,7 @@ services:
     image: portainer/portainer-ce
     container_name: portainer
     volumes:
-      # - /var/run/docker.sock:/var/run/docker.sock # Docker
-      - /run/user/1000/podman/podman.sock:/var/run/docker.sock # Podman
+      - ${DOCKER_SOCK}:/var/run/docker.sock
       - ${CONFIG_DIR}/portainer:/data
     environment:
       - TZ=${TZ}
