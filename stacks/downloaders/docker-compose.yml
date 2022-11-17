@@ -21,7 +21,7 @@ services:
       - /lib/modules:/lib/modules
       - ${EXTHDD_DIR}/downloads/torrents:/downloads # Added path here so it's accesible by Radarr/Sonarr
     networks:
-      - backend
+      - traefik
     # ports:
     #   - 51820:51820/udp
     sysctls:
@@ -75,7 +75,7 @@ services:
       - ${CONFIG_DIR}/qbittorrent:/config
       - ${EXTHDD_DIR}/downloads/torrents/downloads:/downloads
     # networks:
-    #   - backend
+    #   - traefik
     network_mode: service:wireguard
     # ports:
     #   - 6881:6881

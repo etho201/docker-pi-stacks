@@ -26,7 +26,7 @@ services:
     volumes:
       - ${DOCKER_SOCK}:/var/run/docker.sock # Docker
     networks:
-      - backend
+      - traefik
     # Cron Expression of 6 fields: <second> <minute> <hour> <day-of-month> <month> <day-of-week>
     command: --schedule "0 30 3 * * *" --cleanup
     # Checks for new container images everyday at 3:30am
@@ -49,7 +49,7 @@ services:
     volumes:
       - ${CONFIG_DIR}/duckdns:/config #optional
     networks:
-      - backend
+      - traefik
     restart: unless-stopped
 
 ########################################################################################
@@ -91,7 +91,7 @@ services:
       - "traefik.http.routers.oauth-rtr.service=oauth-svc"
       - "traefik.http.services.oauth-svc.loadbalancer.server.port=4181"
     networks:
-      - backend
+      - traefik
     restart: unless-stopped
 
 ########################################################################################
@@ -102,10 +102,10 @@ services:
   traefik-hub-agent:
     image: ghcr.io/traefik/hub-agent-traefik:v1.0.0
     pull_policy: always
-    container_name: treafik-hub-agent
+    container_name: traefik-hub-agent
     restart: "on-failure"
     networks:
-      - backend
+      - traefik
     command:
       - run
       - --hub.token=${TRAEFIK_HUB_TOKEN}
@@ -179,8 +179,7 @@ services:
       - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53
       - --certificatesresolvers.cloudflare.acme.dnschallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
     networks:
-      - frontend
-      - backend
+      - traefik
     #   socket_proxy:
     # depends_on:
     #   - socket-proxy
@@ -248,7 +247,7 @@ services:
   #   image: containous/whoami
   #   container_name: whoami
   #   networks:
-  #     - backend
+  #     - traefik
   #   labels:
   #     - "traefik.enable=true"
   #     ## HTTP Routers
@@ -290,7 +289,7 @@ services:
         - GOTIFY_DEFAULTUSER_NAME=${USERNAME}
         - GOTIFY_DEFAULTUSER_PASS=${GOTIFY_PASSWORD}
     networks:
-      - backend
+      - traefik
     #ports:
       #- 443:443
       #- 80:80
@@ -348,7 +347,7 @@ services:
       #- 8181:8181
     restart: unless-stopped
     networks:
-      - backend
+      - traefik
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -382,7 +381,7 @@ services:
       #- 443:443
     restart: unless-stopped
     networks:
-      - backend
+      - traefik
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -414,7 +413,7 @@ services:
       #- 9000:9000
     restart: unless-stopped
     networks:
-      - backend
+      - traefik
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -464,7 +463,7 @@ services:
       - POSTGRES_DB=whatever
     restart: unless-stopped
     networks:
-      - backend
+      - traefik
 
   nextcloud:
     image: nextcloud:latest
@@ -487,7 +486,7 @@ services:
       - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.${FQDN}
     domainname: nextcloud.${FQDN}
     networks:
-      - backend
+      - traefik
     labels:
       - "traefik.enable=true"
       ## HTTP Routers

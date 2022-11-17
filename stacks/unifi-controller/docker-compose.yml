@@ -28,7 +28,7 @@ services:
       # - 6789:6789 #For UniFi mobile speed test.
     restart: unless-stopped
     networks:
-      - backend
+      - traefik
     labels:
       # https://github.com/containous/traefik/issues/5783 (--serverstransport.insecureskipverify=true)
       # https://community.containo.us/t/problem-using-ssl-backend-with-selfsigned-certificates/1974

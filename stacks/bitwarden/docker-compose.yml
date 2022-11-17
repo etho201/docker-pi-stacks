@@ -27,7 +27,7 @@ services:
       - WEBSOCKET_ENABLED=true # Required to use WebSocket notifications
       # - DATABASE_URL=mysql://bitwarden:${BITWARDEN_DBPASS}@maria-bitwarden/bitwarden #FORMAT: DATABASE_URL=mysql://[[user]:[password]@]host[:port][/database]
     networks:
-      - backend
+      - traefik
     #ports:
       # - 443:443
       # - 80:80
@@ -77,7 +77,7 @@ services:
 #      - TZ=${TZ}
 #    restart: always
 #    networks:
-#      - backend
+#      - traefik
 #    environment:
 #      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOTPW}
 #      MYSQL_USER: ${USERNAME}
