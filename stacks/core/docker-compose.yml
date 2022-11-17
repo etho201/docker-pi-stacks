@@ -502,11 +502,7 @@ services:
       - "traefik.http.services.nextcloud-svc.loadbalancer.server.port=80"
 
 networks:
-  frontend:
-    name: frontend
-    external: true
-    #run: docker network create frontend
-  backend:
+  traefik:
     name: traefik
     external: true
-    #run: docker network create backend
+    #run: docker network create traefik

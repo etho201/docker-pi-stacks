@@ -48,7 +48,7 @@ services:
       - traefik
 
 networks:
-  backend:
+  traefik:
     name: traefik
     external: true
-    #run: docker network create backend
+    #run: docker network create traefik
