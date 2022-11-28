@@ -10,7 +10,7 @@ services:
   bitwarden:
     image: vaultwarden/server:latest
     container_name: bitwarden
-    restart: unless-stopped
+    restart: always
     volumes:
         - ${CONFIG_DIR}/bitwarden:/data
     environment:

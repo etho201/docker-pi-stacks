@@ -18,7 +18,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     # ports:
     #   - 8123:8123
-    restart: unless-stopped
+    restart: always
     privileged: true
     network_mode: host
     # devices:
@@ -61,7 +61,7 @@ services:
 
   ring-mqtt:
     container_name: ring-mqtt
-    restart: unless-stopped
+    restart: always
     image: tsightler/ring-mqtt
     networks:
       - traefik
@@ -100,7 +100,7 @@ services:
       - ${VOLUME_DIR}/mosquitto/data:/mosquitto/data
       - ${VOLUME_DIR}/mosquitto/logs:/mosquitto/log
       - ${CONFIG_DIR}/mosquitto:/mosquitto/config
-    restart: unless-stopped
+    restart: always
     networks:
       - traefik
 

@@ -23,7 +23,7 @@ services:
       - ${CONFIG_DIR}/ombi:/config
     # ports:
     #  - 3579:3579
-    restart: unless-stopped
+    restart: always
     networks:
       - traefik
     labels:
@@ -54,7 +54,7 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
     #ports:
       #- 8989:8989
-    restart: unless-stopped
+    restart: always
     networks:
       - traefik
     labels:
@@ -85,7 +85,7 @@ services:
       - ${EXTHDD_DIR}/media/movies:/movies
     #ports:
       #- 7878:7878
-    restart: unless-stopped
+    restart: always
     networks:
       - traefik
     labels:
@@ -117,7 +117,7 @@ services:
       #- "/etc/localtime:/etc/localtime:ro"
     #ports:
       #- 8686:8686
-    restart: unless-stopped
+    restart: always
     networks:
       - traefik
     labels:
@@ -147,7 +147,7 @@ services:
   #     - "/etc/localtime:/etc/localtime:ro"
   #   #ports:
   #     #- 9117:9117
-  #   restart: unless-stopped
+  #   restart: always
   #   networks:
   #     - traefik
   #   labels:
@@ -175,7 +175,7 @@ services:
       - ${CONFIG_DIR}/prowlarr:/config
     #ports:
       #- 9696:9696
-    restart: unless-stopped
+    restart: always
     networks:
       - traefik
     labels:

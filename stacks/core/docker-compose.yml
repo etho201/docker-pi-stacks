@@ -50,7 +50,7 @@ services:
       - ${CONFIG_DIR}/duckdns:/config #optional
     networks:
       - traefik
-    restart: unless-stopped
+    restart: always
 
 ########################################################################################
 # oauth2
@@ -92,7 +92,7 @@ services:
       - "traefik.http.services.oauth-svc.loadbalancer.server.port=4181"
     networks:
       - traefik
-    restart: unless-stopped
+    restart: always
 
 ########################################################################################
 # Traefik
@@ -103,7 +103,7 @@ services:
     image: ghcr.io/traefik/hub-agent-traefik:v1.0.0
     pull_policy: always
     container_name: traefik-hub-agent
-    restart: "on-failure"
+    restart: always
     networks:
       - traefik
     command:
@@ -120,7 +120,7 @@ services:
   traefik:
     image: traefik:banon # the banon tag refers to v2.9.x
     container_name: traefik
-    restart: unless-stopped
+    restart: always
     command: # CLI arguments
       # Enable Hub communication (open the port 9900 and 9901 by default)
       - --experimental.hub=true
@@ -270,7 +270,7 @@ services:
   gotify:
     image: gotify/server-arm7 # for Raspberry Pi
     container_name: gotify
-    restart: unless-stopped
+    restart: always
     volumes:
         - ${CONFIG_DIR}/gotify:/app/data
     environment:
@@ -331,7 +331,7 @@ services:
       #- ${EXTHDD_DIR}/media/music:/data/music
       #- ${EXTHDD_DIR}/media/other:/data/other
       - ${VOLUME_DIR}/plex/transcode:/transcode
-    restart: unless-stopped
+    restart: always
 
   tautulli:
     image: ghcr.io/linuxserver/tautulli
@@ -345,7 +345,7 @@ services:
       - ${CONFIG_DIR}/plex/Library/Application Support/Plex Media Server/Logs:/logs:ro #Map this to Plex log directory - recommended RO.
     #ports:
       #- 8181:8181
-    restart: unless-stopped
+    restart: always
     networks:
       - traefik
     labels:
@@ -379,7 +379,7 @@ services:
     #ports:
       #- 80:80
       #- 443:443
-    restart: unless-stopped
+    restart: always
     networks:
       - traefik
     labels:
@@ -411,7 +411,7 @@ services:
       - TZ=${TZ}
     #ports:
       #- 9000:9000
-    restart: unless-stopped
+    restart: always
     networks:
       - traefik
     labels:
@@ -439,7 +439,7 @@ services:
 #    container_name: MariaDB
 #    image: mariadb:latest
 #    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
-#    restart: unless-stopped
+#    restart: always
 #    volumes:
 #      - db:/var/lib/mysql
 #    environment:
@@ -461,7 +461,7 @@ services:
       # Do not create the 'nextcloud' database here. Doing so will cause the Nextcloud installation to fail. The nextcloud container handles this automatically; however, you must create at least one other database first (for example: whatever).
       # - POSTGRES_DB=nextcloud
       - POSTGRES_DB=whatever
-    restart: unless-stopped
+    restart: always
     networks:
       - traefik
 
@@ -473,7 +473,7 @@ services:
     volumes:
       - ${CONFIG_DIR}/nextcloud:/var/www/html #config directory
       - ${VOLUME_DIR}/nextcloud:/var/www/html/data:rw #data directory
-    restart: unless-stopped
+    restart: always
     environment:
       - PUID=${PUID}
       - PGID=${PGID}

@@ -26,7 +26,7 @@ services:
       # - 8843:8843 #Unifi communication port
       # - 8880:8880 #For HTTP portal redirection.
       # - 6789:6789 #For UniFi mobile speed test.
-    restart: unless-stopped
+    restart: always
     networks:
       - traefik
     labels:
