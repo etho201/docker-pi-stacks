@@ -22,7 +22,7 @@ services:
       - SMTP_PORT=587
       - SMTP_SECURITY=starttls
       - SMTP_USERNAME=${EMAIL_FROM} # Must 'allow less secure app access' if using Gmail --> https://myaccount.google.com/lesssecureapps?utm_source=google-account&utm_medium=web
-      - SMTP_PASSWORD=${EMAIL_PASSWORD}
+      - SMTP_PASSWORD=${EMAIL_APP_PASSWORD}
       - LOG_FILE=/data/bitwarden.log
       - WEBSOCKET_ENABLED=true # Required to use WebSocket notifications
       # - DATABASE_URL=mysql://bitwarden:${BITWARDEN_DBPASS}@maria-bitwarden/bitwarden #FORMAT: DATABASE_URL=mysql://[[user]:[password]@]host[:port][/database]
