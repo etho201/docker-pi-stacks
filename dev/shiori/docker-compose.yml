@@ -1,0 +1,37 @@
+---
+version: '3.7'
+services:
+
+  shiori:
+    image: ghcr.io/go-shiori/shiori
+    container_name: shiori
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_DIR}/shiori:/shiori
+    #ports:
+      #- 8080:8080
+    restart: always
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.shiori-rtr.entrypoints=websecure"
+      - "traefik.http.routers.shiori-rtr.rule=Host(`shiori.$FQDN`)"
+      - "traefik.http.routers.shiori-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.shiori-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.shiori-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.shiori-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.shiori-rtr.service=shiori-svc"
+      - "traefik.http.services.shiori-svc.loadbalancer.server.port=8080"
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
