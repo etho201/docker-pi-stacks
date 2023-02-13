@@ -2,7 +2,7 @@
 
 Create a Cron job that calls the `healthcheck.sh` file. If the health check determines that Transmission is inaccessible, it will automatically rebuild the containers for Wireguard, Transmission, and qBittorrent and a notification will be sent via Gotify.
 
-> **Important:** Ensure `docker-compose` can be found in one of the paths specified in the script. Example: `/usr/local/bin/docker-compose`
+> **Important:** Ensure `docker` can be found in one of the paths specified in the script. Example: `/usr/bin/docker`
 
 Example of Cron job:
 
