@@ -35,7 +35,7 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
-      - TRANSMISSION_WEB_HOME=/combustion-release/ #optional
+      # - TRANSMISSION_WEB_HOME=/combustion-release/ #optional (not supported in Transmission 4.x)
       # - USER=username #optional
       # - PASS=password #optional
     volumes:
