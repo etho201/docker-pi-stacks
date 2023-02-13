@@ -10,6 +10,6 @@ done
 
 if [[ $(docker run --network=backend --rm curlimages/curl -L -s -o /dev/null -w "%{http_code}" http://wireguard:9091) != "200" ]]; then
     cd "$( dirname "${BASH_SOURCE[0]}" )"
-    docker-compose up -d --force-recreate
+    docker compose up -d --force-recreate
     docker run --network=backend --rm curlimages/curl "http://gotify/message?token=${GOTIFY_TOKEN}" -F "title=Transmission" -F "message=Restarted Transmission" -F "priority=5"
 fi
