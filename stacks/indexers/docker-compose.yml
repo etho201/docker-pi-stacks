@@ -39,13 +39,14 @@ services:
       ## HTTP Services
       - "traefik.http.routers.ombi-rtr.service=ombi-svc"
       - "traefik.http.services.ombi-svc.loadbalancer.server.port=3579"
+
   overseerr:
     image: sctx/overseerr:latest
     container_name: overseerr
     environment:
       - LOG_LEVEL=debug
       - TZ=${TZ}
-      # - PORT=5055 #optional
+      - PORT=5055 #optional
     # ports:
     #   - 5055:5055
     volumes:
