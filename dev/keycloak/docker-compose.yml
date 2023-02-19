@@ -1,0 +1,36 @@
+---
+version: '3.8'
+services:
+
+  keycloak:
+    image: quay.io/keycloak/keycloak
+    container_name: keycloak
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
+    volumes:
+      - ${CONFIG_DIR}/keycloak:/config
+    # ports:
+    #  - 8080:8080
+    restart: always
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.keycloak-rtr.entrypoints=websecure"
+      - "traefik.http.routers.keycloak-rtr.rule=Host(`keycloak.$FQDN`)"
+      - "traefik.http.routers.keycloak-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.keycloak-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.keycloak-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.keycloak-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.keycloak-rtr.service=keycloak-svc"
+      - "traefik.http.services.keycloak-svc.loadbalancer.server.port=8080"
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
