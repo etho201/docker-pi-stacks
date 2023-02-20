@@ -8,18 +8,27 @@ services:
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
+      - KC_HOSTNAME=keycloak.${FQDN}
+        #- KC_HOSTNAME_URL=https://keycloak.${FQDN}
+      - KEYCLOAK_FRONTEND_URL=https://keycloak.${FQDN}/
+      - KC_HOSTNAME_STRICT=false
+      - KC_PROXY=edge
+      - KC_HTTP_ENABLED=true
+    command: 
+      - start-dev
     volumes:
       - ${CONFIG_DIR}/keycloak:/config
-    # ports:
-    #  - 8080:8080
+    ports:
+      - 8081:8080
     restart: always
     networks:
       - traefik
     labels:
+      # https://www.keycloak.org/server/reverseproxy
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.keycloak-rtr.entrypoints=websecure"
-      - "traefik.http.routers.keycloak-rtr.rule=Host(`keycloak.$FQDN`)"
+      - "traefik.http.routers.keycloak-rtr.rule=Host(`keycloak.$FQDN`, `keycloak.$FQDN/js/`, `keycloak.$FQDN/realms/`)"
       - "traefik.http.routers.keycloak-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.keycloak-rtr.middlewares=chain-no-auth@file" # No Authentication
