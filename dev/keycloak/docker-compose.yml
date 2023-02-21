@@ -9,7 +9,7 @@ services:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
       - KC_HOSTNAME=keycloak.${FQDN}
-        #- KC_HOSTNAME_URL=https://keycloak.${FQDN}
+      # - KC_HOSTNAME_URL=https://keycloak.${FQDN}
       - KC_HOSTNAME_STRICT=false
       - KC_PROXY=edge
       - KC_HTTP_ENABLED=true
@@ -17,6 +17,8 @@ services:
       - KC_DB_URL=jdbc:postgresql://keycloak-db:5432/keycloak
       - KC_DB_PASSWORD=${KC_DB_PASSWORD}
       - KC_DB_USERNAME=keycloak
+      # - KC_HEALTH_ENABLED=true
+      # - KC_METRICS_ENABLED=true
     command: 
       - start
     volumes:
