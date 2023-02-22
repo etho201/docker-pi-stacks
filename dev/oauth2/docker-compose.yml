@@ -1,5 +1,5 @@
 ---
-version: '3.7'
+version: '3.8'
 services:
 
 ########################################################################################
@@ -47,6 +47,7 @@ services:
       ## HTTP Services
       - "traefik.http.routers.oauth2-rtr.service=oauth2-svc"
       - "traefik.http.services.oauth2-svc.loadbalancer.server.port=4180"
+      - "traefik.http.services.oauth2-svc.loadBalancer.passHostHeader=false"
       ## Other labels
       # - "traefik.http.middlewares.oauth2-verify.forwardAuth.address=http://oauth2:4180/oauth2/auth"
       # - "traefik.http.middlewares.oauth2-verify.forwardAuth.trustForwardHeader=true"
@@ -59,11 +60,11 @@ services:
       # - "traefik.http.routers.oauth2.service=oauth2@file"
       # - "traefik.http.services.oauth2.loadbalancer.server.port=4180"
     networks:
-      - backend
+      - traefik
     restart: unless-stopped
 
 networks:
-  backend:
+  traefik:
     external:
-      name: backend
-      #run: docker network create backend
+      name: traefik
+      #run: docker network create traefik
