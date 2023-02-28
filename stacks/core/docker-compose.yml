@@ -172,7 +172,7 @@ services:
       - --certificatesresolvers.duckdns.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53
       - --certificatesresolvers.duckdns.acme.dnschallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
       # Comment out the below 5 entries if not using Cloudflare
-      - --certificatesresolvers.cloudflare.acme.email=${EMAIL}
+      - --certificatesresolvers.cloudflare.acme.email=${CF_API_EMAIL}
       - --certificatesresolvers.cloudflare.acme.storage=/etc/traefik/acme/acme.json
       - --certificatesresolvers.cloudflare.acme.dnschallenge=true
       - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
