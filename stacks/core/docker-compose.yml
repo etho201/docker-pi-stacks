@@ -156,9 +156,8 @@ services:
       - --entrypoints.websecure.http.tls.domains[0].sans=*.${FQDN}
       # Comment out the below 3 entries if only using one domain
       - --entrypoints.websecure2.http.tls.certresolver=cloudflare
-      - --entrypoints.websecure2.http.tls.domains[0].main=${FQDN2}
-      - --entrypoints.websecure2.http.tls.domains[0].sans=*.${FQDN2}
-      # - --entrypoints.websecure.http.tls.domains[1].main=$DOMAIN # Pulls main cert for second domain
+      - --entrypoints.websecure.http.tls.domains[1].main=${FQDN2} # Pulls main cert for second domain
+      - --entrypoints.websecure.http.tls.domains[1].sans=*.${FQDN2} # Pulls wildcard cert for second domain
       # - --entrypoints.websecure.http.tls.domains[1].sans=*.$DOMAIN # Pulls wildcard cert for second domain
       # - --providers.docker.network=backend # Defines a default docker network to use for connections to all containers. Setting this will cause issues if a container uses network_mode
       - --providers.docker.swarmMode=false
@@ -169,14 +168,14 @@ services:
       - --certificatesresolvers.duckdns.acme.email=${EMAIL}
       - --certificatesresolvers.duckdns.acme.storage=/etc/traefik/acme/acme.json
       - --certificatesresolvers.duckdns.acme.dnschallenge.provider=duckdns
-      - --certificatesresolvers.duckdns.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53
+      - --certificatesresolvers.duckdns.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53
       - --certificatesresolvers.duckdns.acme.dnschallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
       # Comment out the below 5 entries if not using Cloudflare
       - --certificatesresolvers.cloudflare.acme.email=${CF_API_EMAIL}
       - --certificatesresolvers.cloudflare.acme.storage=/etc/traefik/acme/acme.json
       - --certificatesresolvers.cloudflare.acme.dnschallenge=true
       - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
-      - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53
       - --certificatesresolvers.cloudflare.acme.dnschallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
     networks:
       - traefik
