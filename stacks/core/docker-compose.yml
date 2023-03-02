@@ -154,10 +154,12 @@ services:
       - --entrypoints.websecure.http.tls.certresolver=duckdns # Comment out this line after first run of traefik to force the use of wildcard certs
       - --entrypoints.websecure.http.tls.domains[0].main=${FQDN}
       - --entrypoints.websecure.http.tls.domains[0].sans=*.${FQDN}
-      # Comment out the below 3 entries if only using one domain
-      - --entrypoints.websecure2.http.tls.certresolver=cloudflare
+      # Comment out the below 5 entries if only using one domain
+      # - --entrypoints.websecure2.http.tls.certresolver=cloudflare
       - --entrypoints.websecure.http.tls.domains[1].main=${FQDN2} # Pulls main cert for second domain
       - --entrypoints.websecure.http.tls.domains[1].sans=*.${FQDN2} # Pulls wildcard cert for second domain
+      - --entrypoints.websecure.http.tls.domains[2].main=${FQDN3} # Pulls main cert for second domain
+      - --entrypoints.websecure.http.tls.domains[2].sans=*.${FQDN3} # Pulls wildcard cert for second domain
       # - --entrypoints.websecure.http.tls.domains[1].sans=*.$DOMAIN # Pulls wildcard cert for second domain
       # - --providers.docker.network=backend # Defines a default docker network to use for connections to all containers. Setting this will cause issues if a container uses network_mode
       - --providers.docker.swarmMode=false
