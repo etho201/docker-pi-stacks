@@ -151,7 +151,7 @@ services:
       - --providers.docker.exposedByDefault=false
       # - --entrypoints.websecure.http.middlewares=chain-authelia@file
       # Add dns-cloudflare as default certresolver for all services. Also enables TLS and no need to specify on individual services
-      - --entrypoints.websecure.http.tls.certresolver=duckdns # Comment out this line after first run of traefik to force the use of wildcard certs
+      - --entrypoints.websecure.http.tls.certresolver=letsencrypt # Comment out this line after first run of traefik to force the use of wildcard certs
       - --entrypoints.websecure.http.tls.domains[0].main=${FQDN}
       - --entrypoints.websecure.http.tls.domains[0].sans=*.${FQDN}
       # Comment out the below 5 entries if only using one domain
@@ -167,18 +167,15 @@ services:
       # - --providers.file.filename=/path/to/file # Load dynamic configuration from a file
       - --providers.file.watch=true # Only works on top level files in the rules folder
       # - --certificatesresolvers.letsencrypt.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
-      - --certificatesresolvers.duckdns.acme.email=${EMAIL}
-      - --certificatesresolvers.duckdns.acme.storage=/etc/traefik/acme/acme.json
-      - --certificatesresolvers.duckdns.acme.dnschallenge.provider=duckdns
-      - --certificatesresolvers.duckdns.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53
-      - --certificatesresolvers.duckdns.acme.dnschallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
-      # Comment out the below 5 entries if not using Cloudflare
-      - --certificatesresolvers.cloudflare.acme.email=${EMAIL}
-      - --certificatesresolvers.cloudflare.acme.storage=/etc/traefik/acme/acme.json
-      - --certificatesresolvers.cloudflare.acme.dnschallenge=true
-      - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
-      - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53
-      - --certificatesresolvers.cloudflare.acme.dnschallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
+      - --certificatesresolvers.letsencrypt.acme.email=${EMAIL}
+      - --certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme/acme.json
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=duckdns
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
+      # Comment out the below 2 entries if not using Cloudflare
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge=true
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
+
     networks:
       - traefik
     #   socket_proxy:
