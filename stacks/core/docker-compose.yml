@@ -155,7 +155,7 @@ services:
       - --entrypoints.websecure.http.tls.domains[0].main=${FQDN}
       - --entrypoints.websecure.http.tls.domains[0].sans=*.${FQDN}
       # Comment out the below 5 entries if only using one domain
-      - --entrypoints.websecure.http.tls.certresolver=le-cloudlfare # Comment out this line after first run of traefik to force the use of wildcard certs
+      - --entrypoints.websecure.http.tls.certresolver=le-cloudflare # Comment out this line after first run of traefik to force the use of wildcard certs
       - --entrypoints.websecure.http.tls.domains[1].main=${FQDN2} # Pulls main cert for second domain
       - --entrypoints.websecure.http.tls.domains[1].sans=*.${FQDN2} # Pulls wildcard cert for second domain
       - --entrypoints.websecure.http.tls.domains[2].main=${FQDN3} # Pulls main cert for second domain
