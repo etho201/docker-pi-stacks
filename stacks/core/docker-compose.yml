@@ -128,6 +128,7 @@ services:
       - --metrics.prometheus=true
       - --metrics.prometheus.addrouterslabels=true
       - --metrics.prometheus.addEntryPointsLabels=true
+      - --metrics.prometheus.addServicesLabels=true
       - --global.checkNewVersion=true
       - --global.sendAnonymousUsage=true
       - --entryPoints.web.address=:80 # http
