@@ -125,7 +125,9 @@ services:
       # Enable Hub communication (open the port 9900 and 9901 by default)
       - --experimental.hub=true
       - --hub.tls.insecure=true
+      - --metrics.prometheus=true
       - --metrics.prometheus.addrouterslabels=true
+      - --metrics.prometheus.addEntryPointsLabels=true
       - --global.checkNewVersion=true
       - --global.sendAnonymousUsage=true
       - --entryPoints.web.address=:80 # http
@@ -150,40 +152,37 @@ services:
       - --providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.$FQDN`)
       - --providers.docker.exposedByDefault=false
       # - --entrypoints.websecure.http.middlewares=chain-authelia@file
-      # Add dns-cloudflare as default certresolver for all services. Also enables TLS and no need to specify on individual services
-      - --entrypoints.websecure.http.tls.certresolver=duckdns # Comment out this line after first run of traefik to force the use of wildcard certs
-      - --entrypoints.websecure.http.tls.domains[0].main=${FQDN}
-      - --entrypoints.websecure.http.tls.domains[0].sans=*.${FQDN}
-      # Comment out the below 5 entries if only using one domain
-      - --entrypoints.websecure2.http.tls.certresolver=cloudflare # Comment out this line after first run of traefik to force the use of wildcard certs
-      - --entrypoints.websecure2.http.tls.domains[0].main=${FQDN2} # Pulls main cert for second domain
-      - --entrypoints.websecure2.http.tls.domains[0].sans=*.${FQDN2} # Pulls wildcard cert for second domain
-      - --entrypoints.websecure2.http.tls.domains[1].main=${FQDN3} # Pulls main cert for second domain
-      - --entrypoints.websecure2.http.tls.domains[1].sans=*.${FQDN3} # Pulls wildcard cert for second domain
       # - --providers.docker.network=backend # Defines a default docker network to use for connections to all containers. Setting this will cause issues if a container uses network_mode
       - --providers.docker.swarmMode=false
       - --providers.file.directory=/etc/traefik/rules # Load dynamic configuration from one or more .toml or .yml files in a directory
       # - --providers.file.filename=/path/to/file # Load dynamic configuration from a file
       - --providers.file.watch=true # Only works on top level files in the rules folder
-      # - --certificatesresolvers.letsencrypt.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
+      # DuckDNS
+      - --entrypoints.websecure.http.tls.certresolver=duckdns # Comment out this line after first run of traefik to force the use of wildcard certs
+      - --entrypoints.websecure.http.tls.domains[0].main=${FQDN} # Pulls main cert for second domain
+      - --entrypoints.websecure.http.tls.domains[0].sans=*.${FQDN} # Pulls wildcard cert for second domain
+      # DuckDNS (Certificate Resolvers)
       - --certificatesresolvers.duckdns.acme.email=${EMAIL}
       - --certificatesresolvers.duckdns.acme.storage=/etc/traefik/acme/acme.json
       - --certificatesresolvers.duckdns.acme.dnschallenge.provider=duckdns
       - --certificatesresolvers.duckdns.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53
       - --certificatesresolvers.duckdns.acme.dnschallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
-      # Comment out the below 5 entries if not using Cloudflare
+      # Cloudflare (Comment out the below entries if only using one domain)
+      - --entrypoints.websecure2.http.tls.certresolver=cloudflare # Comment out this line after first run of traefik to force the use of wildcard certs
+      - --entrypoints.websecure2.http.tls.domains[0].main=${FQDN2}
+      - --entrypoints.websecure2.http.tls.domains[0].sans=*.${FQDN2}
+      - --entrypoints.websecure2.http.tls.domains[1].main=${FQDN3}
+      - --entrypoints.websecure2.http.tls.domains[1].sans=*.${FQDN3}
+      # Cloudflare (Certificate Resolvers)
       - --certificatesresolvers.cloudflare.acme.email=${EMAIL}
       - --certificatesresolvers.cloudflare.acme.storage=/etc/traefik/acme/acme.json
       - --certificatesresolvers.cloudflare.acme.dnschallenge=true
       - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
       - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53
-      - --certificatesresolvers.cloudflare.acme.dnschallenge.delayBeforeCheck=90 # To del
-
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
+      # - --certificatesresolvers.duckdns.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
     networks:
       - traefik
-    #   socket_proxy:
-    # depends_on:
-    #   - socket-proxy
     security_opt:
       - no-new-privileges:true
     ports:
