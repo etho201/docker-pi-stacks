@@ -100,7 +100,7 @@ services:
 ########################################################################################
 
   traefik-hub-agent:
-    image: ghcr.io/traefik/hub-agent-traefik:v1.0.0
+    image: ghcr.io/traefik/hub-agent-traefik:latest
     pull_policy: always
     container_name: traefik-hub-agent
     restart: always
