@@ -131,10 +131,10 @@ services:
       - --metrics.prometheus.addServicesLabels=true
       - --global.checkNewVersion=true
       - --global.sendAnonymousUsage=true
-      - --entryPoints.web.address=:80 # http
+      - --entrypoints.web.address=:80 # http
       - --entrypoints.web.http.redirections.entryPoint.to=websecure
       - --entrypoints.web.http.redirections.entryPoint.scheme=https
-      - --entryPoints.websecure.address=:443 # https
+      - --entrypoints.websecure.address=:443 # https
       # Allow these IPs to set the X-Forwarded-* headers - Cloudflare IPs: https://www.cloudflare.com/ips/
       #- --entrypoints.websecure.forwardedHeaders.trustedIPs=173.245.48.0/20,103.21.244.0/22,103.22.200.0/22,103.31.4.0/22,141.101.64.0/18,108.162.192.0/18,190.93.240.0/20,188.114.96.0/20,197.234.240.0/22,198.41.128.0/17,162.158.0.0/15,104.16.0.0/12,172.64.0.0/13,131.0.72.0/22
       - --entryPoints.traefik.address=:8080
@@ -158,23 +158,13 @@ services:
       - --providers.file.directory=/etc/traefik/rules # Load dynamic configuration from one or more .toml or .yml files in a directory
       # - --providers.file.filename=/path/to/file # Load dynamic configuration from a file
       - --providers.file.watch=true # Only works on top level files in the rules folder
-      # DuckDNS
-      - --entrypoints.websecure.http.tls.certresolver=duckdns # Comment out this line after first run of traefik to force the use of wildcard certs
-      - --entrypoints.websecure.http.tls.domains[0].main=${FQDN} # Pulls main cert for second domain
-      - --entrypoints.websecure.http.tls.domains[0].sans=*.${FQDN} # Pulls wildcard cert for second domain
-      # DuckDNS (Certificate Resolvers)
+      # DuckDNS (Comment out the below entries if not using DuckDNS)
       - --certificatesresolvers.duckdns.acme.email=${EMAIL}
       - --certificatesresolvers.duckdns.acme.storage=/etc/traefik/acme/acme.json
       - --certificatesresolvers.duckdns.acme.dnschallenge.provider=duckdns
       - --certificatesresolvers.duckdns.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53
       - --certificatesresolvers.duckdns.acme.dnschallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
-      # Cloudflare (Comment out the below entries if only using one domain)
-      - --entrypoints.websecure2.http.tls.certresolver=cloudflare # Comment out this line after first run of traefik to force the use of wildcard certs
-      - --entrypoints.websecure2.http.tls.domains[0].main=${FQDN2}
-      - --entrypoints.websecure2.http.tls.domains[0].sans=*.${FQDN2}
-      - --entrypoints.websecure2.http.tls.domains[1].main=${FQDN3}
-      - --entrypoints.websecure2.http.tls.domains[1].sans=*.${FQDN3}
-      # Cloudflare (Certificate Resolvers)
+      # Cloudflare (Comment out the below entries if not using Cloudflare)
       - --certificatesresolvers.cloudflare.acme.email=${EMAIL}
       - --certificatesresolvers.cloudflare.acme.storage=/etc/traefik/acme/acme.json
       - --certificatesresolvers.cloudflare.acme.dnschallenge=true
@@ -226,6 +216,16 @@ services:
       - "traefik.http.routers.http-catchall.rule=HostRegexp(`{host:.+}`)"
       - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      # Pull certs for DuckDNS
+      - "traefik.http.routers.duckdns-rtr.tls.certresolver=duckdns"
+      - "traefik.http.routers.duckdns-rtr.tls.domains[0].main=${FQDN}"
+      - "traefik.http.routers.duckdns-rtr.tls.domains[0].sans=*.${FQDN}"
+      # Pull certs for Cloudflare
+      - "traefik.http.routers.cloudflare-rtr.tls.certresolver=cloudflare"
+      - "traefik.http.routers.cloudflare-rtr.tls.domains[0].main=${FQDN2}"
+      - "traefik.http.routers.cloudflare-rtr.tls.domains[0].sans=*.${FQDN2}"
+      - "traefik.http.routers.cloudflare-rtr.tls.domains[1].main=${FQDN3}"
+      - "traefik.http.routers.cloudflare-rtr.tls.domains[1].sans=*.${FQDN3}"
       # HTTP Routers
       - "traefik.http.routers.traefik-rtr.entrypoints=websecure"
       - "traefik.http.routers.traefik-rtr.rule=Host(`traefik.$FQDN`)"
