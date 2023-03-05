@@ -163,6 +163,9 @@ services:
       - "traefik.http.routers.traefik-rtr.tls=true"
       ## Services - API
       - "traefik.http.routers.traefik-rtr.service=api@internal"
+      ## HTTP Services
+      - "traefik.http.routers.traefik-rtr.service=traefik-svc"
+      - "traefik.http.services.traefik-svc.loadbalancer.server.port=8080"
       ## Middlewares
       # - "traefik.http.routers.traefik-rtr.middlewares=chain-authelia@file"
       # - "traefik.http.routers.traefik-rtr.middlewares=chain-no-auth@file" # No Authentication
