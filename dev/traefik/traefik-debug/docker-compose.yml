@@ -1,0 +1,250 @@
+---
+version: '3.7'
+services:
+
+########################################################################################
+# oauth2
+########################################################################################
+
+  # Google OAuth - Single Sign On using OAuth 2.0 for Traefik 2.2
+  oauth:
+    image: thomseddon/traefik-forward-auth:2.2.0-arm # Use this image with Raspberry Pi
+    container_name: oauth
+    #image: thomseddon/traefik-forward-auth:latest
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - PROVIDERS_GENERIC_OAUTH_CLIENT_ID=$GITHUB_CLIENT_ID
+      - PROVIDERS_GENERIC_OAUTH_CLIENT_SECRET=$GITHUB_CLIENT_SECRET
+      - PROVIDERS_GENERIC_OAUTH_USER_URL=https://api.github.com/user
+      - PROVIDERS_GENERIC_OAUTH_AUTH_URL=https://github.com/login/oauth/authorize
+      - PROVIDERS_GENERIC_OAUTH_TOKEN_URL=https://github.com/login/oauth/access_token
+      - SECRET=$OAUTH2_PROXY_COOKIE_SECRET
+      - COOKIE_DOMAIN=${FQDN}
+      - INSECURE_COOKIE=false
+      - AUTH_HOST=oauth.${FQDN} # Note: This should be considered advanced usage, if you are having problems please try disabling this option and then re-read the Auth Host Mode section.
+      - URL_PATH=/_oauth
+      - WHITELIST=${WHITELIST} # Ensure your email is publicly visible on GitHub, otherwise you will get a "not authorized" message when logging in.
+      - LOG_LEVEL=warn
+      - LOG_FORMAT=text
+      - LIFETIME=2592000 # 30 days
+      - DEFAULT_ACTION=auth
+      - DEFAULT_PROVIDER=generic-oauth # use generic-oauth for GitHub
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.oauth-rtr.entrypoints=websecure"
+      - "traefik.http.routers.oauth-rtr.rule=Host(`oauth.$FQDN`)"
+      ## Middlewares
+      - "traefik.http.routers.oauth-rtr.middlewares=chain-oauth@file"
+      ## HTTP Services
+      - "traefik.http.routers.oauth-rtr.service=oauth-svc"
+      - "traefik.http.services.oauth-svc.loadbalancer.server.port=4181"
+    networks:
+      - traefik
+    restart: always
+
+########################################################################################
+# Traefik
+# https://hub.docker.com/_/traefik
+# https://traefik.io/blog/traefik-2-tls-101-23b4fbee81f1/
+########################################################################################
+
+  traefik:
+    image: traefik:banon # the banon tag refers to v2.9.x
+    container_name: traefik
+    restart: always
+    command: # CLI arguments
+      # Enable Hub communication (open the port 9900 and 9901 by default)
+      - --experimental.hub=true
+      - --hub.tls.insecure=true
+      - --metrics.prometheus=true
+      - --metrics.prometheus.addrouterslabels=true
+      - --metrics.prometheus.addEntryPointsLabels=true
+      - --metrics.prometheus.addServicesLabels=true
+      - --global.checkNewVersion=true
+      - --global.sendAnonymousUsage=true
+      - --entrypoints.web.address=:80 # http
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.websecure.address=:443 # https
+      # Allow these IPs to set the X-Forwarded-* headers - Cloudflare IPs: https://www.cloudflare.com/ips/
+      #- --entrypoints.websecure.forwardedHeaders.trustedIPs=173.245.48.0/20,103.21.244.0/22,103.22.200.0/22,103.31.4.0/22,141.101.64.0/18,108.162.192.0/18,190.93.240.0/20,188.114.96.0/20,197.234.240.0/22,198.41.128.0/17,162.158.0.0/15,104.16.0.0/12,172.64.0.0/13,131.0.72.0/22
+      - --entryPoints.traefik.address=:8080
+      - --api=true
+      # - --api.insecure=true
+      - --serversTransport.insecureSkipVerify=true # Required for Unifi since it comes with a self-signed certificate
+      - --log=true
+      - --log.level=WARN # (Default: ERROR) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+      - --accessLog=true
+      - --accessLog.filePath=/etc/traefik/traefik.log
+      - --accessLog.bufferingSize=100 # Configuring a buffer of 100 lines
+      - --accessLog.filters.statusCodes=400-499
+      - --providers.docker=true
+      - --providers.docker.endpoint=unix:///var/run/docker.sock # Connection to the Docker host. Consider using Docker Socket Proxy instead for improved security
+      # - --providers.docker.endpoint=tcp://socket-proxy:2375
+      - --providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.$FQDN`)
+      - --providers.docker.exposedByDefault=false
+      # - --entrypoints.websecure.http.middlewares=chain-authelia@file
+      # - --providers.docker.network=backend # Defines a default docker network to use for connections to all containers. Setting this will cause issues if a container uses network_mode
+      - --providers.docker.swarmMode=false
+      - --providers.file.directory=/etc/traefik/rules # Load dynamic configuration from one or more .toml or .yml files in a directory
+      # - --providers.file.filename=/path/to/file # Load dynamic configuration from a file
+      - --providers.file.watch=true # Only works on top level files in the rules folder
+      # DuckDNS
+      # - --entrypoints.websecure.http.tls.certresolver=duckdns # Comment out this line after first run of traefik to force the use of wildcard certs
+      # - --entrypoints.websecure.http.tls.domains[0].main=${FQDN} # Pulls main cert for second domain
+      # - --entrypoints.websecure.http.tls.domains[0].sans=*.${FQDN} # Pulls wildcard cert for second domain
+      # DuckDNS (Certificate Resolvers)
+      - --certificatesresolvers.duckdns.acme.email=${EMAIL}
+      - --certificatesresolvers.duckdns.acme.storage=/etc/traefik/acme/acme.json
+      - --certificatesresolvers.duckdns.acme.dnschallenge.provider=duckdns
+      - --certificatesresolvers.duckdns.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53
+      - --certificatesresolvers.duckdns.acme.dnschallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
+      # Cloudflare (Comment out the below entries if only using one domain)
+      # - --entrypoints.websecure2.http.tls.certresolver=cloudflare # Comment out this line after first run of traefik to force the use of wildcard certs
+      # - --entrypoints.websecure2.http.tls.domains[0].main=${FQDN2}
+      # - --entrypoints.websecure2.http.tls.domains[0].sans=*.${FQDN2}
+      # - --entrypoints.websecure2.http.tls.domains[1].main=${FQDN3}
+      # - --entrypoints.websecure2.http.tls.domains[1].sans=*.${FQDN3
+      # Cloudflare (Certificate Resolvers)
+      - --certificatesresolvers.cloudflare.acme.email=${EMAIL}
+      - --certificatesresolvers.cloudflare.acme.storage=/etc/traefik/acme/acme.json
+      - --certificatesresolvers.cloudflare.acme.dnschallenge=true
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
+      # - --certificatesresolvers.duckdns.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
+    networks:
+      - traefik
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      # https://www.reddit.com/r/docker/comments/c1wrep/traefik_reverse_proxy_question_docker_overlay/
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
+      # - target: 8080
+      #   published: 8080
+      #   protocol: tcp
+      #   mode: host
+    volumes:
+      - ${DOCKER_SOCK}:/var/run/docker.sock:ro
+      - ${CONFIG_DIR}/shared:/shared # for use with basic auth
+      - ${CONFIG_DIR}/traefik2:/etc/traefik
+      # traefik2
+      # ├── acme
+      # │   └── acme.json # cert location - you must touch this file and change permissions to 600
+      # ├── rules # file provider directory
+      # │   ├── app-plex.yml
+      # │   ├── middleware-chains.yml
+      # │   └── middleware.yml
+      # └── traefik.log # for fail2ban - make sure to touch file before starting container
+      #
+      # Tip: Use Subversion to quickly download the Traefik2 folder into the config directory.
+      # svn export https://github.com/etho201/docker-pi-stacks/trunk/config/traefik2
+    environment:
+      - DUCKDNS_TOKEN=${DUCKDNS_TOKEN}
+      - CF_API_EMAIL=${CF_API_EMAIL} # Comment out if not using Cloudflare
+      - CF_API_KEY=${CF_API_KEY} # Comment out if not using Cloudflare
+    labels:
+      - "traefik.enable=true"
+      # HTTP-to-HTTPS Redirect
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.rule=HostRegexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      # HTTP Routers
+      - "traefik.http.routers.traefik-rtr.tls.domains[0].main=${FQDN}"
+      - "traefik.http.routers.traefik-rtr.tls.domains[0].sans=*.${FQDN}"
+      - "traefik.http.routers.traefik-rtr.tls.domains[1].main=${FQDN2}"
+      - "traefik.http.routers.traefik-rtr.tls.domains[1].sans=*.${FQDN2}"
+      - "traefik.http.routers.traefik-rtr.tls.domains[2].main=${FQDN3}"
+      - "traefik.http.routers.traefik-rtr.tls.domains[2].sans=*.${FQDN3}"
+      - "traefik.http.routers.traefik-rtr.entrypoints=websecure"
+      - "traefik.http.routers.traefik-rtr.rule=Host(`traefik.$FQDN`)"
+      - "traefik.http.routers.traefik-rtr.tls=true"
+      ## Services - API
+      - "traefik.http.routers.traefik-rtr.service=api@internal"
+      ## Middlewares
+      # - "traefik.http.routers.traefik-rtr.middlewares=chain-authelia@file"
+      # - "traefik.http.routers.traefik-rtr.middlewares=chain-no-auth@file" # No Authentication
+      - "traefik.http.routers.traefik-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
+
+########################################################################################
+# Organize
+# https://hub.docker.com/r/linuxserver/heimdall/
+########################################################################################
+
+  heimdall:
+    image: ghcr.io/linuxserver/heimdall
+    container_name: heimdall
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_DIR}/heimdall:/config
+    #ports:
+      #- 80:80
+      #- 443:443
+    restart: always
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.heimdall-rtr.entrypoints=websecure"
+      - "traefik.http.routers.heimdall-rtr.rule=Host(`${FQDN}`)"
+      - "traefik.http.routers.heimdall-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.heimdall-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.heimdall-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.heimdall-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.heimdall-rtr.service=heimdall-svc"
+      - "traefik.http.services.heimdall-svc.loadbalancer.server.port=80"
+
+########################################################################################
+# Portainer
+# https://hub.docker.com/r/portainer/portainer
+########################################################################################
+
+  portainer:
+    image: portainer/portainer-ce
+    container_name: portainer
+    volumes:
+      - ${DOCKER_SOCK}:/var/run/docker.sock
+      - ${CONFIG_DIR}/portainer:/data
+    environment:
+      - TZ=${TZ}
+    #ports:
+      #- 9000:9000
+    restart: always
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.portainer-rtr.entrypoints=websecure"
+      - "traefik.http.routers.portainer-rtr.rule=Host(`portainer.$FQDN`)"
+      - "traefik.http.routers.portainer-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.service-rtr.middlewares=chain-authelia@file"
+      - "traefik.http.routers.portainer-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.portainer-rtr.service=portainer-svc"
+      - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
