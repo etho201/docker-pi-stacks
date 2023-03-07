@@ -1,5 +1,7 @@
 ---
 version: '3.7'
+
+name: core
 services:
 
 ########################################################################################
@@ -151,7 +153,7 @@ services:
       - --providers.docker=true
       - --providers.docker.endpoint=unix:///var/run/docker.sock # Connection to the Docker host. Consider using Docker Socket Proxy instead for improved security
       # - --providers.docker.endpoint=tcp://socket-proxy:2375
-      - --providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.$FQDN`)
+      # - --providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.$FQDN`)
       - --providers.docker.exposedByDefault=false
       # - --entrypoints.websecure.http.middlewares=chain-authelia@file
       # - --providers.docker.network=backend # Defines a default docker network to use for connections to all containers. Setting this will cause issues if a container uses network_mode
@@ -221,12 +223,6 @@ services:
       - "traefik.http.routers.duckdns-rtr.tls.certresolver=duckdns"
       - "traefik.http.routers.duckdns-rtr.tls.domains[0].main=${FQDN}"
       - "traefik.http.routers.duckdns-rtr.tls.domains[0].sans=*.${FQDN}"
-      # Pull certs for Cloudflare
-      - "traefik.http.routers.cloudflare-rtr.tls.certresolver=cloudflare"
-      - "traefik.http.routers.cloudflare-rtr.tls.domains[0].main=${FQDN2}"
-      - "traefik.http.routers.cloudflare-rtr.tls.domains[0].sans=*.${FQDN2}"
-      - "traefik.http.routers.cloudflare-rtr.tls.domains[1].main=${FQDN3}"
-      - "traefik.http.routers.cloudflare-rtr.tls.domains[1].sans=*.${FQDN3}"
       # HTTP Routers
       - "traefik.http.routers.traefik-rtr.entrypoints=websecure"
       - "traefik.http.routers.traefik-rtr.rule=Host(`traefik.$FQDN`)"
