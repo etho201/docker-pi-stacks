@@ -22,7 +22,7 @@ services:
       - "--reverse-proxy=true"
       - "--pass-access-token"
       - "--provider=github"
-      - "--redirect-url=https://${FQDN}/oauth2/callback"
+      - "--redirect-url=https://oauth2.${FQDN}/oauth2/callback"
       - "--set-authorization-header"
       - "--set-xauthrequest"
       - "--whitelist-domain=.${FQDN}"
@@ -56,7 +56,7 @@ services:
       ## HTTP Services
       - "traefik.http.routers.oauth2-rtr.service=oauth2-svc"
       - "traefik.http.services.oauth2-svc.loadbalancer.server.port=4180"
-      - "traefik.http.services.oauth2-svc.loadBalancer.passHostHeader=false"
+      # - "traefik.http.services.oauth2-svc.loadBalancer.passHostHeader=false"
       ## Other labels
       - "traefik.http.middlewares.oauth2-verify.forwardAuth.address=http://oauth2:4180/oauth2/auth"
       - "traefik.http.middlewares.oauth2-verify.forwardAuth.trustForwardHeader=true"
