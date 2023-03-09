@@ -48,8 +48,8 @@ services:
       ## HTTP Routers
       - "traefik.http.routers.oauth2-rtr.entrypoints=websecure"
       # - "traefik.http.routers.oauth2-rtr.rule=Host(`oauth2.${FQDN}`)"
-      # - "traefik.http.routers.oauth2-rtr.rule=Host(`${FQDN}`) && PathPrefix(`/oauth2`)"
-      - "traefik.http.routers.oauth2-rtr.rule=Host(`oauth2.${FQDN}`) || PathPrefix(`/oauth2`)"
+      - "traefik.http.routers.oauth2-rtr.rule=Host(`oauth2.${FQDN}`) && PathPrefix(`/oauth2`)"
+      # - "traefik.http.routers.oauth2-rtr.rule=Host(`oauth2.${FQDN}`) || PathPrefix(`/oauth2`)"
       - "traefik.http.routers.oauth2-rtr.tls=true"
       ## Middlewares
       # - "traefik.http.routers.oauth2-rtr.middlewares=chain-oauth2@file"
