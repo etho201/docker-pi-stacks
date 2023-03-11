@@ -76,7 +76,7 @@ services:
       - "--redirect-url=https://oauth2.${FQDN}/oauth2/callback"
       - "--whitelist-domain=.${FQDN}"
       - "--upstream=static://200"
-      - "--skip-provider-button=false"
+      - "--skip-provider-button=true"
     environment:
       - "OAUTH2_PROXY_CLIENT_ID=${GITHUB_OAUTH_CLIENT_ID}"
       - "OAUTH2_PROXY_CLIENT_SECRET=${GITHUB_OAUTH_CLIENT_SECRET}"
@@ -94,7 +94,9 @@ services:
       - "traefik.http.routers.oauth2-rtr.rule=Host(`oauth2.${FQDN}`) || PathPrefix(`/oauth2`)"
       - "traefik.http.routers.oauth2-rtr.tls=true"
       ## Middlewares
-      - "traefik.http.routers.oauth2-rtr.middlewares=chain-no-auth@file"
+      # - "traefik.http.routers.oauth2-rtr.middlewares=chain-authelia@file"
+      - "traefik.http.routers.oauth2-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.oauth2-rtr.middlewares=chain-oauth2-proxy@file" # Google OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.oauth2-rtr.service=oauth2-svc"
       - "traefik.http.services.oauth2-svc.loadbalancer.server.port=4180"
@@ -132,7 +134,7 @@ services:
   #     - "traefik.http.routers.oauth-rtr.rule=Host(`oauth.$FQDN`)"
   #     - "traefik.http.routers.oauth-rtr.tls=true"
   #     ## Middlewares
-  #     - "traefik.http.routers.oauth-rtr.middlewares=chain-oauth2-proxy@file"
+  #     - "traefik.http.routers.oauth-rtr.middlewares=chain-traefik-forward-auth@file"
   #     ## HTTP Services
   #     - "traefik.http.routers.oauth-rtr.service=oauth-svc"
   #     - "traefik.http.services.oauth-svc.loadbalancer.server.port=4181"
