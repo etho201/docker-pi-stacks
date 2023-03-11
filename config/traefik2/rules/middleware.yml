@@ -50,11 +50,11 @@ http:
 
     middlewares-oauth2: # oauth2-proxy/oauth2-proxy
       forwardAuth:
-        address: https://oauth.***FQDN***.com/oauth2/auth
+        address: "http://oauth2:4180"
         trustForwardHeader: true
         authResponseHeaders:
-          - X-Auth-Request-Access-Token
-          - Authorization
+          # - "X-Auth-Request-Access-Token"
+          # - "Authorization"
 
     middlewares-authelia:
       forwardAuth:
