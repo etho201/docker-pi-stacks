@@ -58,44 +58,87 @@ services:
 # oauth2
 ########################################################################################
 
-  # Google OAuth - Single Sign On using OAuth 2.0 for Traefik 2.2
-  oauth:
-    image: thomseddon/traefik-forward-auth:2.2.0-arm # Use this image with Raspberry Pi
-    container_name: oauth
-    #image: thomseddon/traefik-forward-auth:latest
-    security_opt:
-      - no-new-privileges:true
+  # Google OAuth - Single Sign On using OAuth 2.0 for Traefik v2
+
+  oauth2:
+    container_name: oauth2
+    image: quay.io/oauth2-proxy/oauth2-proxy:latest-arm64
+    command:
+      - "--cookie-domain=${FQDN}"
+      - "--cookie-secure=true"
+      - "--email-domain=*"
+      # - "--github-org=${GITHUB_ORG}"
+      - "--github-user=${GITHUB_USER}" # allow logins by username, separated by a comma
+      - "--scope=user:email"
+      - "--http-address=0.0.0.0:4180"
+      - "--reverse-proxy=true"
+      - "--provider=github"
+      - "--redirect-url=https://oauth2.${FQDN}/oauth2/callback"
+      - "--whitelist-domain=.${FQDN}"
+      - "--upstream=static://200"
+      - "--skip-provider-button=false"
     environment:
-      - PROVIDERS_GENERIC_OAUTH_CLIENT_ID=$GITHUB_CLIENT_ID
-      - PROVIDERS_GENERIC_OAUTH_CLIENT_SECRET=$GITHUB_CLIENT_SECRET
-      - PROVIDERS_GENERIC_OAUTH_USER_URL=https://api.github.com/user
-      - PROVIDERS_GENERIC_OAUTH_AUTH_URL=https://github.com/login/oauth/authorize
-      - PROVIDERS_GENERIC_OAUTH_TOKEN_URL=https://github.com/login/oauth/access_token
-      - SECRET=$OAUTH2_PROXY_COOKIE_SECRET
-      - COOKIE_DOMAIN=${FQDN}
-      - INSECURE_COOKIE=false
-      - AUTH_HOST=oauth.${FQDN} # Note: This should be considered advanced usage, if you are having problems please try disabling this option and then re-read the Auth Host Mode section.
-      - URL_PATH=/_oauth
-      - WHITELIST=${WHITELIST} # Ensure your email is publicly visible on GitHub, otherwise you will get a "not authorized" message when logging in.
-      - LOG_LEVEL=warn
-      - LOG_FORMAT=text
-      - LIFETIME=2592000 # 30 days
-      - DEFAULT_ACTION=auth
-      - DEFAULT_PROVIDER=generic-oauth # use generic-oauth for GitHub
+      - "OAUTH2_PROXY_CLIENT_ID=${GITHUB_OAUTH_CLIENT_ID}"
+      - "OAUTH2_PROXY_CLIENT_SECRET=${GITHUB_OAUTH_CLIENT_SECRET}"
+      - "OAUTH2_PROXY_COOKIE_SECRET=${OAUTH2_PROXY_COOKIE_SECRET}"
+    expose:
+      - "4180"
+    #ports:
+      #- 4180:4180
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
-      - "traefik.http.routers.oauth-rtr.entrypoints=websecure"
-      - "traefik.http.routers.oauth-rtr.rule=Host(`oauth.$FQDN`)"
-      - "traefik.http.routers.oauth-rtr.tls=true"
+      - "traefik.http.routers.oauth2-rtr.entrypoints=websecure"
+      # - "traefik.http.routers.oauth2-rtr.rule=Host(`oauth2.${FQDN}`)"
+      # - "traefik.http.routers.oauth2-rtr.rule=Host(`oauth2.${FQDN}`) && PathPrefix(`/oauth2`)"
+      - "traefik.http.routers.oauth2-rtr.rule=Host(`oauth2.${FQDN}`) || PathPrefix(`/oauth2`)"
+      - "traefik.http.routers.oauth2-rtr.tls=true"
       ## Middlewares
-      - "traefik.http.routers.oauth-rtr.middlewares=chain-oauth2-proxy@file"
+      - "traefik.http.routers.oauth2-rtr.middlewares=chain-no-auth@file"
       ## HTTP Services
-      - "traefik.http.routers.oauth-rtr.service=oauth-svc"
-      - "traefik.http.services.oauth-svc.loadbalancer.server.port=4181"
+      - "traefik.http.routers.oauth2-rtr.service=oauth2-svc"
+      - "traefik.http.services.oauth2-svc.loadbalancer.server.port=4180"
     networks:
       - traefik
-    restart: always
+    restart: unless-stopped
+
+  # oauth:
+  #   image: thomseddon/traefik-forward-auth:2.2.0-arm # Use this image with Raspberry Pi
+  #   container_name: oauth
+  #   #image: thomseddon/traefik-forward-auth:latest
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   environment:
+  #     - PROVIDERS_GENERIC_OAUTH_CLIENT_ID=$GITHUB_CLIENT_ID
+  #     - PROVIDERS_GENERIC_OAUTH_CLIENT_SECRET=$GITHUB_CLIENT_SECRET
+  #     - PROVIDERS_GENERIC_OAUTH_USER_URL=https://api.github.com/user
+  #     - PROVIDERS_GENERIC_OAUTH_AUTH_URL=https://github.com/login/oauth/authorize
+  #     - PROVIDERS_GENERIC_OAUTH_TOKEN_URL=https://github.com/login/oauth/access_token
+  #     - SECRET=$OAUTH2_PROXY_COOKIE_SECRET
+  #     - COOKIE_DOMAIN=${FQDN}
+  #     - INSECURE_COOKIE=false
+  #     - AUTH_HOST=oauth.${FQDN} # Note: This should be considered advanced usage, if you are having problems please try disabling this option and then re-read the Auth Host Mode section.
+  #     - URL_PATH=/_oauth
+  #     - WHITELIST=${WHITELIST} # Ensure your email is publicly visible on GitHub, otherwise you will get a "not authorized" message when logging in.
+  #     - LOG_LEVEL=warn
+  #     - LOG_FORMAT=text
+  #     - LIFETIME=2592000 # 30 days
+  #     - DEFAULT_ACTION=auth
+  #     - DEFAULT_PROVIDER=generic-oauth # use generic-oauth for GitHub
+  #   labels:
+  #     - "traefik.enable=true"
+  #     ## HTTP Routers
+  #     - "traefik.http.routers.oauth-rtr.entrypoints=websecure"
+  #     - "traefik.http.routers.oauth-rtr.rule=Host(`oauth.$FQDN`)"
+  #     - "traefik.http.routers.oauth-rtr.tls=true"
+  #     ## Middlewares
+  #     - "traefik.http.routers.oauth-rtr.middlewares=chain-oauth2-proxy@file"
+  #     ## HTTP Services
+  #     - "traefik.http.routers.oauth-rtr.service=oauth-svc"
+  #     - "traefik.http.services.oauth-svc.loadbalancer.server.port=4181"
+  #   networks:
+  #     - traefik
+  #   restart: always
 
 ########################################################################################
 # Traefik
