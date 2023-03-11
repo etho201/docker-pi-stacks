@@ -5,10 +5,9 @@ http:
       entryPoints:
         - websecure # https
       middlewares:
-        - chain-no-auth@file
+        - chain-oauth2-proxy@file
       service: edgeos-svc
       tls: true
-        #certResolver: dns-duckdns
   services:
     edgeos-svc:
       loadBalancer:
