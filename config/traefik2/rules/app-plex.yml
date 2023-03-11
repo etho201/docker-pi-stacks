@@ -7,8 +7,7 @@ http:
       middlewares:
         - chain-no-auth
       service: plex-svc
-      tls:
-        certResolver: letsencrypt
+      tls: true
   services:
     plex-svc:
       loadBalancer:
