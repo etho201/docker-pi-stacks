@@ -7,7 +7,7 @@ http:
       middlewares:
         - chain-no-auth@file
       service: edgeos-svc
-      #tls:
+      tls: true
         #certResolver: dns-duckdns
   services:
     edgeos-svc:
