@@ -13,19 +13,19 @@ http:
           - middlewares-secure-headers
           - middlewares-basic-auth
 
-    chain-oauth:
+    chain-traefik-forward-auth:
       chain:
         middlewares:
           - middlewares-rate-limit
           - middlewares-secure-headers
-          - middlewares-oauth
-        
-    chain-oauth2:
+          - middlewares-traefik-forward-auth
+
+    chain-oauth2-proxy:
       chain:
         middlewares:
           - middlewares-rate-limit
           - middlewares-secure-headers
-          - middlewares-oauth2
+          - middlewares-oauth2-proxy
 
     chain-authelia:
       chain:
