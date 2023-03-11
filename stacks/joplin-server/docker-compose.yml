@@ -27,7 +27,7 @@ services:
       ## Middlewares
       - "traefik.http.routers.joplin-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.joplin-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      # - "traefik.http.routers.joplin-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      # - "traefik.http.routers.joplin-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.joplin-rtr.service=joplin-svc"
       - "traefik.http.services.joplin-svc.loadbalancer.server.port=22300"

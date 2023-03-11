@@ -57,7 +57,7 @@ services:
       ## Middlewares
       # - "traefik.http.routers.transmission-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.transmission-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      - "traefik.http.routers.transmission-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      - "traefik.http.routers.transmission-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.transmission-rtr.service=transmission-svc"
       - "traefik.http.services.transmission-svc.loadbalancer.server.port=9091"
@@ -91,7 +91,7 @@ services:
       ## Middlewares
       # - "traefik.http.routers.qbittorrent-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.qbittorrent-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      - "traefik.http.routers.qbittorrent-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      - "traefik.http.routers.qbittorrent-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.qbittorrent-rtr.service=qbittorrent-svc"
       - "traefik.http.services.qbittorrent-svc.loadbalancer.server.port=8080"
@@ -119,7 +119,7 @@ services:
       ## Middlewares
       # - "traefik.http.routers.nzbget-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.nzbget-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      - "traefik.http.routers.nzbget-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      - "traefik.http.routers.nzbget-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.nzbget-rtr.service=nzbget-svc"
       - "traefik.http.services.nzbget-svc.loadbalancer.server.port=6789"

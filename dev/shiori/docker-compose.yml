@@ -25,7 +25,7 @@ services:
       ## Middlewares
       # - "traefik.http.routers.shiori-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.shiori-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      - "traefik.http.routers.shiori-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      - "traefik.http.routers.shiori-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.shiori-rtr.service=shiori-svc"
       - "traefik.http.services.shiori-svc.loadbalancer.server.port=8080"

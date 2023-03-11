@@ -1,0 +1,6 @@
+  cron:
+    image: demo-image:latest
+    entrypoint: /bin/bash
+    command: ["cron", "-f"]
+    volumes:
+      - data:/app-data

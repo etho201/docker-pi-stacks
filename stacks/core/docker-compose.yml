@@ -89,7 +89,7 @@ services:
       - "traefik.http.routers.oauth-rtr.rule=Host(`oauth.$FQDN`)"
       - "traefik.http.routers.oauth-rtr.tls=true"
       ## Middlewares
-      - "traefik.http.routers.oauth-rtr.middlewares=chain-oauth@file"
+      - "traefik.http.routers.oauth-rtr.middlewares=chain-oauth2-proxy@file"
       ## HTTP Services
       - "traefik.http.routers.oauth-rtr.service=oauth-svc"
       - "traefik.http.services.oauth-svc.loadbalancer.server.port=4181"
@@ -232,7 +232,7 @@ services:
       ## Middlewares
       # - "traefik.http.routers.traefik-rtr.middlewares=chain-authelia@file"
       # - "traefik.http.routers.traefik-rtr.middlewares=chain-no-auth@file" # No Authentication
-      - "traefik.http.routers.traefik-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
+      - "traefik.http.routers.traefik-rtr.middlewares=chain-oauth2-proxy@file" # Google OAuth 2.0
 
 ########################################################################################
 # whoami
@@ -255,7 +255,7 @@ services:
   #     ## Middlewares
   #     # - "traefik.http.routers.whoami-rtr.middlewares=chain-no-auth@file" # No Authentication
   #     # - "traefik.http.routers.whoami-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-  #     - "traefik.http.routers.whoami-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
+  #     - "traefik.http.routers.whoami-rtr.middlewares=chain-oauth2-proxy@file" # Google OAuth 2.0
   #     ## HTTP Services
   #     - "traefik.http.routers.whoami-rtr.service=whoami-svc"
   #     - "traefik.http.services.whoami-svc.loadbalancer.server.port=80"
@@ -300,7 +300,7 @@ services:
       ## Middlewares
       - "traefik.http.routers.gotify-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.gotify-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      # - "traefik.http.routers.gotify-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      # - "traefik.http.routers.gotify-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.gotify-rtr.service=gotify-svc"
       - "traefik.http.services.gotify-svc.loadbalancer.server.port=80"
@@ -355,7 +355,7 @@ services:
       ## Middlewares
       # - "traefik.http.routers.tautulli-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.tautulli-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      - "traefik.http.routers.tautulli-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      - "traefik.http.routers.tautulli-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.tautulli-rtr.service=tautulli-svc"
       - "traefik.http.services.tautulli-svc.loadbalancer.server.port=8181"
@@ -389,7 +389,7 @@ services:
       ## Middlewares
       # - "traefik.http.routers.heimdall-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.heimdall-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      - "traefik.http.routers.heimdall-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      - "traefik.http.routers.heimdall-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.heimdall-rtr.service=heimdall-svc"
       - "traefik.http.services.heimdall-svc.loadbalancer.server.port=80"
@@ -422,7 +422,7 @@ services:
       # - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
       # - "traefik.http.routers.service-rtr.middlewares=chain-authelia@file"
-      - "traefik.http.routers.portainer-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
+      - "traefik.http.routers.portainer-rtr.middlewares=chain-oauth2-proxy@file" # Google OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.portainer-rtr.service=portainer-svc"
       - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
@@ -494,7 +494,7 @@ services:
       ## Middlewares
       - "traefik.http.routers.nextcloud-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.nextcloud-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      # - "traefik.http.routers.nextcloud-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      # - "traefik.http.routers.nextcloud-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.nextcloud-rtr.service=nextcloud-svc"
       - "traefik.http.services.nextcloud-svc.loadbalancer.server.port=80"

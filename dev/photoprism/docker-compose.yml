@@ -102,7 +102,7 @@ services:
       ## Middlewares
       # - "traefik.http.routers.photoprism-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.photoprism-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      - "traefik.http.routers.photoprism-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      - "traefik.http.routers.photoprism-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.photoprism-rtr.service=photoprism-svc"
       - "traefik.http.services.photoprism-svc.loadbalancer.server.port=2342"

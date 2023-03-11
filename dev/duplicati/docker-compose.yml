@@ -27,7 +27,7 @@ services:
       ## Middlewares
       - "traefik.http.routers.duplicati-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.duplicati-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      # - "traefik.http.routers.duplicati-rtr.middlewares=chain-oauth@file" # OAuth 2.0
+      # - "traefik.http.routers.duplicati-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.duplicati-rtr.service=duplicati-svc"
       - "traefik.http.services.duplicati-svc.loadbalancer.server.port=8200"

@@ -37,7 +37,7 @@ services:
       ## Middlewares
 #      - "traefik.http.routers.netdata-rtr.middlewares=chain-no-auth@file" # No Authentication
 #      - "traefik.http.routers.netdata-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      - "traefik.http.routers.netdata-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
+      - "traefik.http.routers.netdata-rtr.middlewares=chain-oauth2-proxy@file" # Google OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.netdata-rtr.service=netdata-svc"
       - "traefik.http.services.netdata-svc.loadbalancer.server.port=19999"
