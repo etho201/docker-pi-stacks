@@ -7,8 +7,11 @@ http:
       middlewares:
         - chain-no-auth@file
       service: website-svc
-      #tls:
-        #certResolver: dns-duckdns
+      tls:
+        certResolver: cloudflare
+        domains:
+          - main: "***domain***.com"
+            sans: "*.***domain***.com"
   services:
     website-svc:
       loadBalancer:
