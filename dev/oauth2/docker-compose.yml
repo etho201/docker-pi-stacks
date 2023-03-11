@@ -65,7 +65,7 @@ services:
       ## Middlewares
       # - "traefik.http.routers.whoami-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.whoami-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      - "traefik.http.routers.whoami-rtr.middlewares=chain-oauth2@file" # OAuth 2.0
+      - "traefik.http.routers.whoami-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       # - "traefik.http.routers.whoami-rtr.middlewares=oauth2-signin,oauth2-verify,default-https"
       ## HTTP Services
       - "traefik.http.routers.whoami-rtr.service=whoami-svc"
