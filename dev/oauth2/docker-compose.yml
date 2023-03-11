@@ -21,18 +21,15 @@ services:
       - "--scope=user:email"
       - "--http-address=0.0.0.0:4180"
       - "--reverse-proxy=true"
-      - "--pass-access-token=true"
       - "--provider=github"
       - "--redirect-url=https://oauth2.${FQDN}/oauth2/callback"
-      - "--set-authorization-header=true"
-      - "--set-xauthrequest=true"
       - "--whitelist-domain=.${FQDN}"
-      - "--skip-provider-button=true"
+      - "--upstream=static://200"
+      - "--skip-provider-button=false"
     environment:
       - "OAUTH2_PROXY_CLIENT_ID=${GITHUB_OAUTH_CLIENT_ID}"
       - "OAUTH2_PROXY_CLIENT_SECRET=${GITHUB_OAUTH_CLIENT_SECRET}"
       - "OAUTH2_PROXY_COOKIE_SECRET=${OAUTH2_PROXY_COOKIE_SECRET}"
-      - "OAUTH2_PROXY_UPSTREAMS=static://200"
     expose:
       - "4180"
     #ports:
@@ -75,7 +72,8 @@ services:
       - "traefik.http.services.whoami-svc.loadbalancer.server.port=80"
 
 networks:
+
   traefik:
-    external:
-      name: traefik
-      #run: docker network create traefik
+    name: traefik
+    external: true
+    #run: docker network create traefik
