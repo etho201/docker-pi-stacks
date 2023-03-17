@@ -1,0 +1,33 @@
+version: "3.7"
+
+services:
+  ocis:
+    image: owncloud/ocis:latest
+    container_name: owncloud
+    volumes:
+      - ${CONFIG_DIR}/owncloud/ocis.yaml:/etc/ocis/ocis.yaml
+      - ${VOLUME_DIR}/owncloud:/var/lib/ocis
+    environment:
+      - OCIS_INSECURE=false
+      - OCIS_URL=https://owncloud.${FQDN}
+      - OCIS_LOG_LEVEL=info
+    logging:
+      driver: local
+    networks:
+      - traefik
+    # ports:
+    #   - 9200:9200
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.owncloud-rtr.entrypoints=websecure"
+      - "traefik.http.routers.owncloud-rtr.rule=Host(`owncloud.$FQDN`)"
+      - "traefik.http.routers.owncloud-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.owncloud-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.owncloud-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.owncloud-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.owncloud-rtr.service=owncloud-svc"
+      - "traefik.http.services.owncloud-svc.loadbalancer.server.port=9200"
