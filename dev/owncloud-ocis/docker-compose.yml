@@ -31,3 +31,9 @@ services:
       ## HTTP Services
       - "traefik.http.routers.owncloud-rtr.service=owncloud-svc"
       - "traefik.http.services.owncloud-svc.loadbalancer.server.port=9200"
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
