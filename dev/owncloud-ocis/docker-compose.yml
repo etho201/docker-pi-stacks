@@ -9,6 +9,7 @@ services:
       - ${VOLUME_DIR}/owncloud:/var/lib/ocis
     environment:
       - OCIS_INSECURE=false
+      - PROXY_TLS=false
       - OCIS_URL=https://owncloud.${FQDN}
       - OCIS_LOG_LEVEL=info
     logging:
