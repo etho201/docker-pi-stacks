@@ -61,11 +61,6 @@ services:
       ## HTTP Services
       - "traefik.http.routers.transmission-rtr.service=transmission-svc"
       - "traefik.http.services.transmission-svc.loadbalancer.server.port=9091"
-      # HOMEPAGE
-      - homepage.group=Pirate
-      - homepage.name=Transmission
-      - homepage.icon=transmission.png
-      - homepage.href=https://transmission.${FQDN}
 
   qbittorrent:
     image: ghcr.io/linuxserver/qbittorrent
@@ -128,11 +123,6 @@ services:
       ## HTTP Services
       - "traefik.http.routers.nzbget-rtr.service=nzbget-svc"
       - "traefik.http.services.nzbget-svc.loadbalancer.server.port=6789"
-      # HOMEPAGE
-      - homepage.group=Pirate
-      - homepage.name=NZBGet
-      - homepage.icon=nzbget.png
-      - homepage.href=https://nzbget.${FQDN}
 
 networks:
   traefik:

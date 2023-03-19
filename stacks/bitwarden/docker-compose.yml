@@ -59,11 +59,6 @@ services:
       ## HTTP Services
       - "traefik.http.routers.bitwarden-websocket-rtr.service=bitwarden-websocket-svc"
       - "traefik.http.services.bitwarden-websocket-svc.loadbalancer.server.port=3012"
-      # HOMEPAGE
-      - homepage.group=Management
-      - homepage.name=Bitwarden
-      - homepage.icon=bitwarden.png
-      - homepage.href=https://bitwarden.${FQDN}
 
 ########################################################################################
 # MariaDB

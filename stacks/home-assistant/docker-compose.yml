@@ -23,12 +23,6 @@ services:
     network_mode: host
     # devices:
     #   - /dev/ttyUSB0:/dev/ttyUSB0
-    labels:
-      # HOMEPAGE
-      - homepage.group=Management
-      - homepage.name=Home Assistant
-      - homepage.icon=hass.png
-      - homepage.href=https://home-assistant.${FQDN}
 
   zwavejs2mqtt:
     container_name: zwavejs2mqtt

@@ -278,12 +278,6 @@ services:
       # - "traefik.http.routers.traefik-rtr.middlewares=chain-authelia@file"
       # - "traefik.http.routers.traefik-rtr.middlewares=chain-no-auth@file" # No Authentication
       - "traefik.http.routers.traefik-rtr.middlewares=chain-oauth2-proxy@file" # Google OAuth 2.0
-      # HOMEPAGE
-      - homepage.group=Management
-      - homepage.name=Traefik
-      - homepage.icon=traefik.png
-      - homepage.href=https://traefik.${FQDN}
-      - homepage.description=A modern reverse proxy and load balancer
 
 ########################################################################################
 # whoami
@@ -355,12 +349,6 @@ services:
       ## HTTP Services
       - "traefik.http.routers.gotify-rtr.service=gotify-svc"
       - "traefik.http.services.gotify-svc.loadbalancer.server.port=80"
-      # HOMEPAGE
-      - homepage.group=Management
-      - homepage.name=Gotify
-      - homepage.icon=gotify.png
-      - homepage.href=https://gotify.${FQDN}
-      - homepage.description=A simple server for sending and receiving messages in real-time per WebSocket
 
 ########################################################################################
 # Media
@@ -387,13 +375,6 @@ services:
       #- ${EXTHDD_DIR}/media/other:/data/other
       - ${VOLUME_DIR}/plex/transcode:/transcode
     restart: always
-    labels:
-      # HOMEPAGE
-      - homepage.group=Media
-      - homepage.name=Plex
-      - homepage.icon=plex.png
-      - homepage.href=https://plex.${FQDN}
-      - homepage.description=Plex Media Server
 
   tautulli:
     image: ghcr.io/linuxserver/tautulli
@@ -423,12 +404,6 @@ services:
       ## HTTP Services
       - "traefik.http.routers.tautulli-rtr.service=tautulli-svc"
       - "traefik.http.services.tautulli-svc.loadbalancer.server.port=8181"
-      # HOMEPAGE
-      - homepage.group=Media
-      - homepage.name=Tautulli
-      - homepage.icon=tautulli.png
-      - homepage.href=https://tautulli.${FQDN}
-      - homepage.description=Monitoring, analytics and notifications for Plex Media Server
 
 ########################################################################################
 # Organize
@@ -446,7 +421,7 @@ services:
       - traefik
     volumes:
       - ${CONFIG_DIR}/homepage:/app/config # Make sure your local config directory exists
-      - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations
+      # - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -522,12 +497,6 @@ services:
       ## HTTP Services
       - "traefik.http.routers.portainer-rtr.service=portainer-svc"
       - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
-      # HOMEPAGE
-      - homepage.group=Management
-      - homepage.name=Portainer
-      - homepage.icon=portainer.png
-      - homepage.href=https://portainer.${FQDN}
-      - homepage.description=Container management tool
 
 ########################################################################################
 # Nextcloud

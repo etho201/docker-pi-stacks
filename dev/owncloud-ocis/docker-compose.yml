@@ -32,11 +32,6 @@ services:
       ## HTTP Services
       - "traefik.http.routers.owncloud-rtr.service=owncloud-svc"
       - "traefik.http.services.owncloud-svc.loadbalancer.server.port=9200"
-      # HOMEPAGE
-      - homepage.group=Management
-      - homepage.name=ownCloud
-      - homepage.icon=owncloud.png
-      - homepage.href=https://owncloud.${FQDN}
 
 networks:
   traefik:
