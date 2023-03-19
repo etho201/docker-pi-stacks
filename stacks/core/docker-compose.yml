@@ -407,37 +407,63 @@ services:
 
 ########################################################################################
 # Organize
+# https://github.com/benphelps/homepage
 # https://hub.docker.com/r/linuxserver/heimdall/
 ########################################################################################
 
-  heimdall:
-    image: ghcr.io/linuxserver/heimdall
-    container_name: heimdall
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    volumes:
-      - ${CONFIG_DIR}/heimdall:/config
-    #ports:
-      #- 80:80
-      #- 443:443
+  homepage:
+    image: ghcr.io/benphelps/homepage:latest
+    container_name: homepage
+    # ports:
+    #   - 3000:3000
     restart: always
     networks:
       - traefik
+    volumes:
+      - ${CONFIG_DIR}/homepage:/app/config # Make sure your local config directory exists
+      - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
-      - "traefik.http.routers.heimdall-rtr.entrypoints=websecure"
-      - "traefik.http.routers.heimdall-rtr.rule=Host(`${FQDN}`)"
-      - "traefik.http.routers.heimdall-rtr.tls=true"
+      - "traefik.http.routers.homepage-rtr.entrypoints=websecure"
+      - "traefik.http.routers.homepage-rtr.rule=Host(`${FQDN}`)"
+      - "traefik.http.routers.homepage-rtr.tls=true"
       ## Middlewares
-      # - "traefik.http.routers.heimdall-rtr.middlewares=chain-no-auth@file" # No Authentication
-      # - "traefik.http.routers.heimdall-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      - "traefik.http.routers.heimdall-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      # - "traefik.http.routers.homepage-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.homepage-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.homepage-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       ## HTTP Services
-      - "traefik.http.routers.heimdall-rtr.service=heimdall-svc"
-      - "traefik.http.services.heimdall-svc.loadbalancer.server.port=80"
+      - "traefik.http.routers.homepage-rtr.service=homepage-svc"
+      - "traefik.http.services.homepage-svc.loadbalancer.server.port=3000"
+
+  # heimdall:
+  #   image: ghcr.io/linuxserver/heimdall
+  #   container_name: heimdall
+  #   environment:
+  #     - PUID=${PUID}
+  #     - PGID=${PGID}
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ${CONFIG_DIR}/heimdall:/config
+  #   #ports:
+  #     #- 80:80
+  #     #- 443:443
+  #   restart: always
+  #   networks:
+  #     - traefik
+  #   labels:
+  #     - "traefik.enable=true"
+  #     ## HTTP Routers
+  #     - "traefik.http.routers.heimdall-rtr.entrypoints=websecure"
+  #     - "traefik.http.routers.heimdall-rtr.rule=Host(`${FQDN}`)"
+  #     - "traefik.http.routers.heimdall-rtr.tls=true"
+  #     ## Middlewares
+  #     # - "traefik.http.routers.heimdall-rtr.middlewares=chain-no-auth@file" # No Authentication
+  #     # - "traefik.http.routers.heimdall-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+  #     - "traefik.http.routers.heimdall-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+  #     ## HTTP Services
+  #     - "traefik.http.routers.heimdall-rtr.service=heimdall-svc"
+  #     - "traefik.http.services.heimdall-svc.loadbalancer.server.port=80"
 
 ########################################################################################
 # Portainer
