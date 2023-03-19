@@ -497,6 +497,12 @@ services:
       ## HTTP Services
       - "traefik.http.routers.portainer-rtr.service=portainer-svc"
       - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
+      # HOMEPAGE
+      - homepage.group=Management
+      - homepage.name=Portainer
+      - homepage.icon=emby.png
+      - homepage.href=https://portainer.${FQDN}
+      - homepage.description=Container management tool
 
 ########################################################################################
 # Nextcloud
