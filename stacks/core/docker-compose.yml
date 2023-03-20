@@ -421,7 +421,7 @@ services:
       - traefik
     volumes:
       - ${CONFIG_DIR}/homepage:/app/config # Make sure your local config directory exists
-      # - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations
+      - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
