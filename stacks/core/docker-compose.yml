@@ -426,7 +426,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.homepage-rtr.entrypoints=websecure"
-      - "traefik.http.routers.homepage-rtr.rule=Host(`${FQDN}` && Path(`/homepage`)"
+      - "traefik.http.routers.homepage-rtr.rule=Host(`homepage.${FQDN}`)"
       - "traefik.http.routers.homepage-rtr.tls=true"
       ## Middlewares
       # - "traefik.http.routers.homepage-rtr.middlewares=chain-no-auth@file" # No Authentication
