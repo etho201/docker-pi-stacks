@@ -33,7 +33,7 @@ services:
       - "traefik.http.services.joplin-svc.loadbalancer.server.port=22300"
 
   joplin-db:
-    image: postgres:13 # latest as of 11/13/2022
+    image: postgres:15 # latest as of 4/16/2023
     container_name: joplin-db
     environment:
       - POSTGRES_PASSWORD=${JOPLIN_DB_PASS}
