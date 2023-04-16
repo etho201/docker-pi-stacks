@@ -15,6 +15,7 @@ services:
       - PGID=${PGID}
     volumes:
       - ${CONFIG_DIR}/home-assistant:/config
+      - ${VOLUME_DIR}/home-assistant:/media
       - /etc/localtime:/etc/localtime:ro
     # ports:
     #   - 8123:8123
