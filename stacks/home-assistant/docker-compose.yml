@@ -122,6 +122,19 @@ services:
       - TRUSTED_DEVICE_NAME=${EUFY_TRUSTED_DEVICE}
       - PORT=3001
 
+  rtsp-simple-server:
+    container_name: rtsp-simple-server
+    restart: always
+    image: aler9/rtsp-simple-server:latest
+    # networks:
+      # - traefik
+    network_mode: host
+    # ports:
+      # - 8554:8554
+      # - 1935:1935
+    environment:                       
+      - RTSP_PROTOCOLS=tcp
+
 networks:
   traefik:
     name: traefik
