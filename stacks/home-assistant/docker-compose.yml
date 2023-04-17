@@ -109,16 +109,18 @@ services:
     container_name: eufy-security-ws
     restart: always
     image: bropat/eufy-security-ws
-    networks:
-      - traefik
+    # networks:
+      # - traefik
+    network_mode: host
     # ports:
-    #   - 3000:3000
+      # - 3000:3000
     volumes:
       - ${VOLUME_DIR}/eufy-security-ws:/data  # Mapping of local folder to provide persistant storage
     environment:                       
       - USERNAME=${EUFY_USERNAME}
       - PASSWORD=${EUFY_PASSWORD}
       - TRUSTED_DEVICE_NAME=${EUFY_TRUSTED_DEVICE}
+      - PORT=3001
 
 networks:
   traefik:
