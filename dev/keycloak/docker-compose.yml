@@ -25,7 +25,7 @@ services:
       - ${CONFIG_DIR}/keycloak:/config
     ports:
       - 8081:8080
-    restart: always
+    restart: unless-stopped
     networks:
       - traefik
     labels:
@@ -54,7 +54,7 @@ services:
     #   - 5432:5432
     volumes:
       - ${VOLUME_DIR}/keycloak:/var/lib/postgresql/data
-    restart: always
+    restart: unless-stopped
     networks:
       - traefik
 
