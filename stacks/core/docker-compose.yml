@@ -530,7 +530,7 @@ services:
       # Do not create the 'nextcloud' database here. Doing so will cause the Nextcloud installation to fail. The nextcloud container handles this automatically; however, you must create at least one other database first (for example: whatever).
       # - POSTGRES_DB=nextcloud
       - POSTGRES_DB=whatever
-    restart: always
+    restart: unless-stopped
     networks:
       - traefik
 
@@ -542,7 +542,7 @@ services:
     volumes:
       - ${CONFIG_DIR}/nextcloud:/var/www/html #config directory
       - ${VOLUME_DIR}/nextcloud:/var/www/html/data:rw #data directory
-    restart: always
+    restart: unless-stopped
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
