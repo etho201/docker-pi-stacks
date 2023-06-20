@@ -105,7 +105,7 @@ services:
       - TZ=${TZ}
     volumes:
       - ${CONFIG_DIR}/sabnzbd:/config
-      - ${EXTHDD_DIR}/downloads/usenet:/downloads
+      - ${EXTHDD_DIR}/downloads/usenet/completed:/downloads #optional
       - ${EXTHDD_DIR}/downloads/usenet/incomplete:/incomplete-downloads #optional
     # ports:
     #   - 8080:8080 # Configured in sabnzbd.ini
