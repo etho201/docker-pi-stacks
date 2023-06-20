@@ -96,6 +96,36 @@ services:
       - "traefik.http.routers.qbittorrent-rtr.service=qbittorrent-svc"
       - "traefik.http.services.qbittorrent-svc.loadbalancer.server.port=8080"
 
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_DIR}/sabnzbd:/config
+      - ${EXTHDD_DIR}/downloads/usenet:/downloads
+      - ${EXTHDD_DIR}/downloads/usenet/incomplete:/incomplete-downloads #optional
+    # ports:
+    #   - 8080:8080
+    restart: unless-stopped
+    network_mode: service:wireguard
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.sabnzbd-rtr.entrypoints=websecure"
+      - "traefik.http.routers.sabnzbd-rtr.rule=Host(`sabnzbd.$FQDN`)"
+      - "traefik.http.routers.sabnzbd-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.sabnzbd-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.sabnzbd-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.sabnzbd-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.sabnzbd-rtr.service=sabnzbd-svc"
+      - "traefik.http.services.sabnzbd-svc.loadbalancer.server.port=8080"
+
   # nzbget:
   #   image: lscr.io/linuxserver/nzbget:latest
   #   container_name: nzbget
