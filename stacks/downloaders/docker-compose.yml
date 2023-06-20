@@ -108,7 +108,7 @@ services:
       - ${EXTHDD_DIR}/downloads/usenet:/downloads
       - ${EXTHDD_DIR}/downloads/usenet/incomplete:/incomplete-downloads #optional
     # ports:
-    #   - 8085:8085
+    #   - 8085:8085 # Configured in sabnzbd.ini
     restart: unless-stopped
     network_mode: service:wireguard
     labels:
