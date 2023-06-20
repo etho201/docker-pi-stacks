@@ -70,7 +70,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
       - UMASK_SET=022
-      - WEBUI_PORT=8080
+      - WEBUI_PORT=8081
     volumes:
       - ${CONFIG_DIR}/qbittorrent:/config
       - ${EXTHDD_DIR}/downloads/torrents/downloads:/downloads
@@ -80,7 +80,7 @@ services:
     # ports:
     #   - 6881:6881
     #   - 6881:6881/udp
-    #   - 8080:8080
+    #   - 8081:8081
     restart: always
     labels:
       - "traefik.enable=true"
@@ -94,7 +94,7 @@ services:
       - "traefik.http.routers.qbittorrent-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.qbittorrent-rtr.service=qbittorrent-svc"
-      - "traefik.http.services.qbittorrent-svc.loadbalancer.server.port=8080"
+      - "traefik.http.services.qbittorrent-svc.loadbalancer.server.port=8081"
 
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd:latest
@@ -108,7 +108,7 @@ services:
       - ${EXTHDD_DIR}/downloads/usenet:/downloads
       - ${EXTHDD_DIR}/downloads/usenet/incomplete:/incomplete-downloads #optional
     # ports:
-    #   - 8085:8085 # Configured in sabnzbd.ini
+    #   - 8080:8080 # Configured in sabnzbd.ini
     restart: unless-stopped
     network_mode: service:wireguard
     labels:
@@ -123,7 +123,7 @@ services:
       - "traefik.http.routers.sabnzbd-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.sabnzbd-rtr.service=sabnzbd-svc"
-      - "traefik.http.services.sabnzbd-svc.loadbalancer.server.port=8085"
+      - "traefik.http.services.sabnzbd-svc.loadbalancer.server.port=8080"
 
   # nzbget:
   #   image: lscr.io/linuxserver/nzbget:latest
