@@ -166,13 +166,13 @@ services:
       - traefik
 
   traefik:
-    image: traefik:banon # the banon tag refers to v2.9.x
+    image: traefik:saintmarcelin # the saintmarcelin tag refers to v2.10.x
     container_name: traefik
     restart: always
     command: # CLI arguments
       # Enable Hub communication (open the port 9900 and 9901 by default)
-      - --experimental.hub=true
-      - --hub.tls.insecure=true
+      #- --experimental.hub=true
+      #- --hub.tls.insecure=true
       - --metrics.prometheus=true
       - --metrics.prometheus.addrouterslabels=true
       - --metrics.prometheus.addEntryPointsLabels=true
