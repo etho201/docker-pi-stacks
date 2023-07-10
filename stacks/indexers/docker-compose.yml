@@ -75,6 +75,7 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
+      - UMASK=022 #optional
     volumes:
       - ${CONFIG_DIR}/sonarr:/config
       - ${EXTHDD_DIR}/media/tv:/tv
@@ -106,7 +107,7 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
-      - UMASK_SET=022 #optional
+      - UMASK=022 #optional
     volumes:
       - ${CONFIG_DIR}/radarr:/config
       - ${EXTHDD_DIR}/downloads:/downloads
@@ -137,7 +138,7 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
-      - UMASK_SET=022 #optional
+      - UMASK=022 #optional
     volumes:
       - ${CONFIG_DIR}/lidarr:/config
       - ${EXTHDD_DIR}/downloads:/downloads
