@@ -6,7 +6,7 @@ services:
     image: ghcr.io/shadowsocks/ssserver-rust:latest
     container_name: shadowsocks
     volumes:
-      - ${CONFIG_DIR}/shadowsocks/config.json:/etc/shadowsocks-rust/config.json
+      - ${CONFIG_DIR}/shadowsocks:/etc/shadowsocks-rust
     # ports:
     #  - 8388:8388
     restart: always
