@@ -1,0 +1,33 @@
+---
+version: '3.7'
+services:
+
+  shadowsocks:
+    image: ghcr.io/shadowsocks/ssserver-rust:latest
+    container_name: shadowsocks
+    volumes:
+      - ${CONFIG_DIR}/shadowsocks/config.json:/etc/shadowsocks-rust/config.json
+    # ports:
+    #  - 8388:8388
+    restart: always
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.shadowsocks-rtr.entrypoints=websecure"
+      - "traefik.http.routers.shadowsocks-rtr.rule=Host(`shadowsocks.$FQDN`)"
+      - "traefik.http.routers.shadowsocks-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.shadowsocks-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.shadowsocks-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.shadowsocks-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.shadowsocks-rtr.service=shadowsocks-svc"
+      - "traefik.http.services.shadowsocks-svc.loadbalancer.server.port=8388"
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
