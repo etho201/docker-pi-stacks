@@ -13,6 +13,20 @@ services:
     command: ["run", "-c", "/etc/sing-box/config.json"]
     #command: ["version"] 
 
+  traefik-certs-dumper:
+    image: ldez/traefik-certs-dumper:latest
+    entrypoint: sh -c '
+      apk add jq
+      ; while ! [ -e /data/acme.json ]
+      || ! [ `jq ".[] | .Certificates | length" /data/acme.json` != 0 ]; do
+      sleep 1
+      ; done
+      && traefik-certs-dumper file --version v2 --watch
+      --source /data/acme.json --dest /data/certs'
+    volumes:
+      - ${CONFIG_DIR}/traefik2/acme:/data
+
+
 networks:
   traefik:
     name: traefik
