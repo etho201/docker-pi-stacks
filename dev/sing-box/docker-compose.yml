@@ -15,6 +15,9 @@ services:
 
   traefik-certs-dumper:
     image: ldez/traefik-certs-dumper:latest
+    container_name: cert-dumper
+    networks:
+      - traefik
     entrypoint: sh -c '
       apk add jq
       ; while ! [ -e /data/acme.json ]
