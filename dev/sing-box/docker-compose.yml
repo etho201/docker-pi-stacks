@@ -1,0 +1,18 @@
+---
+version: '3.7'
+services:
+
+  sing-box:
+    image: ghcr.io/sagernet/sing-box:latest
+    container_name: sing-box
+    volumes:
+      - ${CONFIG_DIR}/sing-box:/etc/sing-box
+    restart: always
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
