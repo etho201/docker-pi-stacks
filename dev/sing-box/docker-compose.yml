@@ -5,6 +5,8 @@ services:
   sing-box:
     image: ghcr.io/sagernet/sing-box:latest
     container_name: sing-box
+    ports:
+      - 50672:50672
     volumes:
       - ${CONFIG_DIR}/sing-box:/etc/sing-box
       - ${CONFIG_DIR}/traefik2/acme/dump:/certs
