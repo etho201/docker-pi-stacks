@@ -10,6 +10,8 @@ services:
     restart: always
     networks:
       - traefik
+    command: ["run", "-c", "/etc/sing-box/config.json"]
+    #command: ["version"] 
 
 networks:
   traefik:
