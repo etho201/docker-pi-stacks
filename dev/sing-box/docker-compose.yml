@@ -19,9 +19,8 @@ services:
     networks:
       - traefik
     entrypoint: sh -c '
-      apk add jq
-      && traefik-certs-dumper file --version v2 --watch
-      --source /data/acme.json --dest /data/certs'
+      traefik-certs-dumper file --crt-ext=.pem --key-ext=.pem --version v2 --watch
+      --source /data/acme.json --dest /data/dump'
     volumes:
       - ${CONFIG_DIR}/traefik2/acme:/data
 
