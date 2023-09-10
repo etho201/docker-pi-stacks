@@ -21,3 +21,9 @@ services:
       --source /data/acme.json --dest /data/dump'
     volumes:
       - ${CONFIG_DIR}/traefik2/acme:/data
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
