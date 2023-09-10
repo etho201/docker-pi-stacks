@@ -6,7 +6,7 @@ services:
     image: ghcr.io/sagernet/sing-box:latest
     container_name: sing-box
     ports:
-      - 50672:50672
+      - 8443:8443
     volumes:
       - ${CONFIG_DIR}/sing-box:/etc/sing-box
       - ${CONFIG_DIR}/traefik2/acme/dump:/certs
@@ -15,6 +15,20 @@ services:
       - traefik
     command: ["run", "-c", "/etc/sing-box/config.json"]
     #command: ["version"] 
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.sing-box-rtr.entrypoints=websecure"
+      - "traefik.http.routers.sing-box-rtr.rule=Host(`my.$FQDN`)"
+      - "traefik.http.routers.sing-box-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.sing-box-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.sing-box-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.sing-box-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.sing-box-rtr.service=sing-box-svc"
+      - "traefik.http.services.sing-box-svc.loadbalancer.server.port=8443"
+
 
   traefik-certs-dumper:
     image: ldez/traefik-certs-dumper:latest
