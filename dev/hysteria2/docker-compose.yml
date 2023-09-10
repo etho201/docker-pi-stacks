@@ -1,0 +1,23 @@
+---
+version: "3.9"
+services:
+  hysteria:
+    image: tobyxdd/hysteria:latest
+    container_name: hysteria
+    restart: always
+    network_mode: "host"
+    volumes:
+      - ${CONFIG_DIR}/hysteria2/hysteria.yaml:/etc/hysteria.yaml
+      - ${CONFIG_DIR}/traefik2/acme/dump:/certs
+    command: ["server", "-c", "/etc/hysteria.yaml"]
+
+  traefik-certs-dumper:
+    image: ldez/traefik-certs-dumper:latest
+    container_name: cert-dumper
+    networks:
+      - traefik
+    entrypoint: sh -c '
+      traefik-certs-dumper file --domain-subdir --version v2 --watch
+      --source /data/acme.json --dest /data/dump'
+    volumes:
+      - ${CONFIG_DIR}/traefik2/acme:/data
