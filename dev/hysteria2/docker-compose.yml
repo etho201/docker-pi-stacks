@@ -5,12 +5,27 @@ services:
     image: tobyxdd/hysteria:latest
     container_name: hysteria
     restart: always
-    network_mode: "host"
+    networks:
+      - traefik
+    ports:
+      - 8444:8444
     volumes:
       - ${CONFIG_DIR}/hysteria2/hysteria.yaml:/etc/hysteria.yaml
       - ${CONFIG_DIR}/traefik2/acme/dump:/certs
     command: ["server", "-c", "/etc/hysteria.yaml"]
-
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.hysteria-rtr.entrypoints=websecure"
+      - "traefik.http.routers.hysteria-rtr.rule=Host(`my.$FQDN2`)"
+      - "traefik.http.routers.hysteria-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.hysteria-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.hysteria-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.hysteria-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.hysteria-rtr.service=hysteria-svc"
+      - "traefik.http.services.hysteria-svc.loadbalancer.server.port=8444"
   traefik-certs-dumper:
     image: ldez/traefik-certs-dumper:latest
     container_name: cert-dumper
