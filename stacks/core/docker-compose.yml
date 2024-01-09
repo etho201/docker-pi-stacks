@@ -34,27 +34,6 @@ services:
     # Checks for new container images everyday at 3:30am
 
 ########################################################################################
-# DuckDNS
-# https://hub.docker.com/r/linuxserver/duckdns
-########################################################################################
-
-  duckdns:
-    image: ghcr.io/linuxserver/duckdns
-    container_name: duckdns
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - SUBDOMAINS=${DUCKDNS_SUBDOMAINS}
-      - TOKEN=${DUCKDNS_TOKEN}
-      - LOG_FILE=true #optional
-    volumes:
-      - ${CONFIG_DIR}/duckdns:/config #optional
-    networks:
-      - traefik
-    restart: always
-
-########################################################################################
 # oauth2
 ########################################################################################
 
