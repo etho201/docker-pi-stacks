@@ -1,7 +1,7 @@
 version: "3.7"
 
 services:
-  ocis:
+  owncloud:
     image: owncloud/ocis:latest
     container_name: owncloud
     volumes:
