@@ -64,15 +64,16 @@ services:
     container_name: ring-mqtt
     restart: always
     image: tsightler/ring-mqtt
-    networks:
-      - traefik
+    network_mode: host
+    # networks:
+      # - traefik
     # ports:
     #   - 8554:8554                      # Enable RTSP port for external media player access
     volumes:
       - ${VOLUME_DIR}/ring-mqtt:/data  # Mapping of local folder to provide persistant storage
     environment:                       
       - RINGTOKEN=${RINGTOKEN}         # Required for initial startup, see: https://github.com/tsightler/ring-mqtt/blob/main/docs/DOCKER.md#authentication
-      - MQTTHOST=mosquitto             # Hostname or IP of MQTT Broker
+      - MQTTHOST=127.0.0.1             # Hostname or IP of MQTT Broker !! MUST UPDATE HOSTNAME IN config.json FILE AS WELL !!
       - MQTTPORT=1883                  # TCP port for MQTT Broker
       - MQTTUSER=${USERNAME}           # CHANGE ME -- Username for MQTT Broker (remove for anonymous)
       - MQTTPASSWORD=${MOSQUITTO_PASSWORD}     # CHANGE ME -- Password for MQTT Broker (remove for anonymous)
@@ -94,16 +95,17 @@ services:
       - TZ=${TZ}
       - MOSQUITTO_USERNAME=${USERNAME}
       - MOSQUITTO_PASSWORD=${MOSQUITTO_PASSWORD}
-    ports:
-      - 1883:1883
+    # ports:
+      # - 1883:1883
       # - 8883:8883
     volumes:
       - ${VOLUME_DIR}/mosquitto/data:/mosquitto/data
       - ${VOLUME_DIR}/mosquitto/logs:/mosquitto/log
       - ${CONFIG_DIR}/mosquitto:/mosquitto/config
     restart: always
-    networks:
-      - traefik
+    # networks:
+      # - traefik
+    network_mode: host
 
   eufy-security-ws:
     container_name: eufy-security-ws
@@ -145,7 +147,7 @@ services:
       # Optional, but recommended
       - GOVEE_API_KEY=${GOVEE_API_KEY}
 
-      - GOVEE_MQTT_HOST=mosquitto
+      - GOVEE_MQTT_HOST=127.0.0.1
       - GOVEE_MQTT_PORT=1883
       # Uncomment if your mqtt broker requires authentication
       - GOVEE_MQTT_USER=${USERNAME}
@@ -164,6 +166,8 @@ services:
       - TZ=${TZ}
     # Host networking is required
     network_mode: host
+    # networks:
+      # - traefik
 
 networks:
   traefik:
