@@ -135,6 +135,36 @@ services:
     environment:                       
       - RTSP_PROTOCOLS=tcp
 
+  govee2mqtt:
+    image: ghcr.io/wez/govee2mqtt:latest
+    container_name: govee2mqtt
+    restart: unless-stopped
+    environment:
+      - GOVEE_EMAIL=${GOVEE_EMAIL}
+      - GOVEE_PASSWORD=${GOVEE_PASSWORD}
+      # Optional, but recommended
+      - GOVEE_API_KEY=${GOVEE_API_KEY}
+
+      - GOVEE_MQTT_HOST=mosquitto
+      - GOVEE_MQTT_PORT=1883
+      # Uncomment if your mqtt broker requires authentication
+      - GOVEE_MQTT_USER=${USERNAME}
+      - GOVEE_MQTT_PASSWORD=${MOSQUITTO_PASSWORD}
+
+      # Specify the temperature scale to use, either C for Celsius
+      # or F for Farenheit
+      - GOVEE_TEMPERATURE_SCALE=C
+      # Always use colorized output
+      - RUST_LOG_STYLE=always
+
+      # If you are asked to set the debug level, uncomment the next line
+      # - RUST_LOG=govee=trace
+
+      # Set the timezone for timestamps in the log
+      - TZ=${TZ}
+    # Host networking is required
+    network_mode: host
+
 networks:
   traefik:
     name: traefik
