@@ -1,5 +1,4 @@
 ---
-version: '3.8'
 services:
 
 ########################################################################################
@@ -10,9 +9,6 @@ services:
   homeassistant:
     image: ghcr.io/home-assistant/home-assistant:stable
     container_name: homeassistant
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
     volumes:
       - ${CONFIG_DIR}/home-assistant:/config
       - ${VOLUME_DIR}/home-assistant:/media
@@ -166,8 +162,6 @@ services:
       - TZ=${TZ}
     # Host networking is required
     network_mode: host
-    # networks:
-      # - traefik
 
 networks:
   traefik:
