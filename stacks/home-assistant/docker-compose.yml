@@ -155,7 +155,7 @@ services:
 
       # Specify the temperature scale to use, either C for Celsius
       # or F for Farenheit
-      - GOVEE_TEMPERATURE_SCALE=C
+      - GOVEE_TEMPERATURE_SCALE=F
       # Always use colorized output
       - RUST_LOG_STYLE=always
 
