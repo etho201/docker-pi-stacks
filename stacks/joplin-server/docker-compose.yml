@@ -1,7 +1,7 @@
 ---
 version: "3.7"
 services:
-  joplin:
+  joplin-server:
     image: etechonomy/joplin-server:latest
     container_name: joplin-server
     environment:
@@ -33,7 +33,7 @@ services:
       - "traefik.http.services.joplin-svc.loadbalancer.server.port=22300"
 
   joplin-db:
-    image: postgres:15 # latest as of 4/16/2023
+    image: postgres:16 # latest as of 1/27/2024
     container_name: joplin-db
     environment:
       - POSTGRES_PASSWORD=${JOPLIN_DB_PASS}
