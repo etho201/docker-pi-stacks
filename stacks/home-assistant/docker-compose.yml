@@ -163,6 +163,32 @@ services:
     # Host networking is required
     network_mode: host
 
+  esphome:
+    container_name: esphome
+    image: esphome/esphome:latest
+    restart: always
+    environment:
+      - TZ=${TZ}
+    networks:
+      - traefik
+    volumes:
+      - ${CONFIG_DIR}/esphome:/config
+    # ports:
+    #   - '6052:6052'
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.esphome-rtr.entrypoints=websecure"
+      - "traefik.http.routers.esphome-rtr.rule=Host(`esphome.$FQDN`)"
+      - "traefik.http.routers.esphome-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.esphome-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.esphome-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.esphome-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.esphome-rtr.service=esphome-svc"
+      - "traefik.http.services.esphome-svc.loadbalancer.server.port=6052"
+
 networks:
   traefik:
     name: traefik
