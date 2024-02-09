@@ -572,6 +572,8 @@ services:
     volumes:
       - ${CONFIG_DIR}/healthchecks:/data
     restart: unless-stopped
+    depends_on:
+      - healthchecks-db
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
