@@ -595,7 +595,7 @@ services:
     restart: always
     volumes:
       - ${VOLUME_DIR}/healthchecks/database:/var/lib/mysql
-      - ${CONFIG_DIR}/healthchecks/database:/etc/my.cnf
+      - ${CONFIG_DIR}/healthchecks/database/my.cnf:/etc/my.cnf
     environment:
       - MYSQL_DATABASE=hc
       - MYSQL_ROOT_PASSWORD=${HEALTHCHECKS_DB_ROOT_PW}
