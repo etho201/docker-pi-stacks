@@ -569,6 +569,8 @@ services:
       - SITE_ROOT=https://healthchecks.${FQDN}
     # ports:
     #   - 8000:8000
+    networks:
+      - traefik
     volumes:
       - ${CONFIG_DIR}/healthchecks:/data
     restart: unless-stopped
@@ -589,7 +591,7 @@ services:
       - "traefik.http.services.healthchecks-svc.loadbalancer.server.port=8000"
 
   healthchecks-db:
-    image: container-registry.oracle.com/mysql/community-server:latest
+    image: container-registry.oracle.com/mysql/community-server:8.3-aarch64
     restart: always
     volumes:
       - ${VOLUME_DIR}/healthchecks/database:/var/lib/mysql
@@ -599,7 +601,8 @@ services:
       - MYSQL_ROOT_PASSWORD=${HEALTHCHECKS_DB_ROOT_PW}
     # ports:
     #   - 3306:3306
-
+    networks:
+      - traefik
 
 networks:
   traefik:
