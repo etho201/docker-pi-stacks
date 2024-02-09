@@ -549,6 +549,56 @@ services:
       - "traefik.http.routers.nextcloud-rtr.service=nextcloud-svc"
       - "traefik.http.services.nextcloud-svc.loadbalancer.server.port=80"
 
+  healthchecks:
+    image: healthchecks/healthchecks:latest
+    container_name: healthchecks
+    environment:
+      - ALLOWED_HOSTS=healthchecks.${FQDN}
+      - DB=mysql
+      - DB_NAME=hc
+      - DB_PASSWORD=${HEALTHCHECKS_DB_ROOT_PW}
+      - DEBUG=False
+      - INTEGRATIONS_ALLOW_PRIVATE_IPS=true
+      - DEFAULT_FROM_EMAIL=${EMAIL_FROM}
+      - EMAIL_HOST=smtp.gmail.com
+      - EMAIL_HOST_PASSWORD=${EMAIL_PASSWORD}
+      - EMAIL_HOST_USER=${EMAIL_FROM}
+      - EMAIL_PORT=587
+      - EMAIL_USE_TLS=True
+      - SECRET_KEY=${HEALTHCHECKS_SECRET_KEY}
+      - SITE_ROOT=https://healthchecks.${FQDN}
+    # ports:
+    #   - 8000:8000
+    volumes:
+      - ${CONFIG_DIR}/healthchecks:/data
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.healthchecks-rtr.entrypoints=websecure"
+      - "traefik.http.routers.healthchecks-rtr.rule=Host(`healthchecks.$FQDN`)"
+      - "traefik.http.routers.healthchecks-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.healthchecks-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.healthchecks-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.healthchecks-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.healthchecks-rtr.service=healthchecks-svc"
+      - "traefik.http.services.healthchecks-svc.loadbalancer.server.port=8000"
+
+  healthchecks-db:
+    image: container-registry.oracle.com/mysql/community-server:latest
+    restart: always
+    volumes:
+      - ${VOLUME_DIR}/healthchecks/database:/var/lib/mysql
+      - ${CONFIG_DIR}/healthchecks/database:/etc/my.cnf
+    environment:
+      - MYSQL_DATABASE=hc
+      - MYSQL_ROOT_PASSWORD=${HEALTHCHECKS_DB_ROOT_PW}
+    # ports:
+    #   - 3306:3306
+
+
 networks:
   traefik:
     name: traefik
