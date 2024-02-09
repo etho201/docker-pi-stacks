@@ -592,6 +592,7 @@ services:
 
   healthchecks-db:
     image: container-registry.oracle.com/mysql/community-server:8.3-aarch64
+    container_name: healthchecks-db
     restart: always
     volumes:
       - type: bind
