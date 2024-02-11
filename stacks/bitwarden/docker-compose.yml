@@ -17,12 +17,12 @@ services:
       - ADMIN_TOKEN=${ADMIN_TOKEN} # https://github.com/dani-garcia/bitwarden_rs/wiki/Enabling-admin-page
       - DOMAIN=https://bitwarden.${FQDN} # Required for correct generation of invite links
       - SIGNUPS_ALLOWED=false
-      - SMTP_HOST=${SMTP_SERVER} # https://github.com/dani-garcia/vaultwarden/wiki/SMTP-Configuration
+      - SMTP_HOST=${SMTP_RELAY_SERVER} # https://github.com/dani-garcia/vaultwarden/wiki/SMTP-Configuration
       - SMTP_FROM=${EMAIL_FROM}
       - SMTP_PORT=587
       - SMTP_SECURITY=starttls
-      - SMTP_USERNAME=${EMAIL_FROM} # Must 'allow less secure app access' if using Gmail --> https://myaccount.google.com/lesssecureapps?utm_source=google-account&utm_medium=web
-      - SMTP_PASSWORD=${EMAIL_APP_PASSWORD}
+      - SMTP_USERNAME=${EMAIL_FROM} # Must 'enable 2FA and use app password' if using Gmail --> https://support.google.com/accounts/answer/185833?hl=en
+      - SMTP_PASSWORD=${BITWARDEN_EMAIL_APP_PASSWORD}
       - LOG_FILE=/data/bitwarden.log
       - WEBSOCKET_ENABLED=true # Required to use WebSocket notifications
       # - DATABASE_URL=mysql://bitwarden:${BITWARDEN_DBPASS}@maria-bitwarden/bitwarden #FORMAT: DATABASE_URL=mysql://[[user]:[password]@]host[:port][/database]
