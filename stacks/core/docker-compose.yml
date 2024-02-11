@@ -571,12 +571,13 @@ services:
       - EMAIL_USE_TLS=True
       - SECRET_KEY=${HEALTHCHECKS_SECRET_KEY}
       - SITE_ROOT=https://healthchecks.${FQDN}
+      - SITE_LOGO_URL=/static/img/my-logo.svg
     # ports:
     #   - 8000:8000
     networks:
       - traefik
     volumes:
-      - ${CONFIG_DIR}/healthchecks:/data
+      - ${VOLUME_DIR}/healthchecks/healthchecks-green.svg:/opt/healthchecks/static-collected/img/my-logo.svg
     restart: unless-stopped
     depends_on:
       - healthchecks-db
