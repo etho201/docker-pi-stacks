@@ -572,6 +572,7 @@ services:
       - SECRET_KEY=${HEALTHCHECKS_SECRET_KEY}
       - SITE_ROOT=https://healthchecks.${FQDN}
       - SITE_LOGO_URL=/static/img/my-logo.svg
+      - REGISTRATION_OPEN=False
     # ports:
     #   - 8000:8000
     networks:
