@@ -41,14 +41,14 @@ services:
 
   oauth2:
     container_name: oauth2
-    image: quay.io/oauth2-proxy/oauth2-proxy:latest-arm64
+    image: quay.io/oauth2-proxy/oauth2-proxy:latest
     command:
       - "--cookie-domain=${FQDN}"
       - "--cookie-secure=true"
       - "--email-domain=*"
       # - "--github-org=${GITHUB_ORG}"
       - "--github-user=${GITHUB_USER}" # allow logins by username, separated by a comma
-      - "--scope=user:email"
+      - "--scope=user:email read:org"
       - "--http-address=0.0.0.0:4180"
       - "--reverse-proxy=true"
       - "--provider=github"
