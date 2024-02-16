@@ -80,7 +80,7 @@ TRANSMISSION_USERNAME=
 TRANSMISSION_PASSWORD=
 ```
 
-Ideally you should fully configure Traefik before launching any containers. This is simple, just reference the included Traefik config files (config/traefik) and replace `***INSERT_FQDN***` and `***INSERT_EMAIL***` in `traefik.toml` with your own information.
+Ideally you should fully configure Traefik before launching any containers. This is simple, just reference the included Traefik config files (`config/traefik2`) and replace `***FQDN***` in the `middleware.yml` with your own information.
 
 ---
 
