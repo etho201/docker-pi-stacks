@@ -134,6 +134,36 @@ services:
       - "traefik.http.routers.lidarr-rtr.service=lidarr-svc"
       - "traefik.http.services.lidarr-svc.loadbalancer.server.port=8686"
 
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_DIR}/bazarr:/config
+      - ${EXTHDD_DIR}/media/movies:/movies #optional
+      - ${EXTHDD_DIR}/media/tv:/tv #optional
+    # ports:
+    #   - 6767:6767
+    restart: unless-stopped
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.bazarr-rtr.entrypoints=websecure"
+      - "traefik.http.routers.bazarr-rtr.rule=Host(`bazarr.$FQDN`)"
+      - "traefik.http.routers.bazarr-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.bazarr-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.bazarr-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.bazarr-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.bazarr-rtr.service=bazarr-svc"
+      - "traefik.http.services.bazarr-svc.loadbalancer.server.port=6767"
+
   # jackett:
   #   image: ghcr.io/linuxserver/jackett
   #   container_name: jackett
