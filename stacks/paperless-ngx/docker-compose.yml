@@ -14,7 +14,7 @@ services:
       - traefik
 
   paperless-db:
-    image: container-registry.oracle.com/mysql/community-server:latest
+    image: container-registry.oracle.com/mysql/community-server:8.3-aarch64
     container_name: paperless-db
     restart: unless-stopped
     volumes:
@@ -34,6 +34,7 @@ services:
 
   webserver:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    container_name: paperless
     restart: unless-stopped
     depends_on:
       - paperless-db
