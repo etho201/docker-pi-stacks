@@ -1,0 +1,73 @@
+---
+version: '3.7'
+
+name: paperless
+services:
+
+  paperless-broker:
+    image: docker.io/library/redis:7
+    container_name: paperless-broker
+    restart: unless-stopped
+    volumes:
+      - ${VOLUME_DIR}/paperless/redisdata:/data
+    networks:
+      - traefik
+
+  paperless-db:
+    image: container-registry.oracle.com/mysql/community-server:latest
+    container_name: paperless-db
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: ${CONFIG_DIR}/paperless/database/my.cnf
+        target: /etc/my.cnf
+      - ${VOLUME_DIR}/paperless/database:/var/lib/mysql
+    environment:
+      - TZ=${TZ}
+      - MYSQL_DATABASE=paperless
+      - MYSQL_ROOT_PASSWORD=${PAPERLESS_DB_ROOT_PW}
+      - MYSQL_ROOT_HOST=paperless.traefik
+    # ports:
+    #   - 3306:3306
+    networks:
+      - traefik
+
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    restart: unless-stopped
+    depends_on:
+      - paperless-db
+      - paperless-broker
+    # ports:
+    #   - "8000:8000"
+    volumes:
+      - ${VOLUME_DIR}/paperless/data:/usr/src/paperless/data
+      - ${VOLUME_DIR}/paperless/media:/usr/src/paperless/media
+      - ${CONFIG_DIR}/paperless/export:/usr/src/paperless/export
+      - ${CONFIG_DIR}/paperless/consume:/usr/src/paperless/consume
+    environment:
+      PAPERLESS_REDIS: redis://paperless-broker:6379
+      PAPERLESS_DBENGINE: mysql
+      PAPERLESS_DBHOST: paperless-db
+      PAPERLESS_DBUSER: paperless # only needed if non-default username
+      PAPERLESS_DBPASS: ${PAPERLESS_DB_ROOT_PW} # only needed if non-default password
+      PAPERLESS_DBPORT: 3306
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.paperless-rtr.entrypoints=websecure"
+      - "traefik.http.routers.paperless-rtr.rule=Host(`paperless.$FQDN`)"
+      - "traefik.http.routers.paperless-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.paperless-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.paperless-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.paperless-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.paperless-rtr.service=paperless-svc"
+      - "traefik.http.services.paperless-svc.loadbalancer.server.port=8000"
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
