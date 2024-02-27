@@ -22,11 +22,16 @@ services:
         source: ${CONFIG_DIR}/paperless/database/my.cnf
         target: /etc/my.cnf
       - ${VOLUME_DIR}/paperless/database:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb3
     environment:
       - TZ=${TZ}
       - MYSQL_DATABASE=paperless
       - MYSQL_ROOT_PASSWORD=${PAPERLESS_DB_ROOT_PW}
       - MYSQL_ROOT_HOST=paperless.traefik
+      # - COLLATION-SERVER=utf8mb4_bin
+      # - MYSQL_USER=paperless
+      # - MYSQL_PASSWORD=${PAPERLESS_DB_PW}
     # ports:
     #   - 3306:3306
     networks:
@@ -47,12 +52,23 @@ services:
       - ${CONFIG_DIR}/paperless/export:/usr/src/paperless/export
       - ${CONFIG_DIR}/paperless/consume:/usr/src/paperless/consume
     environment:
-      PAPERLESS_REDIS: redis://paperless-broker:6379
-      PAPERLESS_DBENGINE: mysql
+      PAPERLESS_REDIS: redis://paperless-broker.traefik:6379
+      PAPERLESS_DBENGINE: mariadb
       PAPERLESS_DBHOST: paperless-db
-      PAPERLESS_DBUSER: paperless # only needed if non-default username
+      PAPERLESS_DBUSER: root # only needed if non-default username
       PAPERLESS_DBPASS: ${PAPERLESS_DB_ROOT_PW} # only needed if non-default password
       PAPERLESS_DBPORT: 3306
+      PAPERLESS_SECRET_KEY: ${PAPERLESS_SECRET_KEY} # Set using "openssl rand -base64 48"
+      PAPERLESS_URL: https://paperless.${FQDN}
+      PAPERLESS_TIME_ZONE: ${TZ}
+      PAPERLESS_OCR_LANGUAGE: eng
+      USERMAP_UID: ${PUID}
+      USERMAP_GID: ${PGID}
+      PAPERLESS_ADMIN_USER: ${USERNAME}
+      PAPERLESS_ADMIN_PASSWORD: ${PAPERLESS_ADMIN_PASSWORD}
+      PAPERLESS_ADMIN_MAIL: ${EMAIL}
+    networks:
+      - traefik
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
