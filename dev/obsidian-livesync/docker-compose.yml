@@ -1,0 +1,49 @@
+# For details and other explanations about this file refer to:
+# https://github.com/vrtmrz/obsidian-livesync/blob/main/docs/setup_own_server.md#traefik
+
+---
+version: '3.7'
+
+services:
+  couchdb:
+    image: couchdb:latest
+    container_name: obsidian-livesync
+    user: ${PUID}:${PGID}
+    environment:
+      - COUCHDB_USER=${USERNAME}
+      - COUCHDB_PASSWORD=${OBISIDIAN_LIVESYNC_COUCHDB_PASSWORD}
+    volumes:
+      - ${VOLUME_DIR}/obisidian_livesync:/opt/couchdb/data
+      - ${CONFIG_DIR}/obisidian_livesync/local.ini:/opt/couchdb/etc/local.ini
+    #ports:
+    #  - 5984:5984
+    restart: unless-stopped
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.obsidian-livesync-rtr.entrypoints=websecure"
+      - "traefik.http.routers.obsidian-livesync-rtr.rule=Host(`obsidian-livesync.$FQDN`)"
+      - "traefik.http.routers.obsidian-livesync-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.obsidian-livesync-rtr.middlewares=obsidiancors"
+      # - "traefik.http.routers.obsidian-livesync-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.obsidian-livesync-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.obsidian-livesync-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.obsidian-livesync-rtr.service=obsidian-livesync-svc"
+      - "traefik.http.services.obsidian-livesync-svc.loadbalancer.server.port=5984"
+      # The part needed for CORS to work on Traefik 2.x starts here
+      - "traefik.http.middlewares.obsidiancors.headers.accesscontrolallowmethods=GET,PUT,POST,HEAD,DELETE"
+      - "traefik.http.middlewares.obsidiancors.headers.accesscontrolallowheaders=accept,authorization,content-type,origin,referer"
+      - "traefik.http.middlewares.obsidiancors.headers.accesscontrolalloworiginlist=app://obsidian.md,capacitor://localhost,http://localhost"
+      - "traefik.http.middlewares.obsidiancors.headers.accesscontrolmaxage=3600"
+      - "traefik.http.middlewares.obsidiancors.headers.addvaryheader=true"
+      - "traefik.http.middlewares.obsidiancors.headers.accessControlAllowCredentials=true"
+      
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
