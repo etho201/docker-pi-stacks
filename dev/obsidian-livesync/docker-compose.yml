@@ -8,13 +8,15 @@ services:
   couchdb:
     image: couchdb:latest
     container_name: obsidian-livesync
-    user: ${PUID}:${PGID}
+    # user: ${PUID}:${PGID}
     environment:
       - COUCHDB_USER=${USERNAME}
-      - COUCHDB_PASSWORD=${OBISIDIAN_LIVESYNC_COUCHDB_PASSWORD}
+      - COUCHDB_PASSWORD=${OBSIDIAN_LIVESYNC_COUCHDB_PASSWORD}
     volumes:
-      - ${VOLUME_DIR}/obisidian_livesync:/opt/couchdb/data
-      - ${CONFIG_DIR}/obisidian_livesync/local.ini:/opt/couchdb/etc/local.ini
+      - type: bind
+        source: ${CONFIG_DIR}/obsidian_livesync/local.ini
+        target: /opt/couchdb/etc/local.ini
+      - ${VOLUME_DIR}/obsidian_livesync:/opt/couchdb/data
     #ports:
     #  - 5984:5984
     restart: unless-stopped
