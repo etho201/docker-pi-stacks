@@ -596,14 +596,14 @@ services:
       - "traefik.http.services.healthchecks-svc.loadbalancer.server.port=8000"
 
   healthchecks-db:
-    image: container-registry.oracle.com/mysql/community-server:8.3-aarch64
+    image: container-registry.oracle.com/mysql/community-server:8.4-aarch64
     container_name: healthchecks-db
     restart: always
     volumes:
       - type: bind
         source: ${CONFIG_DIR}/healthchecks/database/my.cnf
         target: /etc/my.cnf
-      - ${VOLUME_DIR}/healthchecks/database:/var/lib/mysql
+      - ${VOLUME_DIR}/healthchecks/database:/var/lib/mysql # If permissions issues occur, run `sudo chown 27:sudo ${VOLUME_DIR}/healthchecks/database`
     environment:
       - MYSQL_DATABASE=hc
       - MYSQL_ROOT_PASSWORD=${HEALTHCHECKS_DB_ROOT_PW}
