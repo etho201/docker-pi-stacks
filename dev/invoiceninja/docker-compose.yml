@@ -45,7 +45,7 @@ services:
       - DB_HOST=invoiceninja-db.traefik
       - DB_DATABASE=ninja
       - DB_USERNAME=ninja
-      - DB_PASSWORD=ninja
+      - DB_PASSWORD=${IN_DB_PASSWORD}
       - IN_USER_EMAIL=${EMAIL}
       - IN_PASSWORD=${IN_PASSWORD}
     restart: always
