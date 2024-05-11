@@ -42,7 +42,7 @@ services:
       - APP_URL=http://invoiceninja.${FQDN}
       - APP_KEY=${IN_APP_KEY}
       - MULTI_DB_ENABLED=false
-      - DB_HOST=invoiceninja-db
+      - DB_HOST=invoiceninja-db.traefik
       - DB_DATABASE=ninja
       - DB_USERNAME=ninja
       - DB_PASSWORD=ninja
