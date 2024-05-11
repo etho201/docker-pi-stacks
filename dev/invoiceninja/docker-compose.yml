@@ -42,7 +42,7 @@ services:
       - APP_URL=http://invoiceninja.${FQDN}
       - APP_KEY=${IN_APP_KEY}
       - MULTI_DB_ENABLED=false
-      - DB_HOST=db
+      - DB_HOST=invoiceninja-db
       - DB_DATABASE=ninja
       - DB_USERNAME=ninja
       - DB_PASSWORD=ninja
@@ -50,7 +50,7 @@ services:
       - IN_PASSWORD=${IN_PASSWORD}
     restart: always
     volumes:
-      - ${CONFIG_DIR}/invoiceninja/hosts:/etc/hosts:ro
+      # - ${CONFIG_DIR}/invoiceninja/hosts:/etc/hosts:ro
       - ${VOLUME_DIR}/invoiceninja/public:/var/www/app/public:rw,delegated
       - ${VOLUME_DIR}/invoiceninja/storage:/var/www/app/storage:rw,delegated
       - type: bind
