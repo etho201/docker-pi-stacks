@@ -11,7 +11,7 @@ services:
       # - ./config/nginx/in-vhost.conf:/etc/nginx/conf.d/in-vhost.conf:ro
       - ${VOLUME_DIR}/invoiceninja/public:/var/www/app/public:ro
     depends_on:
-      - invoiceninja-app
+      - invoiceninja
     # Run webserver nginx on port 80
     # Feel free to modify depending what port is already occupied
     # ports:
@@ -35,7 +35,7 @@ services:
       - "traefik.http.routers.in-rtr.service=in-svc"
       - "traefik.http.services.in-svc.loadbalancer.server.port=443"
 
-  invoiceninja-app:
+  invoiceninja:
     image: invoiceninja/invoiceninja:5
     container_name: invoiceninja
     environment: 
@@ -77,6 +77,7 @@ services:
       - MYSQL_USER=ninja
       - MYSQL_PASSWORD=${IN_DB_PASSWORD}
       - MYSQL_DATABASE=ninja
+      - MYSQL_ROOT_HOST=invoiceninja.traefik
     volumes:
       - ${VOLUME_DIR}/invoiceninja:/var/lib/mysql:rw,delegated
     networks:
