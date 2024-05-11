@@ -79,7 +79,7 @@ services:
       - MYSQL_DATABASE=ninja
       - MYSQL_ROOT_HOST=invoiceninja.traefik
     volumes:
-      - ${VOLUME_DIR}/invoiceninja:/var/lib/mysql:rw,delegated
+      - ${VOLUME_DIR}/invoiceninja/db:/var/lib/mysql:rw,delegated
     networks:
       - traefik
     # extra_hosts:
