@@ -8,7 +8,7 @@ services:
     volumes:
       # Vhost configuration
       #- ./config/caddy/Caddyfile:/etc/caddy/Caddyfiledocker-com
-      # - ./config/nginx/in-vhost.conf:/etc/nginx/conf.d/in-vhost.conf:ro
+      - ${CONFIG_DIR}/invoiceninja/nginx/in-vhost.conf:/etc/nginx/conf.d/in-vhost.conf:ro
       - ${VOLUME_DIR}/invoiceninja/public:/var/www/app/public:ro
     depends_on:
       - invoiceninja
