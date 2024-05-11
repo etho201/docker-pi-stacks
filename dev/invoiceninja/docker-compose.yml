@@ -1,6 +1,7 @@
 services:
-  server:
+  invoiceninja-nginx:
     image: nginx
+    container_name: invoiceninja-nginx
     restart: always
     environment: 
       - APP_URL=http://invoiceninja.${FQDN}
@@ -10,7 +11,7 @@ services:
       # - ./config/nginx/in-vhost.conf:/etc/nginx/conf.d/in-vhost.conf:ro
       - ${VOLUME_DIR}/invoiceninja/public:/var/www/app/public:ro
     depends_on:
-      - app
+      - invoiceninja-app
     # Run webserver nginx on port 80
     # Feel free to modify depending what port is already occupied
     # ports:
@@ -34,8 +35,9 @@ services:
       - "traefik.http.routers.in-rtr.service=in-svc"
       - "traefik.http.services.in-svc.loadbalancer.server.port=443"
 
-  app:
+  invoiceninja-app:
     image: invoiceninja/invoiceninja:5
+    container_name: invoiceninja
     environment: 
       - APP_URL=http://invoiceninja.${FQDN}
       - APP_KEY=${IN_APP_KEY}
@@ -51,17 +53,22 @@ services:
       - ${CONFIG_DIR}/invoiceninja/hosts:/etc/hosts:ro
       - ${VOLUME_DIR}/invoiceninja/public:/var/www/app/public:rw,delegated
       - ${VOLUME_DIR}/invoiceninja/storage:/var/www/app/storage:rw,delegated
-      - ${CONFIG_DIR}/invoiceninja/php/php.ini:/usr/local/etc/php/php.ini
-      - ${CONFIG_DIR}/invoiceninja/php/php-cli.ini:/usr/local/etc/php/php-cli.ini
+      - type: bind
+        source: ${CONFIG_DIR}/invoiceninja/php/php.ini
+        target: /usr/local/etc/php/php.ini
+      - type: bind
+        source: ${CONFIG_DIR}/invoiceninja/php/php-cli.ini
+        target: /usr/local/etc/php/php-cli.ini
     depends_on:
-      - db
+      - invoiceninja-db
     networks:
       - traefik
     # extra_hosts:
     #   - "in5.localhost:192.168.0.124 " #host and ip
 
-  db:
+  invoiceninja-db:
     image: container-registry.oracle.com/mysql/community-server:8.4-aarch64
+    container_name: invoiceninja-db
     # ports:
     #   - "3306:3306"
     restart: always
