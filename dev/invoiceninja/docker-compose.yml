@@ -42,10 +42,12 @@ services:
       - APP_URL=http://in.${FQDN}
       - APP_KEY=${IN_APP_KEY}
       - MULTI_DB_ENABLED=false
-      - DB_HOST=invoiceninja-db.traefik
-      - DB_DATABASE=ninja
-      - DB_USERNAME=ninja
-      - DB_PASSWORD=${IN_DB_PASSWORD}
+      - REQUIRE_HTTPS=false
+      - APP_DEBUG=true
+      - DB_HOST1=invoiceninja-db.traefik
+      - DB_DATABASE1=ninja
+      - DB_USERNAME1=ninja
+      - DB_PASSWORD1=${IN_DB_PASSWORD}
       - IN_USER_EMAIL=${EMAIL}
       - IN_PASSWORD=${IN_PASSWORD}
     restart: always
