@@ -41,9 +41,8 @@ services:
     environment: 
       - APP_URL=http://in.${FQDN}
       - APP_KEY=${IN_APP_KEY}
-      - MULTI_DB_ENABLED=false
       - REQUIRE_HTTPS=false
-      - APP_DEBUG=true
+      - APP_DEBUG=false
       - DB_HOST1=invoiceninja-db.traefik
       - DB_DATABASE1=ninja
       - DB_USERNAME1=ninja
