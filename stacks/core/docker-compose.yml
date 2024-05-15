@@ -144,7 +144,7 @@ services:
       - traefik
 
   traefik:
-    image: traefik:mimolette # the mimolette tag refers to v2.11.x
+    image: traefik:beaufort # the mimolette tag refers to v3.0.x
     container_name: traefik
     restart: always
     command: # CLI arguments
@@ -180,7 +180,6 @@ services:
       - --providers.docker.exposedByDefault=false
       # - --entrypoints.websecure.http.middlewares=chain-authelia@file
       # - --providers.docker.network=backend # Defines a default docker network to use for connections to all containers. Setting this will cause issues if a container uses network_mode
-      - --providers.docker.swarmMode=false
       - --providers.file.directory=/etc/traefik/rules # Load dynamic configuration from one or more .toml or .yml files in a directory
       # - --providers.file.filename=/path/to/file # Load dynamic configuration from a file
       - --providers.file.watch=true # Only works on top level files in the rules folder
