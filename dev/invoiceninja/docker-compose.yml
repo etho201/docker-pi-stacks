@@ -40,7 +40,7 @@ services:
       - APP_URL=http://in.${FQDN2}
       - APP_KEY=${IN_APP_KEY}
       - REQUIRE_HTTPS=true
-      - TRUSTED_PROXIES=${TRUSTED_PROXIES}
+      - TRUSTED_PROXIES=http://traefik
       - APP_DEBUG=false
       - DB_HOST1=invoiceninja-db.traefik
       - DB_DATABASE1=ninja
