@@ -8,6 +8,7 @@ services:
       #- ./config/caddy/Caddyfile:/etc/caddy/Caddyfiledocker-com
       - source: ${CONFIG_DIR}/invoiceninja/nginx/in-vhost.conf
         target: /etc/nginx/conf.d/in-vhost.conf
+        type: bind
         read_only: true
         bind:
           create_host_path: false
