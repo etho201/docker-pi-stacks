@@ -576,7 +576,11 @@ services:
     networks:
       - traefik
     volumes:
-      - ${VOLUME_DIR}/healthchecks/healthchecks-green.svg:/opt/healthchecks/static-collected/img/my-logo.svg
+      - source: ${VOLUME_DIR}/healthchecks/healthchecks-green.svg
+        target: /opt/healthchecks/static-collected/img/my-logo.svg
+        type: bind
+        bind:
+          create_host_path: false
     restart: unless-stopped
     depends_on:
       - healthchecks-db
