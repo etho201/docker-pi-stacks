@@ -12,6 +12,7 @@ services:
           create_host_path: false
       - ${VOLUME_DIR}/owncloud:/var/lib/ocis
     environment:
+      #- PROXY_ENABLE_BASIC_AUTH=true # rclone
       - OCIS_INSECURE=false
       - PROXY_TLS=false
       - OCIS_URL=https://owncloud.${FQDN}
