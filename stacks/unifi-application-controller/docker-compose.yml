@@ -1,0 +1,75 @@
+---
+services:
+
+########################################################################################
+# Unifi Controller
+# https://hub.docker.com/r/linuxserver/unifi-controller
+########################################################################################
+
+  unifi-db:
+    image: docker.io/mongo:7.0
+    container_name: unifi-db
+    volumes:
+      - ${VOLUME_DIR}/unifi-network-application/db:/data/db #Data dir grows to 250MB+
+      - source: ${VOLUME_DIR}/unifi-network-application/db/init-mongo.js
+        target: /docker-entrypoint-initdb.d/init-mongo.js
+        type: bind
+        bind:
+          create_host_path: false
+    restart: unless-stopped
+    networks:
+      - traefik
+
+  unifi-network-application:
+    image: lscr.io/linuxserver/unifi-network-application:latest
+    container_name: unifi-network-application
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - MONGO_USER=unifi
+      - MONGO_PASS=${UNIFI_MONGO_PASS}
+      - MONGO_HOST=unifi-db
+      - MONGO_PORT=27017
+      - MONGO_DBNAME=unifi
+      - MEM_LIMIT=1024 #optional
+      - MEM_STARTUP=1024 #optional
+      # - MONGO_TLS= #optional
+      # - MONGO_AUTHSOURCE= #optional
+    volumes:
+      - ${CONFIG_DIR}/unifi-network-application:/config #Config
+      - ${CONFIG_DIR}/unifi-controller:/tmp # to restore backup data
+    ports:
+      # - 8443:8443
+      - 3478:3478/udp # For STUN
+      # - 10001:10001/udp
+      - 8080:8080
+      # - 1900:1900/udp #optional
+      # - 8843:8843 #optional
+      # - 8880:8880 #optional
+      # - 6789:6789 #optional
+      # - 5514:5514/udp #optional
+    restart: unless-stopped
+    networks:
+      - traefik
+    labels:
+      # https://github.com/containous/traefik/issues/5783 (--serverstransport.insecureskipverify=true)
+      # https://community.containo.us/t/problem-using-ssl-backend-with-selfsigned-certificates/1974
+      # Traefik Configuration
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.unifi-controller-rtr.entrypoints=websecure"
+      - "traefik.http.routers.unifi-controller-rtr.rule=Host(`unifi.${FQDN}`)"
+      - "traefik.http.routers.unifi-controller-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.unifi-controller-rtr.middlewares=chain-no-auth@file" # No Authentication
+      ## HTTP Services
+      - "traefik.http.routers.unifi-controller-rtr.service=unifi-controller-svc"
+      - "traefik.http.services.unifi-controller-svc.loadbalancer.server.port=8443"
+      - "traefik.http.services.unifi-controller-svc.loadbalancer.server.scheme=https" # IMPORTANT! This is required for the Unifi Controller!
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
