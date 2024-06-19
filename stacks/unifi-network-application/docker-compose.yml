@@ -11,7 +11,7 @@ services:
     container_name: unifi-db
     volumes:
       - ${VOLUME_DIR}/unifi-network-application/db:/data/db #Data dir grows to 250MB+
-      - source: ${VOLUME_DIR}/unifi-network-application/db/init-mongo.js
+      - source: ${VOLUME_DIR}/unifi-network-application/init-mongo.js
         target: /docker-entrypoint-initdb.d/init-mongo.js
         type: bind
         bind:
@@ -38,7 +38,6 @@ services:
       # - MONGO_AUTHSOURCE= #optional
     volumes:
       - ${CONFIG_DIR}/unifi-network-application:/config #Config
-      - ${CONFIG_DIR}/unifi-controller:/tmp # to restore backup data
     ports:
       # - 8443:8443
       - 3478:3478/udp # For STUN
