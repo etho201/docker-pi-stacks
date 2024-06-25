@@ -25,6 +25,7 @@ services:
     # extra_hosts:
     #   - "in5.localhost:192.168.0.124 " #host and ip
     labels:
+      - autoheal=true
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.in-rtr.entrypoints=websecure"
