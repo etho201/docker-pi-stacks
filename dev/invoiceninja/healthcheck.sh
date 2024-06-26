@@ -8,14 +8,9 @@ while [ $# -gt 0 ]; do
             if [[ "$1" != *=* ]]; then shift; fi # Value is next arg if no `=`
             GOTIFY_TOKEN="${1#*=}"
             ;;
-        -in*|--invoiceninja-token*)
-            if [[ "$1" != *=* ]]; then shift; fi # Value is next arg if no `=`
-            IN_API_TOKEN="${1#*=}"
-            ;;
         --help|-h)
             printf "Options:\n"
             printf "%-30s%-s\n" "  -gt, --gotify-token" "Specify the application token for Gotify"
-            printf "%-30s%-s\n" "  -in, --invoiceninja-token" "Specify the API token for Invoice Ninja"
             exit 0
             ;;
         *)
@@ -25,7 +20,7 @@ while [ $# -gt 0 ]; do
     shift
 done
 
-if [[ $(docker run --network=traefik --rm curlimages/curl -Lso /dev/null -w "%{http_code}" -X GET http://invoiceninja-nginx/api/v1/health_check -H "X-API-TOKEN: ${IN_API_TOKEN}") != "200" ]]; then
+if [[ $(docker run --network=traefik --rm curlimages/curl -Lso /dev/null -w "%{http_code}" -X GET http://invoiceninja-nginx/public/images/blank.png) != "200" ]]; then
     cd "$( dirname "${BASH_SOURCE[0]}" )"
     docker compose up -d --force-recreate invoiceninja-nginx
     docker run --network=traefik --rm curlimages/curl "http://gotify/message?token=${GOTIFY_TOKEN}" -F "title=Invoice Ninja" -F "message=Restarted Invoice Ninja" -F "priority=5"
