@@ -25,6 +25,7 @@ services:
     # extra_hosts:
     #   - "in5.localhost:192.168.0.124 " #host and ip
     labels:
+      - autoheal=true
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.in-rtr.entrypoints=websecure"
@@ -37,6 +38,12 @@ services:
       ## HTTP Services
       - "traefik.http.routers.in-rtr.service=in-svc"
       - "traefik.http.services.in-svc.loadbalancer.server.port=80"
+    healthcheck:
+      test: curl --fail http://invoiceninja-nginx/public/images/blank.png || exit 1
+      interval: 10s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
 
   invoiceninja:
     image: invoiceninja/invoiceninja:5

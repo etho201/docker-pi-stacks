@@ -640,16 +640,6 @@ services:
     networks:
       - traefik
 
-  autoheal:
-    image: willfarrell/autoheal:latest
-    container_name: autoheal
-    environment:
-      - AUTOHEAL_CONTAINER_LABEL=autoheal
-    network_mode: none
-    restart: always
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-
 networks:
   traefik:
     name: traefik
