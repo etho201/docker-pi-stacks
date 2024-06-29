@@ -17,12 +17,12 @@ services:
       - traefik.enable=true
       ## HTTP Routers
       - traefik.http.routers.apprise-rtr.entrypoints=websecure
-      - traefik.http.routers.apprise-rtr.rule=Host(`apprise.$FQDN2`)
+      - traefik.http.routers.apprise-rtr.rule=Host(`apprise.$FQDN`)
       - traefik.http.routers.apprise-rtr.tls=true
       ## Middlewares
-      - traefik.http.routers.apprise-rtr.middlewares=chain-no-auth@file # No Authentication
+      # - traefik.http.routers.apprise-rtr.middlewares=chain-no-auth@file # No Authentication
       # - traefik.http.routers.apprise-rtr.middlewares=chain-basic-auth@file # Basic Authentication
-      # - traefik.http.routers.apprise-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
+      - traefik.http.routers.apprise-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
       ## HTTP Services
       - traefik.http.routers.apprise-rtr.service=apprise-svc
       - traefik.http.services.apprise-svc.loadbalancer.server.port=8000
