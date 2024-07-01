@@ -1,5 +1,4 @@
 ---
-version: "3.7"
 services:
   wireguard: # for rootless operation (Podman), need to first run `sudo modprobe ip_tables`
     image: ghcr.io/linuxserver/wireguard
@@ -28,10 +27,22 @@ services:
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
     restart: always
+    healthcheck:
+      test: curl --fail http://localhost:9091 || exit 1
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
+    labels:
+      - autoheal=true
 
   transmission:
     image: ghcr.io/linuxserver/transmission
     container_name: transmission
+    depends_on:
+      wireguard:
+        condition: service_healthy
+        restart: true
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -66,6 +77,10 @@ services:
   qbittorrent:
     image: ghcr.io/linuxserver/qbittorrent
     container_name: qbittorrent
+    depends_on:
+      wireguard:
+        condition: service_healthy
+        restart: true
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -100,6 +115,10 @@ services:
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd:latest
     container_name: sabnzbd
+    depends_on:
+      wireguard:
+        condition: service_healthy
+        restart: true
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
