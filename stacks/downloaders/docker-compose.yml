@@ -139,9 +139,12 @@ services:
 
   ofelia:
     image: mcuadros/ofelia:latest
+    container_name: ofelia
     depends_on:
       - wireguard
-    command: daemon --docker -f label=com.docker.compose.project=${downloaders}
+    command: daemon --docker
+    networks:
+      - traefik
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./healthcheck.sh:/tmp/healthcheck.sh
