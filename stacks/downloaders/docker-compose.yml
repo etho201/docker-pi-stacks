@@ -27,14 +27,6 @@ services:
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
     restart: always
-    healthcheck:
-      test: curl --fail http://localhost:9091 || exit 1
-      interval: 30s
-      retries: 3
-      start_period: 10s
-      timeout: 10s
-    labels:
-      - autoheal=true
 
   transmission:
     image: ghcr.io/linuxserver/transmission
@@ -144,6 +136,18 @@ services:
       ## HTTP Services
       - "traefik.http.routers.sabnzbd-rtr.service=sabnzbd-svc"
       - "traefik.http.services.sabnzbd-svc.loadbalancer.server.port=8080"
+
+  ofelia:
+    image: mcuadros/ofelia:latest
+    depends_on:
+      - wireguard
+    command: daemon --docker -f label=com.docker.compose.project=${downloaders}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./healthcheck.sh:/tmp/healthcheck.sh
+    labels:
+      ofelia.job-local.my-test-job.schedule: "@every 30s"
+      ofelia.job-local.my-test-job.command: "bash /tmp/healthcheck.sh -t ${GOTIFY_HEALTHCHECK}"
 
   # nzbget:
   #   image: lscr.io/linuxserver/nzbget:latest
