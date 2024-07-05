@@ -71,7 +71,7 @@ services:
     container_name: qbittorrent
     depends_on:
       wireguard:
-        condition: service_healthy
+        condition: service_started
         restart: true
     environment:
       - PUID=${PUID}
@@ -109,7 +109,7 @@ services:
     container_name: sabnzbd
     depends_on:
       wireguard:
-        condition: service_healthy
+        condition: service_started
         restart: true
     environment:
       - PUID=${PUID}
@@ -142,15 +142,20 @@ services:
     container_name: ofelia
     depends_on:
       - wireguard
-    command: daemon --docker
+    entrypoint: []
+    command: |
+      sh -c '
+      apk add docker-cli;
+      /usr/bin/ofelia daemon --docker
+      '
     networks:
       - traefik
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./healthcheck.sh:/tmp/healthcheck.sh
     labels:
-      ofelia.job-local.my-test-job.schedule: "@every 30s"
-      ofelia.job-local.my-test-job.command: "bash /tmp/healthcheck.sh -t ${GOTIFY_HEALTHCHECK}"
+      ofelia.job-local.fix-downloaders.schedule: "@every 5m"
+      ofelia.job-local.fix-downloaders.command: "sh /tmp/healthcheck.sh -t ${GOTIFY_HEALTHCHECK}"
 
   # nzbget:
   #   image: lscr.io/linuxserver/nzbget:latest
