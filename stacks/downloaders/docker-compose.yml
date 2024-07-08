@@ -148,6 +148,7 @@ services:
       apk add docker-cli-compose;
       /usr/bin/ofelia daemon --docker
       '
+    restart: always
     networks:
       - traefik
     volumes:
