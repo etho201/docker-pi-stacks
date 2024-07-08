@@ -145,17 +145,18 @@ services:
     entrypoint: []
     command: |
       sh -c '
-      apk add docker-cli;
+      apk add docker-cli-compose;
       /usr/bin/ofelia daemon --docker
       '
     networks:
       - traefik
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./healthcheck.sh:/tmp/healthcheck.sh
+      - ./:/tmp/downloaders
+    working_dir: /tmp/downloaders
     labels:
       ofelia.job-local.fix-downloaders.schedule: "@every 5m"
-      ofelia.job-local.fix-downloaders.command: "sh /tmp/healthcheck.sh -t ${GOTIFY_HEALTHCHECK}"
+      ofelia.job-local.fix-downloaders.command: "sh healthcheck.sh -t ${GOTIFY_HEALTHCHECK}"
 
   # nzbget:
   #   image: lscr.io/linuxserver/nzbget:latest
