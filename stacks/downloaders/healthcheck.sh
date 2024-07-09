@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 while getopts t: flag
@@ -8,8 +8,7 @@ do
     esac
 done
 
-if [[ $(docker run --network=traefik --rm curlimages/curl -L -s -o /dev/null -w "%{http_code}" http://wireguard:9091) != "200" ]]; then
-    cd "$( dirname "${BASH_SOURCE[0]}" )"
+if [[ $(docker inspect wireguard --format='{{.State.Health.Status}}') == "unhealthy" ]]; then
     docker compose up -d --force-recreate
-    docker run --network=traefik --rm curlimages/curl "http://gotify/message?token=${GOTIFY_TOKEN}" -F "title=Transmission" -F "message=Restarted Transmission" -F "priority=5"
+    docker run --network=traefik --rm curlimages/curl "http://gotify/message?token=${GOTIFY_TOKEN}" -F "title=Wireguard" -F "message=Wireguard container found to be unhealthy. Successfully restarted the container!" -F "priority=5"
 fi
