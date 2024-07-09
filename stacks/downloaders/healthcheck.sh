@@ -9,6 +9,6 @@ do
 done
 
 if [[ $(docker inspect wireguard --format='{{.State.Health.Status}}') == "unhealthy" ]]; then
-    docker compose up -d --force-recreate
+    docker compose up -d --force-recreate wireguard transmission sabnzbd qbittorrent
     docker run --network=traefik --rm curlimages/curl "http://gotify/message?token=${GOTIFY_TOKEN}" -F "title=Wireguard" -F "message=Wireguard container found to be unhealthy. Successfully restarted the container!" -F "priority=5"
 fi
