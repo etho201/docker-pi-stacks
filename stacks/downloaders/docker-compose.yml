@@ -1,4 +1,6 @@
 ---
+name: downloaders
+
 services:
   wireguard: # for rootless operation (Podman), need to first run `sudo modprobe ip_tables`
     image: ghcr.io/linuxserver/wireguard
@@ -153,8 +155,8 @@ services:
       - traefik
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./:/tmp/downloaders
-    working_dir: /tmp/downloaders
+      - ./:/tmp
+    working_dir: /tmp
     labels:
       ofelia.job-local.fix-downloaders.schedule: "@every 5m"
       ofelia.job-local.fix-downloaders.command: "sh healthcheck.sh -t ${GOTIFY_HEALTHCHECK}"
