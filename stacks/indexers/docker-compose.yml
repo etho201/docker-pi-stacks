@@ -49,8 +49,7 @@ services:
       - UMASK=022 #optional
     volumes:
       - ${CONFIG_DIR}/sonarr:/config
-      - ${EXTHDD_DIR}/media/tv:/tv
-      - ${EXTHDD_DIR}/downloads:/downloads
+      - ${EXTHDD_DIR}:/data
       - "/etc/localtime:/etc/localtime:ro"
     #ports:
       #- 8989:8989
@@ -81,8 +80,7 @@ services:
       - UMASK=022 #optional
     volumes:
       - ${CONFIG_DIR}/radarr:/config
-      - ${EXTHDD_DIR}/downloads:/downloads
-      - ${EXTHDD_DIR}/media/movies:/movies
+      - ${EXTHDD_DIR}:/data
     #ports:
       #- 7878:7878
     restart: always
@@ -112,8 +110,7 @@ services:
       - UMASK=022 #optional
     volumes:
       - ${CONFIG_DIR}/lidarr:/config
-      - ${EXTHDD_DIR}/downloads:/downloads
-      - ${EXTHDD_DIR}/media/music:/music
+      - ${EXTHDD_DIR}:/data
       #- "/etc/localtime:/etc/localtime:ro"
     #ports:
       #- 8686:8686
@@ -143,8 +140,7 @@ services:
       - TZ=${TZ}
     volumes:
       - ${CONFIG_DIR}/bazarr:/config
-      - ${EXTHDD_DIR}/media/movies:/movies #optional
-      - ${EXTHDD_DIR}/media/tv:/tv #optional
+      - ${EXTHDD_DIR}:/data
     # ports:
     #   - 6767:6767
     restart: unless-stopped

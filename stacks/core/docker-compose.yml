@@ -345,11 +345,7 @@ services:
       - PLEX_CLAIM=${PLEX_CLAIM} # Optionally you can obtain a claim token from https://plex.tv/claim and input here. Keep in mind that the claim tokens expire within 4 minutes. If you're having trouble claiming the Plex server, delete the "Preferences.xml" and "plexmediaserver.pid" from ${CONFIG_DIR}/plex and try again.
     volumes:
       - ${CONFIG_DIR}/plex:/config
-      - ${EXTHDD_DIR}/media:/data
-      #- ${EXTHDD_DIR}/media/tv:/data/tvshows
-      #- ${EXTHDD_DIR}/media/movies:/data/movies
-      #- ${EXTHDD_DIR}/media/music:/data/music
-      #- ${EXTHDD_DIR}/media/other:/data/other
+      - ${EXTHDD_DIR}/media:/data/media
       - ${VOLUME_DIR}/plex/transcode:/transcode
     restart: always
 

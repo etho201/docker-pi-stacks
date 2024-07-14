@@ -20,8 +20,8 @@ services:
     volumes:
       - ${CONFIG_DIR}/wireguard:/config
       - /lib/modules:/lib/modules
-      - ${EXTHDD_DIR}/downloads/torrents:/downloads # Added path here so it's accesible by Radarr/Sonarr
-      - ${EXTHDD_DIR}/downloads/usenet:/downloads # Added path here so it's accesible by SABnzbd
+      - ${EXTHDD_DIR}/downloads/torrents:/downloads/torrents # Added path here so it's accesible by Radarr/Sonarr
+      - ${EXTHDD_DIR}/downloads/usenet:/downloads/usenet # Added path here so it's accesible by SABnzbd
     networks:
       - traefik
     # ports:
@@ -52,8 +52,7 @@ services:
       # - PASS=password #optional
     volumes:
       - ${CONFIG_DIR}/transmission:/config
-      - ${EXTHDD_DIR}/downloads/torrents:/downloads
-      - ${EXTHDD_DIR}/downloads/torrents/watch:/watch
+      - ${EXTHDD_DIR}/downloads/torrents:/data/torrents
     network_mode: service:wireguard
     # ports:
     #   - 9091:9091
@@ -89,7 +88,7 @@ services:
       - WEBUI_PORT=8081
     volumes:
       - ${CONFIG_DIR}/qbittorrent:/config
-      - ${EXTHDD_DIR}/downloads/torrents/downloads:/downloads
+      - ${EXTHDD_DIR}/downloads/torrents:/data/torrents
     # networks:
     #   - traefik
     network_mode: service:wireguard
@@ -125,8 +124,7 @@ services:
       - TZ=${TZ}
     volumes:
       - ${CONFIG_DIR}/sabnzbd:/config
-      - ${EXTHDD_DIR}/downloads/usenet/completed:/downloads #optional
-      - ${EXTHDD_DIR}/downloads/usenet/incomplete:/incomplete-downloads #optional
+      - ${EXTHDD_DIR}/downloads/usenet:/data/usenet
     # ports:
     #   - 8080:8080 # Configured in sabnzbd.ini
     restart: unless-stopped
@@ -176,7 +174,7 @@ services:
   #     - TZ=${TZ}
   #   volumes:
   #     - ${CONFIG_DIR}/nzbget:/config
-  #     - ${EXTHDD_DIR}/downloads/usenet:/downloads
+  #     - ${EXTHDD_DIR}/downloads/usenet:/data/usenet
   #   # ports:
   #     # - 6789:6789
   #   network_mode: service:wireguard
