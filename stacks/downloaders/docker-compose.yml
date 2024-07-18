@@ -52,7 +52,7 @@ services:
       # - PASS=password #optional
     volumes:
       - ${CONFIG_DIR}/transmission:/config
-      - ${EXTHDD_DIR}/downloads/torrents:/data/torrents
+      - ${EXTHDD_DIR}/downloads/torrents:/data/downloads/torrents
     network_mode: service:wireguard
     # ports:
     #   - 9091:9091
@@ -88,7 +88,7 @@ services:
       - WEBUI_PORT=8081
     volumes:
       - ${CONFIG_DIR}/qbittorrent:/config
-      - ${EXTHDD_DIR}/downloads/torrents:/data/torrents
+      - ${EXTHDD_DIR}/downloads/torrents:/data/downloads/torrents
     # networks:
     #   - traefik
     network_mode: service:wireguard
@@ -124,7 +124,7 @@ services:
       - TZ=${TZ}
     volumes:
       - ${CONFIG_DIR}/sabnzbd:/config
-      - ${EXTHDD_DIR}/downloads/usenet:/data/usenet
+      - ${EXTHDD_DIR}/downloads/usenet:/data/downloads/usenet
     # ports:
     #   - 8080:8080 # Configured in sabnzbd.ini
     restart: unless-stopped
