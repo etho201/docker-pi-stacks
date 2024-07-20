@@ -17,3 +17,10 @@
 4. To recover your old accounts and files, simply merge everything from the deltas from the `ocis.yaml.bak` file into your exisitng `ocis.yaml` file.
 
 5. Reboot ownCloud after updating the ocis.yaml file.
+
+---
+
+## Environment Variables:
+- https://doc.owncloud.com/ocis/next/deployment/services/s-list/search.html
+
+
