@@ -1,6 +1,4 @@
 ---
-version: '3.7'
-
 name: core
 services:
 
@@ -124,24 +122,6 @@ services:
 # Traefik
 # https://hub.docker.com/_/traefik
 ########################################################################################
-
-  traefik-hub-agent:
-    image: ghcr.io/traefik/hub-agent-traefik:latest
-    pull_policy: always
-    container_name: traefik-hub-agent
-    restart: always
-    networks:
-      - traefik
-    command:
-      - run
-      - --hub.token=${TRAEFIK_HUB_TOKEN}
-      - --auth-server.advertise-url=http://hub-agent
-      - --traefik.host=traefik
-      - --traefik.tls.insecure=true
-    volumes:
-      - ${DOCKER_SOCK}:/var/run/docker.sock
-    depends_on:
-      - traefik
 
   traefik:
     image: traefik:beaufort # the mimolette tag refers to v3.0.x

@@ -1,5 +1,5 @@
 ---
-version: "3.7"
+name: joplin-server
 services:
   joplin-server:
     image: etechonomy/joplin-server:latest

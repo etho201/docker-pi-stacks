@@ -20,8 +20,6 @@ services:
     volumes:
       - ${CONFIG_DIR}/wireguard:/config
       - /lib/modules:/lib/modules
-      - ${EXTHDD_DIR}/downloads/torrents:/downloads/torrents # Added path here so it's accesible by Radarr/Sonarr
-      - ${EXTHDD_DIR}/downloads/usenet:/downloads/usenet # Added path here so it's accesible by SABnzbd
     networks:
       - traefik
     # ports:
@@ -174,7 +172,7 @@ services:
   #     - TZ=${TZ}
   #   volumes:
   #     - ${CONFIG_DIR}/nzbget:/config
-  #     - ${EXTHDD_DIR}/downloads/usenet:/data/usenet
+  #     - ${EXTHDD_DIR}/downloads/usenet:/data/downloads/usenet
   #   # ports:
   #     # - 6789:6789
   #   network_mode: service:wireguard

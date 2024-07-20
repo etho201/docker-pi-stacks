@@ -1,3 +1,5 @@
+---
+name: apprise
 services:
   apprise:
     image: lscr.io/linuxserver/apprise-api:latest

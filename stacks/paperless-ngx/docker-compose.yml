@@ -67,6 +67,7 @@ services:
       PAPERLESS_ADMIN_USER: ${USERNAME}
       PAPERLESS_ADMIN_PASSWORD: ${PAPERLESS_ADMIN_PASSWORD}
       PAPERLESS_ADMIN_MAIL: ${EMAIL}
+      PAPERLESS_OCR_DESKEW: false
     networks:
       - traefik
     labels:
