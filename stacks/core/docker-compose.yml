@@ -124,7 +124,7 @@ services:
 ########################################################################################
 
   traefik:
-    image: traefik:beaufort # the mimolette tag refers to v3.0.x
+    image: traefik:comte # the comte tag refers to v3.1.x
     container_name: traefik
     restart: always
     command: # CLI arguments
