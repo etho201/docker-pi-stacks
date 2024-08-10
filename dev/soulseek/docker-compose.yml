@@ -32,21 +32,7 @@ services:
       # - "traefik.http.routers.soulseek-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.soulseek-rtr.service=soulseek-svc"
-      - "traefik.http.services.soulseek-svc.loadbalancer.server.port=80"
-      #---------------------------------
-      # WebSocket Traefik configuration
-      #---------------------------------
-      ## HTTP Routers
-      - "traefik.http.routers.soulseek-websocket-rtr.entrypoints=websecure"
-      - "traefik.http.routers.soulseek-websocket-rtr.rule=Host(`soulseek.$FQDN`)"
-      - "traefik.http.routers.soulseek-websocket-rtr.tls=true"
-      ## Middlewares
-      - "traefik.http.routers.soulseek-websocket-rtr.middlewares=chain-no-auth@file" # No Authentication
-      # - "traefik.http.routers.soulseek-websocket-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      # - "traefik.http.routers.soulseek-websocket-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
-      ## HTTP Services
-      - "traefik.http.routers.soulseek-websocket-rtr.service=soulseek-websocket-svc"
-      - "traefik.http.services.soulseek-websocket-svc.loadbalancer.server.port=5030"
+      - "traefik.http.services.soulseek-svc.loadbalancer.server.port=5030"
 
 networks:
   traefik:
