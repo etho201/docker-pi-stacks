@@ -163,6 +163,37 @@ services:
       ofelia.job-local.fix-downloaders.schedule: "@every 5m"
       ofelia.job-local.fix-downloaders.command: "sh healthcheck.sh -t ${GOTIFY_HEALTHCHECK}"
 
+  soulseek:
+    image: slskd/slskd
+    container_name: soulseek
+    # ports:
+    #   - "5030:5030"
+    #   - "5031:5031"
+    #   - "50300:50300"
+    environment:
+      - SLSKD_REMOTE_CONFIGURATION=true
+    volumes:
+      - ${EXTHDD_DIR}/downloads/soulseek:/app
+    restart: always
+    network_mode: service:wireguard
+    #ports:
+      # - 443:443
+      # - 80:80
+      # - 3012:3012 # For WebSocket
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.soulseek-rtr.entrypoints=websecure"
+      - "traefik.http.routers.soulseek-rtr.rule=Host(`soulseek.$FQDN`)"
+      - "traefik.http.routers.soulseek-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.soulseek-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.soulseek-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.soulseek-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.soulseek-rtr.service=soulseek-svc"
+      - "traefik.http.services.soulseek-svc.loadbalancer.server.port=5030"
+
   # nzbget:
   #   image: lscr.io/linuxserver/nzbget:latest
   #   container_name: nzbget

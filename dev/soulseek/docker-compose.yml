@@ -14,8 +14,7 @@ services:
     volumes:
       - ${EXTHDD_DIR}/downloads/soulseek:/app
     restart: always
-    networks:
-      - traefik
+    network_mode: service:wireguard
     #ports:
       # - 443:443
       # - 80:80
