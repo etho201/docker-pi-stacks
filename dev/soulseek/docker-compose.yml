@@ -12,7 +12,7 @@ services:
     environment:
       - SLSKD_REMOTE_CONFIGURATION=true
     volumes:
-      - ${EXTERNAL_HDD}/downloads/soulseek:/app
+      - ${EXTHDD_DIR}/downloads/soulseek:/app
     restart: always
     networks:
       - traefik
