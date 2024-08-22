@@ -24,14 +24,12 @@ services:
       - SMTP_USERNAME=${EMAIL_FROM} # Must 'enable 2FA and use app password' if using Gmail --> https://support.google.com/accounts/answer/185833?hl=en
       - SMTP_PASSWORD=${BITWARDEN_EMAIL_APP_PASSWORD}
       - LOG_FILE=/data/bitwarden.log
-      - WEBSOCKET_ENABLED=true # Required to use WebSocket notifications
       # - DATABASE_URL=mysql://bitwarden:${BITWARDEN_DBPASS}@maria-bitwarden/bitwarden #FORMAT: DATABASE_URL=mysql://[[user]:[password]@]host[:port][/database]
     networks:
       - traefik
     #ports:
       # - 443:443
       # - 80:80
-      # - 3012:3012 # For WebSocket
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -45,20 +43,6 @@ services:
       ## HTTP Services
       - "traefik.http.routers.bitwarden-rtr.service=bitwarden-svc"
       - "traefik.http.services.bitwarden-svc.loadbalancer.server.port=80"
-      #---------------------------------
-      # WebSocket Traefik configuration
-      #---------------------------------
-      ## HTTP Routers
-      - "traefik.http.routers.bitwarden-websocket-rtr.entrypoints=websecure"
-      - "traefik.http.routers.bitwarden-websocket-rtr.rule=Host(`bitwarden.$FQDN2`) && Path(`/notifications/hub`)"
-      - "traefik.http.routers.bitwarden-websocket-rtr.tls=true"
-      ## Middlewares
-      - "traefik.http.routers.bitwarden-websocket-rtr.middlewares=chain-no-auth@file" # No Authentication
-      # - "traefik.http.routers.bitwarden-websocket-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      # - "traefik.http.routers.bitwarden-websocket-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
-      ## HTTP Services
-      - "traefik.http.routers.bitwarden-websocket-rtr.service=bitwarden-websocket-svc"
-      - "traefik.http.services.bitwarden-websocket-svc.loadbalancer.server.port=3012"
 
 ########################################################################################
 # MariaDB
