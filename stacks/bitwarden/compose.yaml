@@ -15,7 +15,7 @@ services:
         - ${CONFIG_DIR}/bitwarden:/data
     environment:
       - ADMIN_TOKEN=${ADMIN_TOKEN} # https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page
-      - DOMAIN=https://bitwarden.${FQDN2} # Required for correct generation of invite links
+      - DOMAIN=https://bitwarden.${FQDN} # Required for correct generation of invite links
       - SIGNUPS_ALLOWED=false
       - SMTP_HOST=${SMTP_RELAY_SERVER} # https://github.com/dani-garcia/vaultwarden/wiki/SMTP-Configuration
       - SMTP_FROM=${EMAIL_FROM}
@@ -34,7 +34,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.bitwarden-rtr.entrypoints=websecure"
-      - "traefik.http.routers.bitwarden-rtr.rule=Host(`bitwarden.$FQDN2`)"
+      - "traefik.http.routers.bitwarden-rtr.rule=Host(`bitwarden.$FQDN`)"
       - "traefik.http.routers.bitwarden-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.bitwarden-rtr.middlewares=chain-no-auth@file" # No Authentication
