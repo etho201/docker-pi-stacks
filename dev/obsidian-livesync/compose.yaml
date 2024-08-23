@@ -1,9 +1,7 @@
 # For details and other explanations about this file refer to:
 # https://github.com/vrtmrz/obsidian-livesync/blob/main/docs/setup_own_server.md#traefik
-
 ---
-version: '3.7'
-
+name: obsidian-livesync
 services:
   couchdb:
     image: couchdb:latest
