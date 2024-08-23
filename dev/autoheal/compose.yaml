@@ -5,7 +5,7 @@ services:
     container_name: autoheal
     environment:
       - AUTOHEAL_CONTAINER_LABEL=autoheal
-      - APPRISE_URL=http://apprise:8000/notify/6f383be0229c371400b4f2a84cbdb23ce0481f166d6c49044fcbf811c02ee831
+      - APPRISE_URL=http://apprise:8000/notify/${APPRISE_CONFIG_ID}
     #network_mode: none
     networks:
       - traefik
