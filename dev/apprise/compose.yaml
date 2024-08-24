@@ -4,7 +4,7 @@ services:
   apprise:
     image: caronc/apprise:latest
     container_name: apprise
-    environment:
+    environment: # Full list is here: https://hub.docker.com/r/caronc/apprise
       - APPRISE_STATEFUL_MODE=simple
       - SECRET_KEY=${APPRISE_SECRET_KEY}
     volumes:
