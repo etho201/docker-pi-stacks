@@ -2,14 +2,14 @@
 name: apprise
 services:
   apprise:
-    image: lscr.io/linuxserver/apprise-api:latest
+    image: caronc/apprise:latest
     container_name: apprise
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
+      - APPRISE_STATEFUL_MODE=simple
+      - SECRET_KEY=${APPRISE_SECRET_KEY}
     volumes:
       - ${CONFIG_DIR}/apprise:/config
+      - ${VOLUME_DIR}/apprise:/attach
     # ports:
     #   - 8000:8000
     restart: unless-stopped
@@ -34,3 +34,4 @@ networks:
     name: traefik
     external: true
     #run: docker network create traefik
+
