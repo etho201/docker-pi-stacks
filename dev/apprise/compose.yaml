@@ -6,7 +6,7 @@ services:
     container_name: apprise
     environment: # Full list is here: https://hub.docker.com/r/caronc/apprise
       - APPRISE_STATEFUL_MODE=simple
-      - SECRET_KEY=${APPRISE_SECRET_KEY}
+      # - SECRET_KEY=${APPRISE_SECRET_KEY} # Applies only when stateful mode is set to `hash`
     volumes:
       - ${CONFIG_DIR}/apprise:/config
       - ${VOLUME_DIR}/apprise:/attach
