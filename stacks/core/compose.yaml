@@ -297,7 +297,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.gotify-rtr.entrypoints=websecure"
-      - "traefik.http.routers.gotify-rtr.rule=Host(`gotify.$FQDN2`)"
+      - "traefik.http.routers.gotify-rtr.rule=Host(`gotify.$FQDN`)"
       - "traefik.http.routers.gotify-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.gotify-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -408,7 +408,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.heimdall-rtr.entrypoints=websecure"
-      - "traefik.http.routers.heimdall-rtr.rule=Host(`${FQDN}`)"
+      - "traefik.http.routers.heimdall-rtr.rule=Host(`heimdall.${FQDN}`)"
       - "traefik.http.routers.heimdall-rtr.tls=true"
       ## Middlewares
       # - "traefik.http.routers.heimdall-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -529,7 +529,7 @@ services:
     image: healthchecks/healthchecks:latest
     container_name: healthchecks
     environment:
-      - ALLOWED_HOSTS=healthchecks.${FQDN2}
+      - ALLOWED_HOSTS=healthchecks.${FQDN}
       - DB=mysql
       - DB_NAME=hc
       - DB_PASSWORD=${HEALTHCHECKS_DB_ROOT_PW}
@@ -544,7 +544,7 @@ services:
       - EMAIL_USE_SSL=False
       - EMAIL_USE_TLS=True
       - SECRET_KEY=${HEALTHCHECKS_SECRET_KEY}
-      - SITE_ROOT=https://healthchecks.${FQDN2}
+      - SITE_ROOT=https://healthchecks.${FQDN}
       - SITE_LOGO_URL=/static/img/my-logo.svg
       - REGISTRATION_OPEN=False
     # ports:
@@ -564,7 +564,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.healthchecks-rtr.entrypoints=websecure"
-      - "traefik.http.routers.healthchecks-rtr.rule=Host(`healthchecks.$FQDN2`)"
+      - "traefik.http.routers.healthchecks-rtr.rule=Host(`healthchecks.$FQDN`)"
       - "traefik.http.routers.healthchecks-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.healthchecks-rtr.middlewares=chain-no-auth@file" # No Authentication
