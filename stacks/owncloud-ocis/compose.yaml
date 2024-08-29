@@ -2,7 +2,7 @@
 name: owncloud-ocis
 services:
   owncloud:
-    image: owncloud/ocis:latest
+    image: owncloud/ocis:5
     container_name: owncloud
     volumes:
       - source: ${CONFIG_DIR}/owncloud/ocis.yaml
