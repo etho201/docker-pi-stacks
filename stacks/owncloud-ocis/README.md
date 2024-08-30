@@ -1,6 +1,6 @@
 # ownCloud OCIS
 
-1. OCIS is still being developed, so if changes to the `ocis.yaml` file take place upstream, but not for your server, you may need to generate a new file:
+1. OCIS is still being developed, so if changes to the `ocis.yaml` file take place upstream, but not for your server, you may need to generate a new file and/or add environment variables that are missing. Check the [release notes](https://doc.owncloud.com/ocis_release_notes.html) for any breaking changes before upgrading.
 
 2. Initialize the `ocis.yaml` file to see what's new.
 
