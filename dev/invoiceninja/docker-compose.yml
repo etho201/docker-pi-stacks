@@ -35,7 +35,7 @@ services:
       - traefik.enable=true
       ## HTTP Routers
       - traefik.http.routers.in-rtr.entrypoints=websecure
-      - traefik.http.routers.in-rtr.rule=Host(`in.$FQDN2`)
+      - traefik.http.routers.in-rtr.rule=Host(`in.$FQDN`)
       - traefik.http.routers.in-rtr.tls=true
       ## Middlewares
       - traefik.http.routers.in-rtr.middlewares=chain-no-auth@file # No Authentication
@@ -49,7 +49,7 @@ services:
     image: invoiceninja/invoiceninja:5
     container_name: invoiceninja
     environment: 
-      - APP_URL=http://in.${FQDN2}
+      - APP_URL=http://in.${FQDN}
       - APP_KEY=${IN_APP_KEY}
       - REQUIRE_HTTPS=true
       - TRUSTED_PROXIES=*
