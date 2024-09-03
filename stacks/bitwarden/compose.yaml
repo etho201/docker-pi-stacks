@@ -12,7 +12,7 @@ services:
     container_name: bitwarden
     restart: always
     volumes:
-        - ${VOLUME_DIR}/bitwarden:/data
+      - ${VOLUME_DIR}/bitwarden:/data
     environment:
       - ADMIN_TOKEN=${ADMIN_TOKEN} # https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page
       - DOMAIN=https://bitwarden.${FQDN} # Required for correct generation of invite links
