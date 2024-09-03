@@ -12,7 +12,7 @@ services:
     container_name: bitwarden
     restart: always
     volumes:
-        - ${CONFIG_DIR}/bitwarden:/data
+        - ${VOLUME_DIR}/bitwarden:/data
     environment:
       - ADMIN_TOKEN=${ADMIN_TOKEN} # https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page
       - DOMAIN=https://bitwarden.${FQDN} # Required for correct generation of invite links
@@ -24,12 +24,14 @@ services:
       - SMTP_USERNAME=${EMAIL_FROM} # Must 'enable 2FA and use app password' if using Gmail --> https://support.google.com/accounts/answer/185833?hl=en
       - SMTP_PASSWORD=${BITWARDEN_EMAIL_APP_PASSWORD}
       - LOG_FILE=/data/bitwarden.log
-      # - DATABASE_URL=mysql://bitwarden:${BITWARDEN_DBPASS}@maria-bitwarden/bitwarden #FORMAT: DATABASE_URL=mysql://[[user]:[password]@]host[:port][/database]
+      - DATABASE_URL=mysql://vaultwarden:${BITWARDEN_MYSQL_PASSWORD}@bitwarden-db/vaultwarden #FORMAT: DATABASE_URL=mysql://[[user]:[password]@]host[:port][/database]
     networks:
       - traefik
     #ports:
       # - 443:443
       # - 80:80
+    depends_on:
+      - bitwarden-db
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -46,30 +48,26 @@ services:
 
 ########################################################################################
 # MariaDB
-# The only official MySQL compatible database compiled for ARM is MariaDB
+# Vaultwarden is based upon MariaDB client libraries since that is what Debian provides.
 # https://hub.docker.com/_/mariadb
 #
 # Notes: https://github.com/dani-garcia/bitwarden_rs/wiki/Using-the-MySQL-Backend
 ########################################################################################
-#
-#  mariadb:
-#    image: mariadb
-#    container_name: mariadb
-#    environment:
-#      - PUID=${PUID}
-#      - PGID=${PGID}
-#      - TZ=${TZ}
-#    restart: always
-#    networks:
-#      - traefik
-#    environment:
-#      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOTPW}
-#      MYSQL_USER: ${USERNAME}
-#      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-#      MYSQL_DATABASE: ${DB_NAME}
-#    volumes:
-#      - ./data/database:/docker-entrypoint-initdb.d
-#      - ${VOLUME_DIR}/mariadb:/var/lib/mysql #Data Directory
+
+ bitwarden-db:
+   image: mariadb
+   container_name: bitwarden-db
+   restart: always
+   networks:
+     - traefik
+   environment:
+     MYSQL_USER: vaultwarden
+     MYSQL_DATABASE: vaultwarden
+     MYSQL_ROOT_PASSWORD: ${BITWARDEN_MYSQL_ROOTPW}
+     MYSQL_PASSWORD: ${BITWARDEN_MYSQL_PASSWORD}
+   volumes:
+     - ${VOLUME_DIR}/bitwarden/db:/var/lib/mysql #Data Directory
+     - /etc/localtime:/etc/localtime:ro
 
 networks:
   traefik:
