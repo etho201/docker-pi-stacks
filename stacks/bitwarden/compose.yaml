@@ -54,20 +54,20 @@ services:
 # Notes: https://github.com/dani-garcia/bitwarden_rs/wiki/Using-the-MySQL-Backend
 ########################################################################################
 
- bitwarden-db:
-   image: mariadb
-   container_name: bitwarden-db
-   restart: always
-   networks:
-     - traefik
-   environment:
-     MYSQL_USER: vaultwarden
-     MYSQL_DATABASE: vaultwarden
-     MYSQL_ROOT_PASSWORD: ${BITWARDEN_MYSQL_ROOTPW}
-     MYSQL_PASSWORD: ${BITWARDEN_MYSQL_PASSWORD}
-   volumes:
-     - ${VOLUME_DIR}/bitwarden/db:/var/lib/mysql #Data Directory
-     - /etc/localtime:/etc/localtime:ro
+  bitwarden-db:
+    image: mariadb
+    container_name: bitwarden-db
+    restart: always
+    networks:
+      - traefik
+    environment:
+      MYSQL_USER: vaultwarden
+      MYSQL_DATABASE: vaultwarden
+      MYSQL_ROOT_PASSWORD: ${BITWARDEN_MYSQL_ROOTPW}
+      MYSQL_PASSWORD: ${BITWARDEN_MYSQL_PASSWORD}
+    volumes:
+      - ${VOLUME_DIR}/bitwarden/db:/var/lib/mysql #Data Directory
+      - /etc/localtime:/etc/localtime:ro
 
 networks:
   traefik:
