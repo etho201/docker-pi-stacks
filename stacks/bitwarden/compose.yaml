@@ -14,7 +14,7 @@ services:
     volumes:
       - ${VOLUME_DIR}/bitwarden:/data
     environment:
-      - ADMIN_TOKEN=${ADMIN_TOKEN} # https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page
+      - ADMIN_TOKEN=${BITWARDEN_ADMIN_TOKEN} # https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page
       - DOMAIN=https://bitwarden.${FQDN} # Required for correct generation of invite links
       - SIGNUPS_ALLOWED=false
       - SMTP_HOST=${SMTP_RELAY_SERVER} # https://github.com/dani-garcia/vaultwarden/wiki/SMTP-Configuration
@@ -31,7 +31,8 @@ services:
       # - 443:443
       # - 80:80
     depends_on:
-      - bitwarden-db
+      bitwarden-db:
+        condition: service_healthy
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -55,7 +56,7 @@ services:
 ########################################################################################
 
   bitwarden-db:
-    image: mariadb
+    image: container-registry.oracle.com/mysql/community-server:8.4-aarch64
     container_name: bitwarden-db
     restart: always
     networks:
@@ -65,9 +66,16 @@ services:
       MYSQL_DATABASE: vaultwarden
       MYSQL_ROOT_PASSWORD: ${BITWARDEN_MYSQL_ROOTPW}
       MYSQL_PASSWORD: ${BITWARDEN_MYSQL_PASSWORD}
+      MYSQL_ROOT_HOST: bitwarden.traefik
     volumes:
       - ${VOLUME_DIR}/bitwarden/db:/var/lib/mysql #Data Directory
       - /etc/localtime:/etc/localtime:ro
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+      start_period: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 55
 
 networks:
   traefik:
