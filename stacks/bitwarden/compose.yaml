@@ -25,6 +25,7 @@ services:
       - SMTP_PASSWORD=${BITWARDEN_EMAIL_APP_PASSWORD}
       - LOG_FILE=/data/bitwarden.log
       - DATABASE_URL=mysql://vaultwarden:${BITWARDEN_MYSQL_PASSWORD}@bitwarden-db/vaultwarden #FORMAT: DATABASE_URL=mysql://[[user]:[password]@]host[:port][/database]
+      - DISABLE_ICON_DOWNLOAD=true
     networks:
       - traefik
     #ports:
