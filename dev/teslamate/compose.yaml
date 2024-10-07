@@ -3,6 +3,7 @@ services:
 
   teslamate:
     image: teslamate/teslamate:latest
+    container_name: teslamate
     restart: always
     environment:
       - ENCRYPTION_KEY=${TESLAMATE_ENCRYPTION_KEY} #replace with a secure key to encrypt your Tesla API tokens
@@ -24,18 +25,19 @@ services:
       - traefik.enable=true
       ## HTTP Routers
       - traefik.http.routers.teslamate-rtr.entrypoints=websecure
-      - traefik.http.routers.teslamate-rtr.rule=Host(`in.$FQDN`)
+      - traefik.http.routers.teslamate-rtr.rule=Host(`teslamate.$FQDN2`)
       - traefik.http.routers.teslamate-rtr.tls=true
       ## Middlewares
-      # - traefik.http.routers.teslamate-rtr.middlewares=chateslamate-no-auth@file # No Authentication
-      # - traefik.http.routers.teslamate-rtr.middlewares=chateslamate-basic-auth@file # Basic Authentication
-      - traefik.http.routers.teslamate-rtr.middlewares=chateslamate-oauth2-proxy@file # OAuth 2.0
+      # - traefik.http.routers.teslamate-rtr.middlewares=chain-no-auth@file # No Authentication
+      # - traefik.http.routers.teslamate-rtr.middlewares=chain-basic-auth@file # Basic Authentication
+      - traefik.http.routers.teslamate-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
       ## HTTP Services
       - traefik.http.routers.teslamate-rtr.service=teslamate-svc
       - traefik.http.services.teslamate-svc.loadbalancer.server.port=4000
 
   teslamate-db:
-    image: postgres:17
+    image: postgres:16
+    container_name: teslamate-db
     restart: always
     environment:
       - POSTGRES_USER=teslamate
