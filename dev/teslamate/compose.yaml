@@ -1,0 +1,53 @@
+name: teslamate
+services:
+
+  teslamate:
+    image: teslamate/teslamate:latest
+    restart: always
+    environment:
+      - ENCRYPTION_KEY=${TESLAMATE_ENCRYPTION_KEY} #replace with a secure key to encrypt your Tesla API tokens
+      - DATABASE_USER=teslamate
+      - DATABASE_PASS=${TESLAMATE_DATABASE_PASSWORD} #insert your secure database password!
+      - DATABASE_NAME=teslamate
+      - DATABASE_HOST=teslamate-db
+      - MQTT_HOST=mosquitto
+    # ports:
+    #   - 4000:4000
+    # volumes:
+    #   - ./import:/opt/app/import
+    networks:
+      - traefik
+    cap_drop:
+      - all
+    labels:
+      - autoheal=true
+      - traefik.enable=true
+      ## HTTP Routers
+      - traefik.http.routers.teslamate-rtr.entrypoints=websecure
+      - traefik.http.routers.teslamate-rtr.rule=Host(`in.$FQDN`)
+      - traefik.http.routers.teslamate-rtr.tls=true
+      ## Middlewares
+      # - traefik.http.routers.teslamate-rtr.middlewares=chateslamate-no-auth@file # No Authentication
+      # - traefik.http.routers.teslamate-rtr.middlewares=chateslamate-basic-auth@file # Basic Authentication
+      - traefik.http.routers.teslamate-rtr.middlewares=chateslamate-oauth2-proxy@file # OAuth 2.0
+      ## HTTP Services
+      - traefik.http.routers.teslamate-rtr.service=teslamate-svc
+      - traefik.http.services.teslamate-svc.loadbalancer.server.port=4000
+
+  teslamate-db:
+    image: postgres:17
+    restart: always
+    environment:
+      - POSTGRES_USER=teslamate
+      - POSTGRES_PASSWORD=${TESLAMATE_DATABASE_PASSWORD} #insert your secure database password!
+      - POSTGRES_DB=teslamate
+    volumes:
+      - ${VOLUME_DIR}/teslamate/db:/var/lib/postgresql/data
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
