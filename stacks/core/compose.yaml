@@ -124,7 +124,7 @@ services:
 ########################################################################################
 
   traefik:
-    image: traefik:comte # the comte tag refers to v3.1.x
+    image: traefik:munster # the munster tag refers to v3.2.x
     container_name: traefik
     restart: always
     command: # CLI arguments
