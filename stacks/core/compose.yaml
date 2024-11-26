@@ -222,9 +222,9 @@ services:
       - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       # Pull certs for DuckDNS
-      - "traefik.http.routers.duckdns-rtr.tls.certresolver=duckdns"
-      - "traefik.http.routers.duckdns-rtr.tls.domains[0].main=${FQDN}"
-      - "traefik.http.routers.duckdns-rtr.tls.domains[0].sans=*.${FQDN}"
+      - "traefik.http.routers.cloudflare-rtr.tls.certresolver=cloudflare"
+      - "traefik.http.routers.cloudflare-rtr.tls.domains[0].main=${FQDN}"
+      - "traefik.http.routers.cloudflare-rtr.tls.domains[0].sans=*.${FQDN}"
       # HTTP Routers
       - "traefik.http.routers.traefik-rtr.entrypoints=websecure"
       - "traefik.http.routers.traefik-rtr.rule=Host(`traefik.$FQDN`)"
