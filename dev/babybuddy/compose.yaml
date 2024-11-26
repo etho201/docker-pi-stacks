@@ -1,12 +1,10 @@
 name: babybuddy
 services:
-
-services:
   babybuddy:
     image: lscr.io/linuxserver/babybuddy
     container_name: babybuddy
     volumes:
-      - ${DATA_DIR}/babybuddy:/config
+      - ${CONFIG_DIR}/babybuddy:/config
     # ports:
     #   - 8000:8000
     networks:
@@ -17,7 +15,7 @@ services:
       - traefik.enable=true
       ## HTTP Routers
       - traefik.http.routers.babybuddy-rtr.entrypoints=websecure
-      - traefik.http.routers.babybuddy-rtr.rule=Host(`babybuddy.$FQDN2`)
+      - traefik.http.routers.babybuddy-rtr.rule=Host(`babybuddy.$FQDN`)
       - traefik.http.routers.babybuddy-rtr.tls=true
       ## Middlewares
       - traefik.http.routers.babybuddy-rtr.middlewares=chain-no-auth@file # No Authentication
