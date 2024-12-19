@@ -61,7 +61,7 @@ services:
     container_name: invoiceninja2-nginx
     restart: unless-stopped
     ports:
-      - "80:80"
+      - 81:80
     volumes:
       - source: ${CONFIG_DIR}/invoiceninja-debian/debian/nginx
         target: /etc/nginx/conf.d
@@ -89,7 +89,7 @@ services:
       # - traefik.http.routers.in-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
       ## HTTP Services
       - traefik.http.routers.in-rtr.service=in-svc
-      - traefik.http.services.in-svc.loadbalancer.server.port=80
+      - traefik.http.services.in-svc.loadbalancer.server.port=81
 
 
   mysql:
