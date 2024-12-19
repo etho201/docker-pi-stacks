@@ -33,7 +33,7 @@ services:
         bind:
           create_host_path: false
       - type: bind
-        source: ${CONFIG_DIR}/invoiceninja-debian/debian/php/php-fpm.ini
+        source: ${CONFIG_DIR}/invoiceninja-debian/debian/php/php-fpm.conf
         target: /usr/local/etc/php-fpm.d/zzz-php-fpm.conf
         read_only: true
         bind:
