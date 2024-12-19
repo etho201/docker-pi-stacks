@@ -27,7 +27,7 @@ services:
       - CACHE_DRIVER=redis
       - QUEUE_CONNECTION=redis
       - SESSION_DRIVER=redis
-      - REDIS_HOST=redis
+      - REDIS_HOST=invoiceninja2-redis.traefik
       - REDIS_PASSWORD=null
       - REDIS_PORT=6379
     volumes:
@@ -101,8 +101,6 @@ services:
     image: container-registry.oracle.com/mysql/community-server:8.4-aarch64
     container_name: invoiceninja2-db
     restart: unless-stopped
-    env_file:
-      - ./.env
     environment: 
       - MYSQL_ROOT_PASSWORD=${IN_DB_ROOT_PASSWORD}
       - MYSQL_USER=ninja
