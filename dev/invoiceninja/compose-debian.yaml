@@ -24,7 +24,12 @@ services:
       - DB_PASSWORD1=${IN_DB_PASSWORD}
       - IN_USER_EMAIL=${EMAIL}
       - IN_PASSWORD=${IN_PASSWORD}
-      - CONFIG_PATH=invoiceninja-debian/debian
+      - CACHE_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+      - SESSION_DRIVER=redis
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=null
+      - REDIS_PORT=6379
     volumes:
       - type: bind
         source: ${CONFIG_DIR}/invoiceninja-debian/debian/php/php.ini
