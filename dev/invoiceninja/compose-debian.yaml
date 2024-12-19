@@ -18,7 +18,7 @@ services:
       - REQUIRE_HTTPS=true
       - TRUSTED_PROXIES=*
       - APP_DEBUG=false
-      - DB_HOST1=invoiceninja-db.traefik
+      - DB_HOST1=invoiceninja2-db.traefik
       - DB_DATABASE1=ninja
       - DB_USERNAME1=ninja
       - DB_PASSWORD1=${IN_DB_PASSWORD}
@@ -103,7 +103,7 @@ services:
       - MYSQL_USER=ninja
       - MYSQL_PASSWORD=${IN_DB_PASSWORD}
       - MYSQL_DATABASE=ninja
-      - MYSQL_ROOT_HOST=invoiceninja.traefik
+      - MYSQL_ROOT_HOST=invoiceninja2.traefik
     volumes:
       - ${VOLUME_DIR}/invoiceninja-debian/db:/var/lib/mysql
     networks:
