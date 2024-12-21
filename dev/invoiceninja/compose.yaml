@@ -68,9 +68,15 @@ services:
       - type: bind
         source: ${CONFIG_DIR}/invoiceninja/php/php.ini
         target: /usr/local/etc/php/php.ini
+        read_only: true
+        bind:
+          create_host_path: false
       - type: bind
         source: ${CONFIG_DIR}/invoiceninja/php/php-cli.ini
         target: /usr/local/etc/php/php-cli.ini
+        read_only: true
+        bind:
+          create_host_path: false
     depends_on:
       invoiceninja-db:
         condition: service_healthy
