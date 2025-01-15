@@ -168,14 +168,14 @@ services:
       - --certificatesresolvers.duckdns.acme.storage=/etc/traefik/acme/acme.json
       - --certificatesresolvers.duckdns.acme.dnschallenge.provider=duckdns
       - --certificatesresolvers.duckdns.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53
-      - --certificatesresolvers.duckdns.acme.dnschallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
+      - --certificatesresolvers.duckdns.acme.dnschallenge.propagation.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
       # Cloudflare (Comment out the below entries if not using Cloudflare)
       - --certificatesresolvers.cloudflare.acme.email=${EMAIL}
       - --certificatesresolvers.cloudflare.acme.storage=/etc/traefik/acme/acme.json
       - --certificatesresolvers.cloudflare.acme.dnschallenge=true
       - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
       - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53
-      - --certificatesresolvers.cloudflare.acme.dnschallenge.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
+      - --certificatesresolvers.cloudflare.acme.propagation.delayBeforeCheck=90 # To delay DNS check and reduce LE hitrate
       # - --certificatesresolvers.duckdns.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
     networks:
       - traefik
