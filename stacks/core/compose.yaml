@@ -124,7 +124,7 @@ services:
 ########################################################################################
 
   traefik:
-    image: traefik:munster # the munster tag refers to v3.2.x
+    image: traefik:saintnectaire # the saintnectaire tag refers to v3.3.x
     container_name: traefik
     restart: always
     command: # CLI arguments
