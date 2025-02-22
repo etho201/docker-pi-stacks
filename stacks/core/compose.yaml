@@ -24,9 +24,9 @@ services:
       - "traefik.http.routers.dozzle-rtr.rule=Host(`dozzle.$FQDN`)"
       - "traefik.http.routers.dozzle-rtr.tls=true"
       ## Middlewares
-      - "traefik.http.routers.dozzle-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.dozzle-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.dozzle-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      # - "traefik.http.routers.dozzle-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      - "traefik.http.routers.dozzle-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.dozzle-rtr.service=dozzle-svc"
       - "traefik.http.services.dozzle-svc.loadbalancer.server.port=8080"
