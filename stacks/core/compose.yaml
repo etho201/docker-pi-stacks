@@ -3,6 +3,35 @@ name: core
 services:
 
 ########################################################################################
+# Dozzle
+# https://github.com/amir20/dozzle
+# Realtime log viewer for docker containers.
+########################################################################################
+
+  dozzle:
+    container_name: dozzle
+    image: amir20/dozzle:latest
+    networks:
+      - traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    # ports:
+    #   - 8080:8080
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.dozzle-rtr.entrypoints=websecure"
+      - "traefik.http.routers.dozzle-rtr.rule=Host(`dozzle.$FQDN`)"
+      - "traefik.http.routers.dozzle-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.dozzle-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.dozzle-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.dozzle-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.dozzle-rtr.service=dozzle-svc"
+      - "traefik.http.services.dozzle-svc.loadbalancer.server.port=8080"
+
+########################################################################################
 # Watchtower
 # https://github.com/containrrr/watchtower
 # As an alternative to Watchtower, look at https://github.com/pyouroboros/ouroboros
@@ -59,8 +88,8 @@ services:
       - "OAUTH2_PROXY_COOKIE_SECRET=${OAUTH2_PROXY_COOKIE_SECRET}"
     expose:
       - "4180"
-    #ports:
-      #- 4180:4180
+    # ports:
+    #   - 4180:4180
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -288,9 +317,9 @@ services:
         - GOTIFY_DEFAULTUSER_PASS=${GOTIFY_PASSWORD}
     networks:
       - traefik
-    #ports:
-      #- 443:443
-      #- 80:80
+    # ports:
+    #   - 443:443
+    #   - 80:80
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -337,8 +366,8 @@ services:
     volumes:
       - ${CONFIG_DIR}/tautulli:/config
       - ${CONFIG_DIR}/plex/Library/Application Support/Plex Media Server/Logs:/logs:ro #Map this to Plex log directory - recommended RO.
-    #ports:
-      #- 8181:8181
+    # ports:
+    #   - 8181:8181
     restart: always
     networks:
       - traefik
@@ -396,9 +425,9 @@ services:
       - TZ=${TZ}
     volumes:
       - ${CONFIG_DIR}/heimdall:/config
-    #ports:
-      #- 80:80
-      #- 443:443
+    # ports:
+    #   - 80:80
+    #   - 443:443
     restart: always
     networks:
       - traefik
@@ -429,8 +458,8 @@ services:
       - ${CONFIG_DIR}/portainer:/data
     environment:
       - TZ=${TZ}
-    #ports:
-      #- 9000:9000
+    # ports:
+    #   - 9000:9000
     restart: always
     networks:
       - traefik
@@ -488,8 +517,8 @@ services:
   nextcloud:
     image: nextcloud:latest
     container_name: nextcloud
-    #ports:
-      #- 8081:80
+    # ports:
+    #   - 8081:80
     volumes:
       - ${CONFIG_DIR}/nextcloud:/var/www/html #config directory
       - ${VOLUME_DIR}/nextcloud:/var/www/html/data:rw #data directory
