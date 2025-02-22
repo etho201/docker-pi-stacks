@@ -82,6 +82,8 @@ services:
       - "--whitelist-domain=.${FQDN}"
       - "--upstream=static://200"
       - "--skip-provider-button=true"
+      # - "--cookie-csrf-per-request=true" # required if using nginx as reverse proxy
+      # - "--cookie-csrf-expire=5m" # required if using nginx as reverse proxy
     environment:
       - "OAUTH2_PROXY_CLIENT_ID=${GITHUB_OAUTH_CLIENT_ID}"
       - "OAUTH2_PROXY_CLIENT_SECRET=${GITHUB_OAUTH_CLIENT_SECRET}"
