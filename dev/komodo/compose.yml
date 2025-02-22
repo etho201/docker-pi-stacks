@@ -33,6 +33,7 @@ services:
     # ports:
     #   - 9120:9120
     environment:
+      KOMODO_HOST=https://komodo.${FQDN}
       KOMODO_DATABASE_ADDRESS: komodo-db:27017
       KOMODO_DATABASE_USERNAME: komodo
       KOMODO_DATABASE_PASSWORD: ${KOMODO_DB_PASSWORD}
