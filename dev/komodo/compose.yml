@@ -40,7 +40,7 @@ services:
       ## Core cache for repos for latest commit hash / contents
       - ${CONFIG_DIR}/komodo/repo-cache:/repo-cache
     labels:
-      komodo.skip: # Prevent Komodo from stopping with StopAllContainers
+      - komodo.skip= # Prevent Komodo from stopping with StopAllContainers
       - autoheal=true
       - traefik.enable=true
       ## HTTP Routers
