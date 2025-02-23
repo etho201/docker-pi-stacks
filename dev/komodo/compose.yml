@@ -1,31 +1,47 @@
 services:
 
   komodo-db:
-    image: mongo
+    image: postgres
     container_name: komodo-db
     labels:
       komodo.skip: # Prevent Komodo from stopping with StopAllContainers
-    command: --quiet --wiredTigerCacheSizeGB 0.25
     restart: unless-stopped
     logging:
       driver: ${COMPOSE_LOGGING_DRIVER:-local}
     networks:
       - traefik
     # ports:
-    #   - 27017:27017
+    #   - 5432:5432
     volumes:
-      - ${VOLUME_DIR}/komodo/db:/data/db
-      - ${CONFIG_DIR}/komodo/db:/data/configdb
+      - ${VOLUME_DIR}/komodo/db:/var/lib/postgresql/data
     environment:
-      MONGO_INITDB_ROOT_USERNAME: komodo
-      MONGO_INITDB_ROOT_PASSWORD: ${KOMODO_DB_PASSWORD}
+      - POSTGRES_USER=${KOMODO_DB_USERNAME:-komodo}
+      - POSTGRES_PASSWORD=${KOMODO_DB_PASSWORD}
+      - POSTGRES_DB=${KOMODO_DATABASE_DB_NAME:-komodo}
+
+  komodo-ferretdb:
+    image: ghcr.io/ferretdb/ferretdb
+    container_name: komodo-ferretdb
+    labels:
+      komodo.skip: # Prevent Komodo from stopping with StopAllContainers
+    restart: unless-stopped
+    depends_on:
+      - komodo-db
+    logging:
+      driver: ${COMPOSE_LOGGING_DRIVER:-local}
+    networks:
+      - default
+    # ports:
+    #   - 27017:27017
+    environment:
+      - FERRETDB_POSTGRESQL_URL=postgres://postgres:5432/${KOMODO_DATABASE_DB_NAME:-komodo}
   
   komodo:
     image: ghcr.io/mbecker20/komodo:${COMPOSE_KOMODO_IMAGE_TAG:-latest}
     container_name: komodo
     restart: unless-stopped
     depends_on:
-      - komodo-db
+      - komodo-ferretdb
     logging:
       driver: ${COMPOSE_LOGGING_DRIVER:-local}
     networks:
@@ -34,9 +50,7 @@ services:
     #   - 9120:9120
     environment:
       KOMODO_HOST: https://komodo.${FQDN}
-      KOMODO_DATABASE_ADDRESS: komodo-db:27017
-      KOMODO_DATABASE_USERNAME: komodo
-      KOMODO_DATABASE_PASSWORD: ${KOMODO_DB_PASSWORD}
+      KOMODO_DATABASE_URI: mongodb://${KOMODO_DB_USERNAME:-komodo}:${KOMODO_DB_PASSWORD}@ferretdb:27017/${KOMODO_DATABASE_DB_NAME:-komodo}?authMechanism=PLAIN
     volumes:
       ## Core cache for repos for latest commit hash / contents
       - ${CONFIG_DIR}/komodo/repo-cache:/repo-cache
