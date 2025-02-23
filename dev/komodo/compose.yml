@@ -30,7 +30,7 @@ services:
     logging:
       driver: ${COMPOSE_LOGGING_DRIVER:-local}
     networks:
-      - default
+      - traefik
     # ports:
     #   - 27017:27017
     environment:
