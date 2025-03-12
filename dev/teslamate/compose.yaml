@@ -11,7 +11,9 @@ services:
       - DATABASE_PASS=${TESLAMATE_DATABASE_PASSWORD} #insert your secure database password!
       - DATABASE_NAME=teslamate
       - DATABASE_HOST=teslamate-db
-      - MQTT_HOST=mosquitto
+      - MQTT_HOST=${MQTT_HOST}
+      - MQTT_USERNAME=${USERNAME}
+      - MQTT_PASSWORD=${MOSQUITTO_PASSWORD}
     # ports:
     #   - 4000:4000
     # volumes:
