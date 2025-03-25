@@ -5,18 +5,49 @@
 2. Initialize the `ocis.yaml` file to see what's new.
 
     ```bash
-    docker run --rm -it -v $(pwd):/etc/ocis/ owncloud/ocis:latest init
+    docker run --rm -it -v $(pwd):/etc/ocis/ owncloud/ocis:latest
     ```
 
-3. Move the `ocis.yaml` file to the mounted location. Example:
+3. Check for new entries required in the `ocis.yaml` file. This can be done using the ocis cli:
 
     ```bash
-    mv ocis.yaml /media/docker/config/owncloud/ocis.yaml.bak
+    cd /etc/ocis
+    ocis init --diff
     ```
 
-4. To recover your old accounts and files, simply merge everything from the deltas from the `ocis.yaml.bak` file into your exisitng `ocis.yaml` file.
+4. To recover your old accounts and files, simply merge everything from the deltas between the old and new configuration.
 
-5. Reboot ownCloud after updating the ocis.yaml file.
+    ```bash
+    patch < ocis.config.patch
+    ```
+
+5. Update the ocis version in your `compose.yaml` file and recreate the container.
+
+---
+
+## Troubleshooting:
+
+
+### Unexpected HTTP response: 500
+
+1. If you try to login to OwnCloud and receive the error: "**Unexpected HTTP response: 500. Please check your connection and try again.**" This is probably due to an expired cert. You can confirm this by viewing the logs (may need to put the logging into `DEBUG` mode to see).
+2. Within the logs, you may see issues such as:
+    ```bash
+    "ldap identifier backend logon connect error: LDAP Result Code 200 \"Network Error\": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2025-03-25T20:51:42Z is after 2025-03-24T19:07:03Z"
+
+    "remote error: tls: bad certificate"
+	```
+3. To fix this, kill the `owncloud` container. Then navigate to the `idm` directory and rename the `ldap.crt` and `ldap.key` files.
+    ```bash
+    cd ${VOLUME_DIR}/owncloud/idm
+    mv ldap.crt ldap.crt.bak
+    mv ldap.key ldap.key.bak
+    ```
+4. Recreate owncloud
+    ```bash
+    docker compose up -d --force-recreate
+    ```
+5. Check if you can login, and if so, go ahead and delete the old `ldap` (`*.bak`) files as they're no longer needed.
 
 ---
 
