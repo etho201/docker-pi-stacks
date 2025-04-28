@@ -389,7 +389,7 @@ services:
 
 ########################################################################################
 # Organize
-# https://github.com/benphelps/homepage
+# https://github.com/gethomepage/homepage
 # https://hub.docker.com/r/linuxserver/heimdall/
 ########################################################################################
 
@@ -398,6 +398,10 @@ services:
     container_name: homepage
     # ports:
     #   - 3000:3000
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - HOMEPAGE_ALLOWED_HOST=homepage.${FQDN}
     restart: always
     networks:
       - traefik
