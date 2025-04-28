@@ -401,7 +401,7 @@ services:
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
-      - HOMEPAGE_ALLOWED_HOST=homepage.${FQDN}
+      - HOMEPAGE_ALLOWED_HOSTS=homepage.${FQDN}
     restart: always
     networks:
       - traefik
