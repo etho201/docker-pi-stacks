@@ -97,7 +97,7 @@ services:
       ##############################
       ## HTTP Routers
       - "traefik.tcp.routers.rustdesk-relay2-rtr.entrypoints=websecure"
-      - "traefik.tcp.routers.rustdesk-relay1-rtr.rule=HostSNI(`rustdesk-relay.$FQDN`)"
+      - "traefik.tcp.routers.rustdesk-relay2-rtr.rule=HostSNI(`rustdesk-relay.$FQDN`)"
       - "traefik.tcp.routers.rustdesk-relay2-rtr.tls=true"
       ## Middlewares
       # - "traefik.tcp.routers.rustdesk-relay2-rtr.middlewares=chain-no-auth@file" # No Authentication
