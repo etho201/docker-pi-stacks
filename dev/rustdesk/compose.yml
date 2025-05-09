@@ -28,7 +28,7 @@ services:
       # - "traefik.tcp.routers.rustdesk-id1-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
       # - "traefik.tcp.routers.rustdesk-id1-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       ## HTTP Services
-      - "traefik.tcp.routers.rustdesk-id1-rtr.service=rustdesk-id-svc"
+      - "traefik.tcp.routers.rustdesk-id1-rtr.service=rustdesk-id1-svc"
       - "traefik.tcp.services.rustdesk-id1-svc.loadbalancer.server.port=21115"
       ##############################
       ###### Additional Ports ######
@@ -40,7 +40,7 @@ services:
       ## Middlewares
       - "traefik.tcp.routers.rustdesk-id2-rtr.middlewares=chain-no-auth@file" # No Authentication
       ## HTTP Services
-      - "traefik.tcp.routers.rustdesk-id2-rtr.service=rustdesk-id-svc"
+      - "traefik.tcp.routers.rustdesk-id2-rtr.service=rustdesk-id2-svc"
       - "traefik.tcp.services.rustdesk-id2-svc.loadbalancer.server.port=21116"
       ##############################
       ###### Additional Ports ######
@@ -52,7 +52,7 @@ services:
       ## Middlewares
       - "traefik.udp.routers.rustdesk-id3-rtr.middlewares=chain-no-auth@file" # No Authentication
       ## HTTP Services
-      - "traefik.udp.routers.rustdesk-id3-rtr.service=rustdesk-id-svc"
+      - "traefik.udp.routers.rustdesk-id3-rtr.service=rustdesk-id3-svc"
       - "traefik.udp.services.rustdesk-id3-svc.loadbalancer.server.port=21116"
       ##############################
       ###### Additional Ports ######
@@ -64,7 +64,7 @@ services:
       ## Middlewares
       - "traefik.tcp.routers.rustdesk-id4-rtr.middlewares=chain-no-auth@file" # No Authentication
       ## HTTP Services
-      - "traefik.tcp.routers.rustdesk-id4-rtr.service=rustdesk-id-svc"
+      - "traefik.tcp.routers.rustdesk-id4-rtr.service=rustdesk-id4-svc"
       - "traefik.tcp.services.rustdesk-id4-svc.loadbalancer.server.port=21118"
 
   rustdesk-relay:
@@ -90,7 +90,7 @@ services:
       # - "traefik.tcp.routers.rustdesk-relay1-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
       # - "traefik.tcp.routers.rustdesk-relay1-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       ## HTTP Services
-      - "traefik.tcp.routers.rustdesk-relay1-rtr.service=rustdesk-relay-svc"
+      - "traefik.tcp.routers.rustdesk-relay1-rtr.service=rustdesk-relay1-svc"
       - "traefik.tcp.services.rustdesk-relay1-svc.loadbalancer.server.port=21117"
       ##############################
       ###### Additional Ports ######
@@ -102,7 +102,7 @@ services:
       ## Middlewares
       - "traefik.tcp.routers.rustdesk-relay2-rtr.middlewares=chain-no-auth@file" # No Authentication
       ## HTTP Services
-      - "traefik.tcp.routers.rustdesk-relay2-rtr.service=rustdesk-relay-svc"
+      - "traefik.tcp.routers.rustdesk-relay2-rtr.service=rustdesk-relay2-svc"
       - "traefik.tcp.services.rustdesk-relay2-svc.loadbalancer.server.port=21119"
 
 networks:
