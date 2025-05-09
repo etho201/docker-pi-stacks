@@ -64,6 +64,11 @@ services:
       ## TCP Services
       - "traefik.tcp.routers.rustdesk-id4-rtr.service=rustdesk-id4-svc"
       - "traefik.tcp.services.rustdesk-id4-svc.loadbalancer.server.port=21118"
+      ## URL: vpn.${FQDN}.com (Cloudflare)
+      - "traefik.tcp.routers.no-proxy-rtr.tls.certresolver=cloudflare"
+      - "traefik.tcp.routers.no-proxy-rtr.tls.domains[0].main=vpn.${FQDN}.com"
+      - "traefik.tcp.routers.no-proxy-rtr.tls.domains[0].sans=*.vpn.${FQDN}.com"
+      - "traefik.tcp.routers.no-proxy-rtr.rule=Host(`vpn.${FQDN}.com`) || Host(`www.vpn.${FQDN}.com`)"
 
   rustdesk-relay:
     container_name: rustdesk-relay
