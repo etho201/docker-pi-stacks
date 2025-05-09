@@ -45,8 +45,6 @@ services:
       ##############################
       ## UDP Routers
       - "traefik.udp.routers.rustdesk-id3-rtr.entrypoints=websecure"
-      - "traefik.udp.routers.rustdesk-id3-rtr.rule=HostSNI(`vpn.$FQDN`)"
-      - "traefik.udp.routers.rustdesk-id3-rtr.tls=true"
       ## Middlewares
       # - "traefik.udp.routers.rustdesk-id3-rtr.middlewares=chain-no-auth@file" # No Authentication
       ## UDP Services
