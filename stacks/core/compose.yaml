@@ -172,7 +172,12 @@ services:
       - --entrypoints.web.http.redirections.entryPoint.to=websecure
       - --entrypoints.web.http.redirections.entryPoint.scheme=https
       - --entrypoints.websecure.address=:443 # https
-      - --entrypoints.udp.address=:9090/udp # udp
+      - --entrypoints.rd5-tcp.address=:21115/tcp
+      - --entrypoints.rd6-tcp.address=:21116/tcp
+      - --entrypoints.rd7-tcp.address=:21117/tcp
+      - --entrypoints.rd8-tcp.address=:21118/tcp
+      - --entrypoints.rd9-tcp.address=:21119/tcp
+      - --entrypoints.rd6-udp.address=:21116/udp
       # Allow these IPs to set the X-Forwarded-* headers - Cloudflare IPs: https://www.cloudflare.com/ips/
       #- --entrypoints.websecure.forwardedHeaders.trustedIPs=173.245.48.0/20,103.21.244.0/22,103.22.200.0/22,103.31.4.0/22,141.101.64.0/18,108.162.192.0/18,190.93.240.0/20,188.114.96.0/20,197.234.240.0/22,198.41.128.0/17,162.158.0.0/15,104.16.0.0/12,172.64.0.0/13,131.0.72.0/22
       - --entryPoints.traefik.address=:8080
@@ -221,7 +226,13 @@ services:
         published: 443
         protocol: tcp
         mode: host
-      # - target: 8080
+      - 21115:21115/tcp
+      - 21116:21116/tcp
+      - 21117:21117/tcp
+      - 21118:21118/tcp
+      - 21119:21119/tcp
+      - 21116:21116/udp
+          # - target: 8080
       #   published: 8080
       #   protocol: tcp
       #   mode: host

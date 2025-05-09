@@ -3,11 +3,11 @@ version: '3'
 services:
   rustdesk-id:
     container_name: rustdesk-id
-    # ports:
-    #   - 21115:21115
-    #   - 21116:21116
-    #   - 21116:21116/udp
-    #   - 21118:21118
+      # ports:
+      #   - 21115:21115
+      #   - 21116:21116
+      #   - 21116:21116/udp
+      #   - 21118:21118
     image: rustdesk/rustdesk-server:latest
     command: hbbs -r rustdesk-relay:21117
     volumes:
@@ -20,7 +20,8 @@ services:
     labels:
       - "traefik.enable=true"
       ## TCP Routers
-      - "traefik.tcp.routers.rustdesk-id1-rtr.rule=HostSNI(`rustdesk.$FQDN`)"
+      - "traefik.tcp.routers.rustdesk-id1-rtr.entrypoints=rd5-tcp"
+      - "traefik.tcp.routers.rustdesk-id1-rtr.rule=HostSNI(`rustdesk.${FQDN}`)"
       - "traefik.tcp.routers.rustdesk-id1-rtr.tls=true"
       ## Middlewares
       # - "traefik.tcp.routers.rustdesk-id1-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -33,7 +34,8 @@ services:
       ###### Additional Ports ######
       ##############################
       ## TCP Routers
-      - "traefik.tcp.routers.rustdesk-id2-rtr.rule=HostSNI(`rustdesk.$FQDN`)"
+      - "traefik.tcp.routers.rustdesk-id2-rtr.entrypoints=rd6-tcp"
+      - "traefik.tcp.routers.rustdesk-id2-rtr.rule=HostSNI(`rustdesk.${FQDN}`)"
       - "traefik.tcp.routers.rustdesk-id2-rtr.tls=true"
       ## Middlewares
       # - "traefik.tcp.routers.rustdesk-id2-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -44,7 +46,7 @@ services:
       ###### Additional Ports ######
       ##############################
       ## UDP Routers
-      - "traefik.udp.routers.rustdesk-id3-rtr.entrypoints=udp"
+      - "traefik.udp.routers.rustdesk-id3-rtr.entrypoints=rd6-udp"
       ## Middlewares
       # - "traefik.udp.routers.rustdesk-id3-rtr.middlewares=chain-no-auth@file" # No Authentication
       ## UDP Services
@@ -54,8 +56,8 @@ services:
       ###### Additional Ports ######
       ##############################
       ## TCP Routers
-      - "traefik.tcp.routers.rustdesk-id4-rtr.entrypoints=websecure"
-      - "traefik.tcp.routers.rustdesk-id4-rtr.rule=HostSNI(`rustdesk.$FQDN`)"
+      - "traefik.tcp.routers.rustdesk-id4-rtr.entrypoints=rd8-tcp"
+      - "traefik.tcp.routers.rustdesk-id4-rtr.rule=HostSNI(`rustdesk.${FQDN}`)"
       - "traefik.tcp.routers.rustdesk-id4-rtr.tls=true"
       ## Middlewares
       # - "traefik.tcp.routers.rustdesk-id4-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -70,9 +72,9 @@ services:
 
   rustdesk-relay:
     container_name: rustdesk-relay
-    # ports:
-    #   - 21117:21117
-    #   - 21119:21119
+      # ports:
+      #  - 21117:21117
+      #  - 21119:21119
     image: rustdesk/rustdesk-server:latest
     command: hbbr
     volumes:
@@ -83,8 +85,8 @@ services:
     labels:
       - "traefik.enable=true"
       ## TCP Routers
-      - "traefik.tcp.routers.rustdesk-relay1-rtr.entrypoints=websecure"
-      - "traefik.tcp.routers.rustdesk-relay1-rtr.rule=HostSNI(`rustdesk.$FQDN`)"
+      - "traefik.tcp.routers.rustdesk-relay1-rtr.entrypoints=rd7-tcp"
+      - "traefik.tcp.routers.rustdesk-relay1-rtr.rule=HostSNI(`rustdesk.${FQDN}`)"
       - "traefik.tcp.routers.rustdesk-relay1-rtr.tls=true"
       ## Middlewares
       # - "traefik.tcp.routers.rustdesk-relay1-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -97,8 +99,8 @@ services:
       ###### Additional Ports ######
       ##############################
       ## TCP Routers
-      - "traefik.tcp.routers.rustdesk-relay2-rtr.entrypoints=websecure"
-      - "traefik.tcp.routers.rustdesk-relay2-rtr.rule=HostSNI(`rustdesk.$FQDN`)"
+      - "traefik.tcp.routers.rustdesk-relay2-rtr.entrypoints=rd9-tcp"
+      - "traefik.tcp.routers.rustdesk-relay2-rtr.rule=HostSNI(`rustdesk.${FQDN}`)"
       - "traefik.tcp.routers.rustdesk-relay2-rtr.tls=true"
       ## Middlewares
       # - "traefik.tcp.routers.rustdesk-relay2-rtr.middlewares=chain-no-auth@file" # No Authentication
