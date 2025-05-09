@@ -21,7 +21,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.tcp.routers.rustdesk-id1-rtr.entrypoints=websecure"
-      - "traefik.tcp.routers.rustdesk-id1-rtr.rule=Host(`rustdesk-id.$FQDN`)"
+      - "traefik.tcp.routers.rustdesk-id1-rtr.domains[0].main=rustdesk-id.$FQDN"
       - "traefik.tcp.routers.rustdesk-id1-rtr.tls=true"
       ## Middlewares
       - "traefik.tcp.routers.rustdesk-id1-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -35,7 +35,7 @@ services:
       ##############################
       ## HTTP Routers
       - "traefik.tcp.routers.rustdesk-id2-rtr.entrypoints=websecure"
-      - "traefik.tcp.routers.rustdesk-id2-rtr.rule=Host(`rustdesk-id.$FQDN`)"
+      - "traefik.tcp.routers.rustdesk-id2-rtr.domains[0].main=rustdesk-id.$FQDN"
       - "traefik.tcp.routers.rustdesk-id2-rtr.tls=true"
       ## Middlewares
       - "traefik.tcp.routers.rustdesk-id2-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -47,7 +47,7 @@ services:
       ##############################
       ## HTTP Routers
       - "traefik.udp.routers.rustdesk-id3-rtr.entrypoints=websecure"
-      - "traefik.udp.routers.rustdesk-id3-rtr.rule=Host(`rustdesk-id.$FQDN`)"
+      - "traefik.udp.routers.rustdesk-id3-rtr.domains[0].main=rustdesk-id.$FQDN"
       - "traefik.udp.routers.rustdesk-id3-rtr.tls=true"
       ## Middlewares
       - "traefik.udp.routers.rustdesk-id3-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -59,7 +59,7 @@ services:
       ##############################
       ## HTTP Routers
       - "traefik.tcp.routers.rustdesk-id4-rtr.entrypoints=websecure"
-      - "traefik.tcp.routers.rustdesk-id4-rtr.rule=Host(`rustdesk-id.$FQDN`)"
+      - "traefik.tcp.routers.rustdesk-id4-rtr.domains[0].main=rustdesk-id.$FQDN"
       - "traefik.tcp.routers.rustdesk-id4-rtr.tls=true"
       ## Middlewares
       - "traefik.tcp.routers.rustdesk-id4-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -83,7 +83,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.tcp.routers.rustdesk-relay1-rtr.entrypoints=websecure"
-      - "traefik.tcp.routers.rustdesk-relay1-rtr.rule=Host(`rustdesk-relay.$FQDN`)"
+      - "traefik.tcp.routers.rustdesk-relay1-rtr.domains[0].main=rustdesk-relay.$FQDN"
       - "traefik.tcp.routers.rustdesk-relay1-rtr.tls=true"
       ## Middlewares
       - "traefik.tcp.routers.rustdesk-relay1-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -97,7 +97,7 @@ services:
       ##############################
       ## HTTP Routers
       - "traefik.tcp.routers.rustdesk-relay2-rtr.entrypoints=websecure"
-      - "traefik.tcp.routers.rustdesk-relay2-rtr.rule=Host(`rustdesk-relay.$FQDN`)"
+      - "traefik.tcp.routers.rustdesk-relay2-rtr.domains[0].main=rustdesk-relay.$FQDN"
       - "traefik.tcp.routers.rustdesk-relay2-rtr.tls=true"
       ## Middlewares
       - "traefik.tcp.routers.rustdesk-relay2-rtr.middlewares=chain-no-auth@file" # No Authentication
