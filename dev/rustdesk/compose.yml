@@ -20,7 +20,7 @@ services:
     labels:
       - "traefik.enable=true"
       ## TCP Routers
-      - "traefik.tcp.routers.rustdesk-id1-rtr.rule=HostSNI(`rustdesk-id.vpn.$FQDN`)"
+      - "traefik.tcp.routers.rustdesk-id1-rtr.rule=HostSNI(`vpn.$FQDN`)"
       - "traefik.tcp.routers.rustdesk-id1-rtr.tls=true"
       ## Middlewares
       # - "traefik.tcp.routers.rustdesk-id1-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -33,7 +33,7 @@ services:
       ###### Additional Ports ######
       ##############################
       ## TCP Routers
-      - "traefik.tcp.routers.rustdesk-id2-rtr.rule=HostSNI(`rustdesk-id.vpn.$FQDN`)"
+      - "traefik.tcp.routers.rustdesk-id2-rtr.rule=HostSNI(`vpn.$FQDN`)"
       - "traefik.tcp.routers.rustdesk-id2-rtr.tls=true"
       ## Middlewares
       # - "traefik.tcp.routers.rustdesk-id2-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -45,7 +45,7 @@ services:
       ##############################
       ## UDP Routers
       - "traefik.udp.routers.rustdesk-id3-rtr.entrypoints=websecure"
-      - "traefik.udp.routers.rustdesk-id3-rtr.rule=HostSNI(`rustdesk-id.vpn.$FQDN`)"
+      - "traefik.udp.routers.rustdesk-id3-rtr.rule=HostSNI(`vpn.$FQDN`)"
       - "traefik.udp.routers.rustdesk-id3-rtr.tls=true"
       ## Middlewares
       # - "traefik.udp.routers.rustdesk-id3-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -57,7 +57,7 @@ services:
       ##############################
       ## TCP Routers
       - "traefik.tcp.routers.rustdesk-id4-rtr.entrypoints=websecure"
-      - "traefik.tcp.routers.rustdesk-id4-rtr.rule=HostSNI(`rustdesk-id.vpn.$FQDN`)"
+      - "traefik.tcp.routers.rustdesk-id4-rtr.rule=HostSNI(`vpn.$FQDN`)"
       - "traefik.tcp.routers.rustdesk-id4-rtr.tls=true"
       ## Middlewares
       # - "traefik.tcp.routers.rustdesk-id4-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -86,7 +86,7 @@ services:
       - "traefik.enable=true"
       ## TCP Routers
       - "traefik.tcp.routers.rustdesk-relay1-rtr.entrypoints=websecure"
-      - "traefik.tcp.routers.rustdesk-relay1-rtr.rule=HostSNI(`rustdesk-relay.vpn.$FQDN`)"
+      - "traefik.tcp.routers.rustdesk-relay1-rtr.rule=HostSNI(`vpn.$FQDN`)"
       - "traefik.tcp.routers.rustdesk-relay1-rtr.tls=true"
       ## Middlewares
       # - "traefik.tcp.routers.rustdesk-relay1-rtr.middlewares=chain-no-auth@file" # No Authentication
@@ -100,7 +100,7 @@ services:
       ##############################
       ## TCP Routers
       - "traefik.tcp.routers.rustdesk-relay2-rtr.entrypoints=websecure"
-      - "traefik.tcp.routers.rustdesk-relay2-rtr.rule=HostSNI(`rustdesk-relay.vpn.$FQDN`)"
+      - "traefik.tcp.routers.rustdesk-relay2-rtr.rule=HostSNI(`vpn.$FQDN`)"
       - "traefik.tcp.routers.rustdesk-relay2-rtr.tls=true"
       ## Middlewares
       # - "traefik.tcp.routers.rustdesk-relay2-rtr.middlewares=chain-no-auth@file" # No Authentication
