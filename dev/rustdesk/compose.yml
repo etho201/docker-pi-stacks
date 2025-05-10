@@ -21,7 +21,7 @@ services:
       - "traefik.enable=true"
       ## TCP Routers
       - "traefik.tcp.routers.rustdesk-id1-rtr.entrypoints=rd5-tcp"
-      - "traefik.tcp.routers.rustdesk-id1-rtr.rule=HostSNI(`rustdesk.${FQDN}`)"
+      - "traefik.tcp.routers.rustdesk-id1-rtr.rule=HostSNI(`*`)"
       - "traefik.tcp.routers.rustdesk-id1-rtr.tls=false"
       - "traefik.tcp.routers.rustdesk-id1-rtr.tls.passthrough=true"
       ## Middlewares
@@ -36,7 +36,7 @@ services:
       ##############################
       ## TCP Routers
       - "traefik.tcp.routers.rustdesk-id2-rtr.entrypoints=rd6-tcp"
-      - "traefik.tcp.routers.rustdesk-id2-rtr.rule=HostSNI(`rustdesk.${FQDN}`)"
+      - "traefik.tcp.routers.rustdesk-id2-rtr.rule=HostSNI(`*`)"
       - "traefik.tcp.routers.rustdesk-id2-rtr.tls=false"
       - "traefik.tcp.routers.rustdesk-id2-rtr.tls.passthrough=true"
       ## Middlewares
@@ -59,7 +59,7 @@ services:
       ##############################
       ## TCP Routers
       - "traefik.tcp.routers.rustdesk-id4-rtr.entrypoints=rd8-tcp"
-      - "traefik.tcp.routers.rustdesk-id4-rtr.rule=HostSNI(`rustdesk.${FQDN}`)"
+      - "traefik.tcp.routers.rustdesk-id4-rtr.rule=HostSNI(`*`)"
       - "traefik.tcp.routers.rustdesk-id4-rtr.tls=false"
       - "traefik.tcp.routers.rustdesk-id4-rtr.tls.passthrough=true"
       ## Middlewares
@@ -89,7 +89,7 @@ services:
       - "traefik.enable=true"
       ## TCP Routers
       - "traefik.tcp.routers.rustdesk-relay1-rtr.entrypoints=rd7-tcp"
-      - "traefik.tcp.routers.rustdesk-relay1-rtr.rule=HostSNI(`rustdesk.${FQDN}`)"
+      - "traefik.tcp.routers.rustdesk-relay1-rtr.rule=HostSNI(`*`)"
       - "traefik.tcp.routers.rustdesk-relay1-rtr.tls=false"
       - "traefik.tcp.routers.rustdesk-relay1-rtr.tls.passthrough=true"
       ## Middlewares
@@ -104,7 +104,7 @@ services:
       ##############################
       ## TCP Routers
       - "traefik.tcp.routers.rustdesk-relay2-rtr.entrypoints=rd9-tcp"
-      - "traefik.tcp.routers.rustdesk-relay2-rtr.rule=HostSNI(`rustdesk.${FQDN}`)"
+      - "traefik.tcp.routers.rustdesk-relay2-rtr.rule=HostSNI(`*`)"
       - "traefik.tcp.routers.rustdesk-relay2-rtr.tls=false"
       - "traefik.tcp.routers.rustdesk-relay2-rtr.tls.passthrough=true"
       ## Middlewares
