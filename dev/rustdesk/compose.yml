@@ -19,6 +19,20 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.rustdesk-web-rtr.entrypoints=websecure"
+      - "traefik.http.routers.rustdesk-web-rtr.rule=Host(`rustdesk-web.$FQDN`)"
+      - "traefik.http.routers.rustdesk-web-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.rustdesk-web-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.rustdesk-web-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.rustdesk-web-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.rustdesk-web-rtr.service=rustdesk-web-svc"
+      - "traefik.http.services.rustdesk-web-svc.loadbalancer.server.port=21114"
+      ##############################
+      ###### Additional Ports ######
+      ##############################
       ## TCP Routers
       - "traefik.tcp.routers.rustdesk-id1-rtr.entrypoints=rd5-tcp"
       - "traefik.tcp.routers.rustdesk-id1-rtr.rule=HostSNI(`*`)"
