@@ -7,7 +7,7 @@ services:
     image: cloudflare/cloudflared:latest
     restart: always
     command: tunnel run
-    networks: 
+    networks:
       - traefik
     environment:
       - TUNNEL_TOKEN=${CLOUDFLARED_TOKEN}
