@@ -1,0 +1,19 @@
+---
+name: cloudflared
+services:
+
+  cloudflared:
+    container_name: cloudflared
+    image: cloudflare/cloudflared:latest
+    restart: always
+    command: tunnel run
+    networks:
+      - traefik
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARED_TOKEN}
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
