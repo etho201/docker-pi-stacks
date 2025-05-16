@@ -6,9 +6,11 @@ services:
     container_name: cloudflared
     image: cloudflare/cloudflared:latest
     restart: always
-    command: tunnel --no-autoupdate run --token ${CLOUDFLARED_TOKEN}
-    networks:
+    command: tunnel run
+    networks: 
       - traefik
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARED_TOKEN}
 
 ########################################################################################
 # Dozzle
