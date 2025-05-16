@@ -10,7 +10,7 @@ services:
       #   - 21116:21116/udp
       #   - 21118:21118
     image: rustdesk/rustdesk-server:latest
-    command: hbbs -r rustdesk.${FQDN}:21117
+    command: hbbs -r http://rustdesk-relay:21117
     volumes:
       - ${VOLUME_DIR}/rustdesk:/root
     networks:
