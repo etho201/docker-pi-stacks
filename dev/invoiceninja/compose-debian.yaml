@@ -13,43 +13,67 @@ services:
     container_name: invoiceninja2
     restart: unless-stopped
     environment: 
-      - APP_URL=http://in-debian.${FQDN}
-      - APP_KEY=${IN_APP_KEY}
-      - APP_ENV=production
-      - APP_DEBUG=false
-      - REQUIRE_HTTPS=true
-      - PHANTOMJS_PDF_GENERATION=false
-      - PDF_GENERATOR=snappdf
-      - TRUSTED_PROXIES=*
-      - APP_DEBUG=false
-      - DB_HOST1=invoiceninja2-db.traefik
-      - DB_DATABASE1=ninja
-      - DB_USERNAME1=ninja
-      - DB_PASSWORD1=${IN_DB_PASSWORD}
-      - IN_USER_EMAIL=${EMAIL}
-      - IN_PASSWORD=${IN_PASSWORD}
-      - CACHE_DRIVER=redis
-      - QUEUE_CONNECTION=redis
-      - SESSION_DRIVER=redis
-      - REDIS_HOST=invoiceninja2-redis.traefik
-      - REDIS_PASSWORD=null
-      - REDIS_PORT=6379
-      - FILESYSTEM_DISK=debian_docker
+      # IN application vars
+      APP_URL: http://in2.${FQDN}
+      APP_KEY: ${IN_APP_KEY}
+      APP_ENV: production
+      APP_DEBUG: false
+      REQUIRE_HTTPS: true
+      PHANTOMJS_PDF_GENERATION: false
+      PDF_GENERATOR: snappdf
+      TRUSTED_PROXIES: '*'
+
+      CACHE_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      SESSION_DRIVER: redis
+
+      REDIS_HOST: invoiceninja2-redis.traefik
+      REDIS_PASSWORD: null
+      REDIS_PORT: 6379
+
+      FILESYSTEM_DISK: debian_docker
+
+      # DB connection
+      DB_HOST: invoiceninja2-db.traefik
+      DB_PORT: 3306
+      DB_DATABASE: ninja
+      DB_USERNAME: ninja
+      DB_PASSWORD: ${IN_DB_PASSWORD}
+      DB_ROOT_PASSWORD: ${IN_DB_ROOT_PASSWORD}
+      DB_CONNECTION: mysql
+
+      # Create initial user
+      IN_USER_EMAIL: ${EMAIL}
+      IN_PASSWORD: ${IN_PASSWORD}
+
+      # Mail options
+      MAIL_MAILER: log
+      MAIL_HOST: ${SMTP_SERVER}
+      MAIL_PORT: 587
+      MAIL_USERNAME: ${EMAIL_FROM}
+      MAIL_PASSWORD: ${IN_EMAIL_APP_PASSWORD}
+      MAIL_ENCRYPTION: STARTTLS
+      MAIL_FROM_ADDRESS: ${EMAIL_FROM}
+      MAIL_FROM_NAME: ${EMAIL_FROM_NAME}
+
+      IS_DOCKER: true
+      SCOUT_DRIVER: null
+      #SNAPPDF_CHROMIUM_PATH: /usr/bin/google-chrome-stable
     volumes:
       - type: bind
-        source: ${CONFIG_DIR}/invoiceninja-debian/php/php.ini
+        source: ./config/php/php.ini
         target: /usr/local/etc/php/conf.d/invoiceninja.ini
         read_only: true
         bind:
           create_host_path: false
       - type: bind
-        source: ${CONFIG_DIR}/invoiceninja-debian/php/php-fpm.conf
+        source: ./config/php/php-fpm.conf
         target: /usr/local/etc/php-fpm.d/invoiceninja.conf
         read_only: true
         bind:
           create_host_path: false
       - type: bind
-        source: ${CONFIG_DIR}/invoiceninja-debian/supervisor/supervisord.conf
+        source: ./config/supervisor/supervisord.conf
         target: /etc/supervisor/conf.d/supervisord.conf
         read_only: true
         bind:
@@ -59,26 +83,26 @@ services:
     networks:
       - traefik
     depends_on:
-      mysql:
+      invoiceninja2-db:
         condition: service_healthy
-      redis:
+      invoiceninja2-redis:
         condition: service_healthy
     logging: *default-logging
 
-  nginx:
+  invoiceninja2-nginx:
     image: nginx:alpine
     container_name: invoiceninja2-nginx
     restart: unless-stopped
     # ports:
     #   - 80:80
     volumes:
-      - source: ${CONFIG_DIR}/invoiceninja-debian/nginx/nginx.conf
+      - source: ./config/nginx/nginx.conf
         target: /etc/nginx/conf.d/nginx.conf
         type: bind
         read_only: true
         bind:
           create_host_path: false
-      - source: ${CONFIG_DIR}/invoiceninja-debian/nginx/laravel.conf
+      - source: ./config/nginx/laravel.conf
         target: /etc/nginx/conf.d/laravel.conf
         type: bind
         read_only: true
@@ -106,8 +130,7 @@ services:
       - traefik.http.routers.in2-rtr.service=in-svc
       - traefik.http.services.in2-svc.loadbalancer.server.port=80
 
-
-  mysql:
+  invoiceninja2-db:
     image: container-registry.oracle.com/mysql/community-server:9.3-aarch64
     container_name: invoiceninja2-db
     restart: unless-stopped
@@ -129,7 +152,7 @@ services:
       retries: 55
     logging: *default-logging
 
-  redis:
+  invoiceninja2-redis:
     image: redis:alpine
     container_name: invoiceninja2-redis
     restart: unless-stopped
