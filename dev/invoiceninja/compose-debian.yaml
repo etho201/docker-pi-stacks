@@ -15,7 +15,11 @@ services:
     environment: 
       - APP_URL=http://in-debian.${FQDN}
       - APP_KEY=${IN_APP_KEY}
+      - APP_ENV=production
+      - APP_DEBUG=false
       - REQUIRE_HTTPS=true
+      - PHANTOMJS_PDF_GENERATION=false
+      - PDF_GENERATOR=snappdf
       - TRUSTED_PROXIES=*
       - APP_DEBUG=false
       - DB_HOST1=invoiceninja2-db.traefik
@@ -30,6 +34,7 @@ services:
       - REDIS_HOST=invoiceninja2-redis.traefik
       - REDIS_PASSWORD=null
       - REDIS_PORT=6379
+      - FILESYSTEM_DISK=debian_docker
     volumes:
       - type: bind
         source: ${CONFIG_DIR}/invoiceninja-debian/php/php.ini
