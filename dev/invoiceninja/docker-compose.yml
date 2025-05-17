@@ -1,0 +1,111 @@
+services:
+  invoiceninja-nginx:
+    image: nginx
+    container_name: invoiceninja-nginx
+    restart: always
+    volumes:
+      # Vhost configuration
+      #- ./config/caddy/Caddyfile:/etc/caddy/Caddyfiledocker-com
+      - source: ${CONFIG_DIR}/invoiceninja/nginx/in-vhost.conf
+        target: /etc/nginx/conf.d/in-vhost.conf
+        type: bind
+        read_only: true
+        bind:
+          create_host_path: false
+      - ${VOLUME_DIR}/invoiceninja/public:/var/www/app/public:ro
+    depends_on:
+      - invoiceninja
+    # Run webserver nginx on port 80
+    # Feel free to modify depending what port is already occupied
+    # ports:
+      # - "80:80"
+      #- "443:443"
+    networks:
+      - traefik
+    # extra_hosts:
+    #   - "in5.localhost:192.168.0.124 " #host and ip
+    healthcheck:
+      test: curl --fail http://invoiceninja-nginx/public/images/blank.png || exit 1
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
+    labels:
+      - autoheal=true
+      - traefik.enable=true
+      ## HTTP Routers
+      - traefik.http.routers.in-rtr.entrypoints=websecure
+      - traefik.http.routers.in-rtr.rule=Host(`in.$FQDN`)
+      - traefik.http.routers.in-rtr.tls=true
+      ## Middlewares
+      - traefik.http.routers.in-rtr.middlewares=chain-no-auth@file # No Authentication
+      # - traefik.http.routers.in-rtr.middlewares=chain-basic-auth@file # Basic Authentication
+      # - traefik.http.routers.in-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
+      ## HTTP Services
+      - traefik.http.routers.in-rtr.service=in-svc
+      - traefik.http.services.in-svc.loadbalancer.server.port=80
+
+  invoiceninja:
+    image: invoiceninja/invoiceninja:5
+    container_name: invoiceninja
+    environment: 
+      - APP_URL=http://in.${FQDN}
+      - APP_KEY=${IN_APP_KEY}
+      - REQUIRE_HTTPS=true
+      - TRUSTED_PROXIES=*
+      - APP_DEBUG=false
+      - DB_HOST1=invoiceninja-db.traefik
+      - DB_DATABASE1=ninja
+      - DB_USERNAME1=ninja
+      - DB_PASSWORD1=${IN_DB_PASSWORD}
+      - IN_USER_EMAIL=${EMAIL}
+      - IN_PASSWORD=${IN_PASSWORD}
+    restart: always
+    volumes:
+      # - ${CONFIG_DIR}/invoiceninja/hosts:/etc/hosts:ro
+      - ${VOLUME_DIR}/invoiceninja/public:/var/www/app/public:rw,delegated
+      - ${VOLUME_DIR}/invoiceninja/storage:/var/www/app/storage:rw,delegated
+      - type: bind
+        source: ${CONFIG_DIR}/invoiceninja/php/php.ini
+        target: /usr/local/etc/php/php.ini
+      - type: bind
+        source: ${CONFIG_DIR}/invoiceninja/php/php-cli.ini
+        target: /usr/local/etc/php/php-cli.ini
+    depends_on:
+      invoiceninja-db:
+        condition: service_healthy
+    networks:
+      - traefik
+    # extra_hosts:
+    #   - "in5.localhost:192.168.0.124 " #host and ip
+
+  invoiceninja-db:
+    image: container-registry.oracle.com/mysql/community-server:8.4-aarch64
+    container_name: invoiceninja-db
+    # ports:
+    #   - "3306:3306"
+    restart: always
+    environment: 
+      - MYSQL_ROOT_PASSWORD=${IN_DB_ROOT_PASSWORD}
+      - MYSQL_USER=ninja
+      - MYSQL_PASSWORD=${IN_DB_PASSWORD}
+      - MYSQL_DATABASE=ninja
+      - MYSQL_ROOT_HOST=invoiceninja.traefik
+    volumes:
+      - ${VOLUME_DIR}/invoiceninja/db:/var/lib/mysql:rw,delegated
+    networks:
+      - traefik
+    # extra_hosts:
+    #   - "in5.localhost:192.168.0.124 " #host and ip
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+      start_period: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 55
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
