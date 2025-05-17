@@ -96,7 +96,7 @@ services:
     # ports:
     #   - 80:80
     volumes:
-      - source: ./config/nginx/nginx.conf
+      - source: ./config/nginx/invoiceninja.conf
         target: /etc/nginx/conf.d/nginx.conf
         type: bind
         read_only: true
