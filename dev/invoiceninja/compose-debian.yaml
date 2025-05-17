@@ -8,8 +8,8 @@ x-logging: &default-logging
   driver: json-file
 
 services:
-  invoiceninja:
-    image: invoiceninja/invoiceninja-debian:5
+  invoiceninja2:
+    image: invoiceninja/invoiceninja-debian:latest
     container_name: invoiceninja2
     restart: unless-stopped
     environment: 
@@ -32,24 +32,23 @@ services:
       - REDIS_PORT=6379
     volumes:
       - type: bind
-        source: ${CONFIG_DIR}/invoiceninja-debian/debian/php/php.ini
-        target: /usr/local/etc/php/conf.d/zzz-php.ini
+        source: ${CONFIG_DIR}/invoiceninja-debian/php/php.ini
+        target: /usr/local/etc/php/conf.d/invoiceninja.ini
         read_only: true
         bind:
           create_host_path: false
       - type: bind
-        source: ${CONFIG_DIR}/invoiceninja-debian/debian/php/php-fpm.conf
-        target: /usr/local/etc/php-fpm.d/zzz-php-fpm.conf
+        source: ${CONFIG_DIR}/invoiceninja-debian/php/php-fpm.conf
+        target: /usr/local/etc/php-fpm.d/invoiceninja.conf
         read_only: true
         bind:
           create_host_path: false
       - type: bind
-        source: ${CONFIG_DIR}/invoiceninja-debian/debian/supervisor/supervisord.conf
+        source: ${CONFIG_DIR}/invoiceninja-debian/supervisor/supervisord.conf
         target: /etc/supervisor/conf.d/supervisord.conf
         read_only: true
         bind:
           create_host_path: false
-      - ${VOLUME_DIR}/invoiceninja-debian/cache:/var/www/html/bootstrap/cache
       - ${VOLUME_DIR}/invoiceninja-debian/public:/var/www/html/public
       - ${VOLUME_DIR}/invoiceninja-debian/storage:/var/www/html/storage
     networks:
@@ -65,8 +64,8 @@ services:
     image: nginx:alpine
     container_name: invoiceninja2-nginx
     restart: unless-stopped
-    ports:
-      - 81:80
+    # ports:
+    #   - 80:80
     volumes:
       - source: ${CONFIG_DIR}/invoiceninja-debian/debian/nginx
         target: /etc/nginx/conf.d
@@ -79,29 +78,29 @@ services:
     networks:
       - traefik
     depends_on:
-      - invoiceninja
+      - invoiceninja2
     logging: *default-logging
     labels:
       - autoheal=true
       - traefik.enable=true
       ## HTTP Routers
-      - traefik.http.routers.in-rtr.entrypoints=websecure
-      - traefik.http.routers.in-rtr.rule=Host(`in-debian.$FQDN`)
-      - traefik.http.routers.in-rtr.tls=true
+      - traefik.http.routers.in2-rtr.entrypoints=websecure
+      - traefik.http.routers.in2-rtr.rule=Host(`in2.$FQDN`)
+      - traefik.http.routers.in2-rtr.tls=true
       ## Middlewares
-      - traefik.http.routers.in-rtr.middlewares=chain-no-auth@file # No Authentication
-      # - traefik.http.routers.in-rtr.middlewares=chain-basic-auth@file # Basic Authentication
-      # - traefik.http.routers.in-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
+      - traefik.http.routers.in2-rtr.middlewares=chain-no-auth@file # No Authentication
+      # - traefik.http.routers.in2-rtr.middlewares=chain-basic-auth@file # Basic Authentication
+      # - traefik.http.routers.in2-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
       ## HTTP Services
-      - traefik.http.routers.in-rtr.service=in-svc
-      - traefik.http.services.in-svc.loadbalancer.server.port=81
+      - traefik.http.routers.in2-rtr.service=in-svc
+      - traefik.http.services.in2-svc.loadbalancer.server.port=80
 
 
   mysql:
-    image: container-registry.oracle.com/mysql/community-server:8.4-aarch64
+    image: container-registry.oracle.com/mysql/community-server:9.3-aarch64
     container_name: invoiceninja2-db
     restart: unless-stopped
-    environment: 
+    environment:
       - MYSQL_ROOT_PASSWORD=${IN_DB_ROOT_PASSWORD}
       - MYSQL_USER=ninja
       - MYSQL_PASSWORD=${IN_DB_PASSWORD}
