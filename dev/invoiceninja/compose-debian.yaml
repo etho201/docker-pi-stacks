@@ -67,8 +67,14 @@ services:
     # ports:
     #   - 80:80
     volumes:
-      - source: ${CONFIG_DIR}/invoiceninja-debian/nginx
-        target: /etc/nginx/conf.d
+      - source: ${CONFIG_DIR}/invoiceninja-debian/nginx/nginx.conf
+        target: /etc/nginx/conf.d/nginx.conf
+        type: bind
+        read_only: true
+        bind:
+          create_host_path: false
+      - source: ${CONFIG_DIR}/invoiceninja-debian/nginx/laravel.conf
+        target: /etc/nginx/conf.d/laravel.conf
         type: bind
         read_only: true
         bind:
