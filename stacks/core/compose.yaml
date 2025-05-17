@@ -2,16 +2,6 @@
 name: core
 services:
 
-  cloudflared:
-    container_name: cloudflared
-    image: cloudflare/cloudflared:latest
-    restart: always
-    command: tunnel run
-    networks:
-      - traefik
-    environment:
-      - TUNNEL_TOKEN=${CLOUDFLARED_TOKEN}
-
 ########################################################################################
 # Dozzle
 # https://github.com/amir20/dozzle
