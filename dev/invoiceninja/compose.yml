@@ -1,5 +1,5 @@
 ---
-name: invoiceninja-debian
+name: invoiceninja
 
 x-logging: &default-logging
   options:
@@ -8,13 +8,13 @@ x-logging: &default-logging
   driver: json-file
 
 services:
-  invoiceninja2:
+  invoiceninja:
     image: invoiceninja/invoiceninja-debian:latest
-    container_name: invoiceninja2
+    container_name: invoiceninja
     restart: unless-stopped
     environment: 
       # IN application vars
-      APP_URL: http://in2.${FQDN}
+      APP_URL: http://in.${FQDN}
       APP_KEY: ${IN_APP_KEY}
       APP_ENV: production
       APP_DEBUG: false
@@ -27,14 +27,14 @@ services:
       QUEUE_CONNECTION: redis
       SESSION_DRIVER: redis
 
-      REDIS_HOST: invoiceninja2-redis.traefik
+      REDIS_HOST: invoiceninja-redis.traefik
       REDIS_PASSWORD: null
       REDIS_PORT: 6379
 
       FILESYSTEM_DISK: debian_docker
 
       # DB connection
-      DB_HOST: invoiceninja2-db.traefik
+      DB_HOST: invoiceninja-db.traefik
       DB_PORT: 3306
       DB_DATABASE: ninja
       DB_USERNAME: ninja
@@ -78,20 +78,20 @@ services:
         read_only: true
         bind:
           create_host_path: false
-      - ${VOLUME_DIR}/invoiceninja-debian/public:/var/www/html/public
-      - ${VOLUME_DIR}/invoiceninja-debian/storage:/var/www/html/storage
+      - ${VOLUME_DIR}/invoiceninja/public:/var/www/html/public
+      - ${VOLUME_DIR}/invoiceninja/storage:/var/www/html/storage
     networks:
       - traefik
     depends_on:
-      invoiceninja2-db:
+      invoiceninja-db:
         condition: service_healthy
-      invoiceninja2-redis:
+      invoiceninja-redis:
         condition: service_healthy
     logging: *default-logging
 
-  invoiceninja2-nginx:
+  invoiceninja-nginx:
     image: nginx:alpine
-    container_name: invoiceninja2-nginx
+    container_name: invoiceninja-nginx
     restart: unless-stopped
     # ports:
     #   - 80:80
@@ -108,40 +108,46 @@ services:
         read_only: true
         bind:
           create_host_path: false
-      - ${VOLUME_DIR}/invoiceninja-debian/public:/var/www/html/public:ro
-      - ${VOLUME_DIR}/invoiceninja-debian/storage:/var/www/html/storage:ro
+      - ${VOLUME_DIR}/invoiceninja/public:/var/www/html/public:ro
+      - ${VOLUME_DIR}/invoiceninja/storage:/var/www/html/storage:ro
     networks:
       - traefik
     depends_on:
-      - invoiceninja2
+      - invoiceninja
     logging: *default-logging
+    healthcheck:
+      test: curl --fail http://invoiceninja-nginx/public/images/blank.png || exit 1
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
     labels:
       - autoheal=true
       - traefik.enable=true
       ## HTTP Routers
-      - traefik.http.routers.in2-rtr.entrypoints=websecure
-      - traefik.http.routers.in2-rtr.rule=Host(`in2.$FQDN`)
-      - traefik.http.routers.in2-rtr.tls=true
+      - traefik.http.routers.in-rtr.entrypoints=websecure
+      - traefik.http.routers.in-rtr.rule=Host(`in.$FQDN`)
+      - traefik.http.routers.in-rtr.tls=true
       ## Middlewares
-      - traefik.http.routers.in2-rtr.middlewares=chain-no-auth@file # No Authentication
-      # - traefik.http.routers.in2-rtr.middlewares=chain-basic-auth@file # Basic Authentication
-      # - traefik.http.routers.in2-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
+      - traefik.http.routers.in-rtr.middlewares=chain-no-auth@file # No Authentication
+      # - traefik.http.routers.in-rtr.middlewares=chain-basic-auth@file # Basic Authentication
+      # - traefik.http.routers.in-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
       ## HTTP Services
-      - traefik.http.routers.in2-rtr.service=in-svc
-      - traefik.http.services.in2-svc.loadbalancer.server.port=80
+      - traefik.http.routers.in-rtr.service=in-svc
+      - traefik.http.services.in-svc.loadbalancer.server.port=80
 
-  invoiceninja2-db:
+  invoiceninja-db:
     image: container-registry.oracle.com/mysql/community-server:9.3-aarch64
-    container_name: invoiceninja2-db
+    container_name: invoiceninja-db
     restart: unless-stopped
     environment:
       - MYSQL_ROOT_PASSWORD=${IN_DB_ROOT_PASSWORD}
       - MYSQL_USER=ninja
       - MYSQL_PASSWORD=${IN_DB_PASSWORD}
       - MYSQL_DATABASE=ninja
-      - MYSQL_ROOT_HOST=invoiceninja2.traefik
+      - MYSQL_ROOT_HOST=invoiceninja.traefik
     volumes:
-      - ${VOLUME_DIR}/invoiceninja-debian/db:/var/lib/mysql
+      - ${VOLUME_DIR}/invoiceninja/db:/var/lib/mysql
     networks:
       - traefik
     healthcheck:
@@ -152,12 +158,12 @@ services:
       retries: 55
     logging: *default-logging
 
-  invoiceninja2-redis:
+  invoiceninja-redis:
     image: redis:alpine
-    container_name: invoiceninja2-redis
+    container_name: invoiceninja-redis
     restart: unless-stopped
     volumes:
-      - ${VOLUME_DIR}/invoiceninja-debian/redis:/data
+      - ${VOLUME_DIR}/invoiceninja/redis:/data
     networks:
       - traefik
     healthcheck:
