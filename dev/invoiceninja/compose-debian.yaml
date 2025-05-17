@@ -67,7 +67,7 @@ services:
     # ports:
     #   - 80:80
     volumes:
-      - source: ${CONFIG_DIR}/invoiceninja-debian/debian/nginx
+      - source: ${CONFIG_DIR}/invoiceninja-debian/nginx
         target: /etc/nginx/conf.d
         type: bind
         read_only: true
