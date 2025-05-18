@@ -137,7 +137,7 @@ services:
       - traefik.http.services.in-svc.loadbalancer.server.port=80
 
   invoiceninja-db:
-    image: container-registry.oracle.com/mysql/community-server:9.3-aarch64
+    image: container-registry.oracle.com/mysql/community-server:8.4-aarch64
     container_name: invoiceninja-db
     restart: unless-stopped
     environment:
