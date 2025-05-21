@@ -1,0 +1,32 @@
+---
+name: wud
+services:
+  
+  whatsupdocker:
+    image: getwud/wud
+    container_name: wud
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    # ports:
+    #   - 3000:3000
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.wud-rtr.entrypoints=websecure"
+      - "traefik.http.routers.wud-rtr.rule=Host(`wud.$FQDN`)"
+      - "traefik.http.routers.wud-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.wud-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.wud-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.wud-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.wud-rtr.service=wud-svc"
+      - "traefik.http.services.wud-svc.loadbalancer.server.port=3000"
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
