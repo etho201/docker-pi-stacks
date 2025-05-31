@@ -2,6 +2,23 @@
 name: core
 services:
 
+  socket-proxy:
+    image: lscr.io/linuxserver/socket-proxy:latest
+    container_name: socket-proxy
+    environment:
+      - CONTAINERS=1 # Allow access to viewing containers
+      - EVENTS=1 # Allow access to events
+      - INFO=1 # List system information
+      - POST=0 # Disallow any POST operations (effectively read-only)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    # ports:
+    #   - 2375:2375
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /run
+
 ########################################################################################
 # Dozzle
 # https://github.com/amir20/dozzle
@@ -13,10 +30,10 @@ services:
     image: amir20/dozzle:latest
     networks:
       - traefik
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
     # ports:
     #   - 8080:8080
+    environment:
+      DOZZLE_REMOTE_HOST: tcp://socket-proxy:2375
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -419,7 +436,6 @@ services:
       - traefik
     volumes:
       - ${CONFIG_DIR}/homepage:/app/config # Make sure your local config directory exists
-      - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
