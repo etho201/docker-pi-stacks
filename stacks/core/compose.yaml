@@ -5,6 +5,8 @@ services:
   socket-proxy:
     image: lscr.io/linuxserver/socket-proxy:latest
     container_name: socket-proxy
+    networks:
+      - traefik
     environment:
       - CONTAINERS=1 # Allow access to viewing containers
       - EVENTS=1 # Allow access to events
