@@ -1,0 +1,32 @@
+---
+name: pairdrop
+
+services:
+  pairdrop:
+    image: lscr.io/linuxserver/pairdrop:latest
+    container_name: pairdrop
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - RATE_LIMIT=false #optional
+      - WS_FALLBACK=false #optional
+      # - RTC_CONFIG= #optional
+      - DEBUG_MODE=false #optional
+    # ports:
+    #   - 3000:3000
+    restart: unless-stopped
+    labels:
+      # - autoheal=true
+      - traefik.enable=true
+      ## HTTP Routers
+      - traefik.http.routers.pairdrop-rtr.entrypoints=websecure
+      - traefik.http.routers.pairdrop-rtr.rule=Host(`pairdrop.$FQDN`)
+      - traefik.http.routers.pairdrop-rtr.tls=true
+      ## Middlewares
+      - traefik.http.routers.pairdrop-rtr.middlewares=chain-no-auth@file # No Authentication
+      # - traefik.http.routers.pairdrop-rtr.middlewares=chain-basic-auth@file # Basic Authentication
+      # - traefik.http.routers.pairdrop-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
+      ## HTTP Services
+      - traefik.http.routers.pairdrop-rtr.service=pairdrop-svc
+      - traefik.http.services.pairdrop-svc.loadbalancer.server.port=3000
