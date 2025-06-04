@@ -30,6 +30,7 @@ services:
   dozzle:
     container_name: dozzle
     image: amir20/dozzle:latest
+    restart: always
     networks:
       - traefik
     # ports:
