@@ -49,6 +49,13 @@
     ```
 5. Check if you can login, and if so, go ahead and delete the old `ldap` (`*.bak`) files as they're no longer needed.
 
+### Upload fails with "Unknown Error"
+
+- Uploads of files over 100MB seem to fail with status 404 and unknown error.
+- Cloudflare's free tier may limit uploads to 100MB. If using Cloudflare, disable the proxy for the specific DNS entry (owncloud.${FQDN}).
+- This could be resolved by adjusting the `FRONTEND_UPLOAD_MAX_CHUNK_SIZE` value in `ocis.yaml`
+    - https://doc.owncloud.com/ocis/next/deployment/services/s-list/frontend.html
+
 ---
 
 ## Environment Variables:
