@@ -10,13 +10,27 @@ services:
         type: bind
         bind:
           create_host_path: false
+      - source: ${CONFIG_DIR}/owncloud/csp.yaml
+        target: /etc/ocis/csp.yaml
+        type: bind
+        bind:
+          create_host_path: false
       - ${VOLUME_DIR}/owncloud:/var/lib/ocis
     environment:
       #- PROXY_ENABLE_BASIC_AUTH=true # rclone
-      - OCIS_INSECURE=false
-      - PROXY_TLS=false
-      - OCIS_URL=https://owncloud.${FQDN}
-      - OCIS_LOG_LEVEL=info
+      OCIS_INSECURE: false
+      PROXY_TLS: false
+      OCIS_URL: https://owncloud.${FQDN}
+      OCIS_LOG_LEVEL: info
+      PROXY_AUTOPROVISION_ACCOUNTS: false
+      PROXY_ROLE_ASSIGNMENT_DRIVER: oidc
+      OCIS_OIDC_ISSUER: https://pocket-id.${FQDN}
+      PROXY_OIDC_REWRITE_WELLKNOWN: true
+      WEB_OIDC_CLIENT_ID: ${POCKETID_OWNCLOUD_CLIENT_ID}
+      PROXY_OIDC_ACCESS_TOKEN_VERIFY_METHOD: none
+      PROXY_USER_OIDC_CLAIM: preferred_username
+      OCIS_EXCLUDE_RUN_SERVICES: idp
+      PROXY_CSP_CONFIG_FILE_LOCATION: /etc/ocis/csp.yaml
     logging:
       driver: local
     networks:

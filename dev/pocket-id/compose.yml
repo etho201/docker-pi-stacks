@@ -1,0 +1,46 @@
+---
+name: pocket-id
+services:
+
+  pocket-id:
+    image: ghcr.io/pocket-id/pocket-id
+    container_name: pocket-id
+    restart: unless-stopped
+    environment:
+      APP_URL: https://pocket-id.${FQDN}
+      TRUST_PROXY: true
+      MAXMIND_LICENSE_KEY: ${MAXMIND_LICENSE_KEY}
+      PUID: ${PUID}
+      PGID: ${PGID}
+    # ports:
+    #   - 1411:1411
+    volumes:
+      - ${VOLUME_DIR}/pocket-id:/app/data
+    networks:
+      - traefik
+    # Optional healthcheck
+    healthcheck:
+      test: "curl -f http://localhost:1411/healthz"
+      interval: 1m30s
+      timeout: 5s
+      retries: 2
+      start_period: 10s
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.pocket-id-rtr.entrypoints=websecure"
+      - "traefik.http.routers.pocket-id-rtr.rule=Host(`pocket-id.$FQDN`)"
+      - "traefik.http.routers.pocket-id-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.pocket-id-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.pocket-id-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.pocket-id-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.pocket-id-rtr.service=pocket-id-svc"
+      - "traefik.http.services.pocket-id-svc.loadbalancer.server.port=1411"
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
