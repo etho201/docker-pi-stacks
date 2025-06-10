@@ -439,6 +439,7 @@ services:
       - traefik
     volumes:
       - ${CONFIG_DIR}/homepage:/app/config # Make sure your local config directory exists
+      - ${CONFIG_DIR}/homepage/images:/app/public/images
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
