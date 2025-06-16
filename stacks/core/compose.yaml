@@ -492,11 +492,10 @@ services:
     image: portainer/portainer-ce
     container_name: portainer
     volumes:
-      # - ${DOCKER_SOCK}:/var/run/docker.sock # Using socket-proxy instead
+      - ${DOCKER_SOCK}:/var/run/docker.sock
       - ${CONFIG_DIR}/portainer:/data
     environment:
       TZ: ${TZ}
-      DOCKER_HOST: socket-proxy:2375
     # ports:
     #   - 9000:9000
     restart: always
