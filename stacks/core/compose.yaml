@@ -212,7 +212,7 @@ services:
       - --accessLog.filters.statusCodes=400-499
       - --providers.docker=true
       - --providers.docker.endpoint=unix:///var/run/docker.sock # Connection to the Docker host. Consider using Docker Socket Proxy instead for improved security
-      # - --providers.docker.endpoint=tcp://socket-proxy:2375
+      - --providers.docker.endpoint=tcp://socket-proxy:2375
       # - --providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.$FQDN`)
       - --providers.docker.exposedByDefault=false
       # - --entrypoints.websecure.http.middlewares=chain-authelia@file
@@ -257,7 +257,7 @@ services:
       #   protocol: tcp
       #   mode: host
     volumes:
-      - ${DOCKER_SOCK}:/var/run/docker.sock:ro
+      # - ${DOCKER_SOCK}:/var/run/docker.sock:ro # Using socket-proxy instead
       - ${CONFIG_DIR}/shared:/shared # for use with basic auth
       - ${CONFIG_DIR}/traefik2:/etc/traefik
       # traefik2
@@ -492,10 +492,11 @@ services:
     image: portainer/portainer-ce
     container_name: portainer
     volumes:
-      - ${DOCKER_SOCK}:/var/run/docker.sock
+      # - ${DOCKER_SOCK}:/var/run/docker.sock # Using socket-proxy instead
       - ${CONFIG_DIR}/portainer:/data
     environment:
-      - TZ=${TZ}
+      TZ: ${TZ}
+      DOCKER_HOST: socket-proxy:2375
     # ports:
     #   - 9000:9000
     restart: always
