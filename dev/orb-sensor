@@ -1,0 +1,11 @@
+---
+name: orb-sensor
+services:
+
+  orb-sensor:
+    image: orbforge/orb:latest
+    container_name: orb-sensor # Optional: Give the container a specific name
+    network_mode: host # Required: Allows Orb to see network traffic
+    volumes:
+      - ${CONFIG_DIR}/orb:/root/.config/orb # Persists Orb configuration
+    restart: always # Ensures Orb restarts if it stops or on system reboot
