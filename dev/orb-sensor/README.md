@@ -40,11 +40,20 @@
     mkdir -p /home/admin/orb/
     systemctl daemon-reload
     systemctl start orb-sensor
-    systemctl enable --now podman-auto-update
-    podman auto-update --dry-run
     ```
 
-    > NOTE: Troubleshoot with: `/usr/lib/systemd/system-generators/podman-system-generator --dryrun`
+    > **NOTE:** Troubleshoot with: `/usr/lib/systemd/system-generators/podman-system-generator --dryrun`
+
+3. Enable auto updates:
+
+    ```bash
+    systemctl enable --now podman-auto-update.timer
+    podman auto-update --dry-run
+    ```
+    
+    > **NOTE:** You only need to enable the timer (`podman-auto-update.timer`), not the service (`podman-auto-update.service`).
+
+    > **NOTE:** By default, the timer runs the podman-auto-update.service daily at midnight.
 
 3. Link to your account:
 
