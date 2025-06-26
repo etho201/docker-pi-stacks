@@ -50,6 +50,15 @@ services:
     networks:
       - traefik
 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: never
+    networks:
+      - traefik
+    ports:
+      - 5432:5432
+
 networks:
   traefik:
     name: traefik
