@@ -163,6 +163,37 @@ services:
     # Host networking is required
     network_mode: host
 
+  zigbee2mqtt:
+    container_name: zigbee2mqtt
+    image: ghcr.io/koenkk/zigbee2mqtt
+    restart: unless-stopped
+    volumes:
+        - ${VOLUME_DIR}/zigbee2mqtt:/app/data
+        - /run/udev:/run/udev:ro
+    networks:
+      - traefik
+    # ports:
+        # Frontend port
+        # - 8080:8080 GUI
+    environment:
+        - TZ=${TZ}
+    devices:
+        # Make sure this matched your adapter location
+        - /dev/serial/by-id/${ZWAVE_DEVICE_ID}:/dev/ttyACM0
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.zigbee2mqtt-rtr.entrypoints=websecure"
+      - "traefik.http.routers.zigbee2mqtt-rtr.rule=Host(`zigbee2mqtt.$FQDN`)"
+      - "traefik.http.routers.zigbee2mqtt-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.zigbee2mqtt-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.zigbee2mqtt-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.zigbee2mqtt-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.zigbee2mqtt-rtr.service=zigbee2mqtt-svc"
+      - "traefik.http.services.zigbee2mqtt-svc.loadbalancer.server.port=8080"
+
   esphome:
     container_name: esphome
     image: esphome/esphome:latest
