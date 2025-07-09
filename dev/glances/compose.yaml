@@ -3,6 +3,7 @@ services:
 
   glances:
     image: nicolargo/glances:latest
+    container_name: glances
     restart: always
     pid: "host"
     privileged: true
@@ -13,17 +14,3 @@ services:
     environment:
       - TZ=${TZ}
       - GLANCES_OPT=-C /glances/conf/glances.conf -w
-    labels:
-      - autoheal=true
-      - traefik.enable=true
-      ## HTTP Routers
-      - traefik.http.routers.glances-rtr.entrypoints=websecure
-      - traefik.http.routers.glances-rtr.rule=Host(`glances.$FQDN`)
-      - traefik.http.routers.glances-rtr.tls=true
-      ## Middlewares
-      - traefik.http.routers.glances-rtr.middlewares=chain-no-auth@file # No Authentication
-      # - traefik.http.routers.glances-rtr.middlewares=chain-basic-auth@file # Basic Authentication
-      # - traefik.http.routers.glances-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
-      ## HTTP Services
-      - traefik.http.routers.glances-rtr.service=glances-svc
-      - traefik.http.services.glances-svc.loadbalancer.server.port=61208
