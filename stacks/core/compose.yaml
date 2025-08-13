@@ -175,7 +175,7 @@ services:
 ########################################################################################
 
   traefik:
-    image: traefik:chaource # the saintnectaire tag refers to v3.4.x
+    image: traefik:chabichou # the chabichou tag refers to v3.5.x
     container_name: traefik
     restart: always
     command: # CLI arguments
