@@ -37,4 +37,4 @@
 	docker exec immich-db pg_restore --clean -U postgres -d immich /var/lib/postgresql/data/backup.dump
 	```
 	
-7. You're now finished with your database upgrade.
+7. You're now finished with your database upgrade. At this point, it's a good idea to restart your Immich docker compose enrionment with `docker compose up -d --force-recreate` to purge out any excess RAM usage left behind from the database upgrade.
