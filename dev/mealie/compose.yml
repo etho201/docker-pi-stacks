@@ -1,0 +1,42 @@
+name: mealie
+
+services:
+  mealie:
+    image: ghcr.io/mealie-recipes/mealie:latest
+    container_name: mealie
+    restart: always
+    # ports:
+        # - "9000:9000"
+    deploy:
+      resources:
+        limits:
+          memory: 1000M # 
+    volumes:
+      - ${VOLUME_DIR}/mealie:/app/data
+    environment:
+      # Set Backend ENV Variables Here
+      ALLOW_SIGNUP: "false"
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+      BASE_URL: https://mealie.${FQDN}
+    labels:
+      # - autoheal=true
+      - traefik.enable=true
+      ## HTTP Routers
+      - traefik.http.routers.mealie-rtr.entrypoints=websecure
+      - traefik.http.routers.mealie-rtr.rule=Host(`mealie.$FQDN`)
+      - traefik.http.routers.mealie-rtr.tls=true
+      ## Middlewares
+      - traefik.http.routers.mealie-rtr.middlewares=chain-no-auth@file # No Authentication
+      # - traefik.http.routers.mealie-rtr.middlewares=chain-basic-auth@file # Basic Authentication
+      # - traefik.http.routers.mealie-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
+      ## HTTP Services
+      - traefik.http.routers.mealie-rtr.service=mealie-svc
+      - traefik.http.services.mealie-svc.loadbalancer.server.port=9000
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik

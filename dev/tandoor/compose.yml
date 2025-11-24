@@ -1,0 +1,51 @@
+name: tandoor
+
+services:
+  tandoor-db:
+    restart: always
+    image: postgres:16-alpine
+    volumes:
+      - ${VOLUME_DIR}/tandoor/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: tandoor
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: tandoor
+      POSTGRES_PASSWORD: ${TANDOOR_POSTGRES_PASSWORD}
+
+  tandoor:
+    restart: always
+    image: vabene1111/recipes:latest
+    volumes:
+      - ${VOLUME_DIR}/tandoor/static:/opt/recipes/staticfiles
+      - ${VOLUME_DIR}/tandoor/media:/opt/recipes/mediafiles
+    depends_on:
+      - db_recipes
+    environment:
+      SECRET_KEY: 
+      TZ: ${TZ}
+      # allowed hosts (see documentation), should be set to your hostname(s) but might be * (default) for some proxies/providers
+      # ALLOWED_HOSTS: recipes.mydomain.com
+      # add only a database password if you want to run with the default postgres, otherwise change settings accordingly
+      DB_ENGINE: django.db.backends.postgresql
+      POSTGRES_HOST: tandoor-db
+      POSTGRES_DB: tandoor
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: tandoor
+      POSTGRES_PASSWORD: ${TANDOOR_POSTGRES_PASSWORD}
+    labels:
+      # - autoheal=true
+      - traefik.enable=true
+      ## HTTP Routers
+      - traefik.http.routers.tandoor-rtr.entrypoints=websecure
+      - traefik.http.routers.tandoor-rtr.rule=Host(`tandoor.$FQDN`)
+      - traefik.http.routers.tandoor-rtr.tls=true
+      ## Middlewares
+      - traefik.http.routers.tandoor-rtr.middlewares=chain-no-auth@file # No Authentication
+      # - traefik.http.routers.tandoor-rtr.middlewares=chain-basic-auth@file # Basic Authentication
+      # - traefik.http.routers.tandoor-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
+      ## HTTP Services
+      - traefik.http.routers.tandoor-rtr.service=tandoor-svc
+      - traefik.http.services.tandoor-svc.loadbalancer.server.port=80
+
+volumes:
+  staticfiles:
