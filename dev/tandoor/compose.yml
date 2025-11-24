@@ -11,6 +11,8 @@ services:
       POSTGRES_PORT: 5432
       POSTGRES_USER: tandoor
       POSTGRES_PASSWORD: ${TANDOOR_POSTGRES_PASSWORD}
+    networks:
+      - traefik
 
   tandoor:
     restart: always
@@ -46,6 +48,11 @@ services:
       ## HTTP Services
       - traefik.http.routers.tandoor-rtr.service=tandoor-svc
       - traefik.http.services.tandoor-svc.loadbalancer.server.port=80
+    networks:
+      - traefik
 
-volumes:
-  staticfiles:
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
