@@ -25,6 +25,18 @@
 
 ---
 
+# WebDAV
+
+To configure WebDAV, you need to add the following environment variables to the `compose.yaml` file:
+
+```yaml
+PROXY_ENABLE_APP_AUTH: true
+OCIS_ADD_RUN_SERVICES: auth-app
+```
+
+Ensure the App Tokens plugin (from the App Store) is installed at `${VOLUME_DIR}/owncloud/web/assets/apps/`, and restart the container. Then you can access the `App Tokens` plugins screen upon logging into ownCloud. Create a new token and copy the raw token to the clipboard. When configuring your WebDAV connection, input your login username, the raw token as the password, and the WebDAV URL for the desired path as shown in the App Tokens plugin screen.
+
+
 ## Troubleshooting:
 
 
