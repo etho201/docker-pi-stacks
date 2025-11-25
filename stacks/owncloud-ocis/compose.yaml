@@ -2,7 +2,7 @@
 name: owncloud-ocis
 services:
   owncloud:
-    image: owncloud/ocis:7
+    image: owncloud/ocis:latest
     container_name: owncloud
     volumes:
       - source: ${CONFIG_DIR}/owncloud/ocis.yaml
@@ -17,7 +17,6 @@ services:
           create_host_path: false
       - ${VOLUME_DIR}/owncloud:/var/lib/ocis
     environment:
-      #- PROXY_ENABLE_BASIC_AUTH=true # rclone
       OCIS_INSECURE: false
       PROXY_TLS: false
       OCIS_URL: https://owncloud.${FQDN}
@@ -31,6 +30,8 @@ services:
       PROXY_USER_OIDC_CLAIM: preferred_username
       OCIS_EXCLUDE_RUN_SERVICES: idp
       PROXY_CSP_CONFIG_FILE_LOCATION: /etc/ocis/csp.yaml
+      PROXY_ENABLE_APP_AUTH: true # Required for APP TOKENS for use with 3rd party applications like RCLONE
+      OCIS_ADD_RUN_SERVICES: auth-app # Required for APP TOKENS for use with 3rd party applications like RCLONE
     logging:
       driver: local
     networks:
