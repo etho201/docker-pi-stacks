@@ -2,6 +2,7 @@ name: tandoor
 
 services:
   tandoor-db:
+    container_name: tandoor-db
     restart: always
     image: postgres:16-alpine
     volumes:
@@ -10,20 +11,21 @@ services:
       POSTGRES_DB: tandoor
       POSTGRES_PORT: 5432
       POSTGRES_USER: tandoor
-      POSTGRES_PASSWORD: ${TANDOOR_POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${TANDOOR_DB_PASSWORD}
     networks:
       - traefik
 
   tandoor:
+    container_name: tandoor
     restart: always
     image: vabene1111/recipes:latest
     volumes:
       - ${VOLUME_DIR}/tandoor/static:/opt/recipes/staticfiles
       - ${VOLUME_DIR}/tandoor/media:/opt/recipes/mediafiles
     depends_on:
-      - db_recipes
+      - tandoor-db
     environment:
-      SECRET_KEY: 
+      SECRET_KEY: ${TANDOOR_SECRET_KEY}
       TZ: ${TZ}
       # allowed hosts (see documentation), should be set to your hostname(s) but might be * (default) for some proxies/providers
       # ALLOWED_HOSTS: recipes.mydomain.com
@@ -33,7 +35,7 @@ services:
       POSTGRES_DB: tandoor
       POSTGRES_PORT: 5432
       POSTGRES_USER: tandoor
-      POSTGRES_PASSWORD: ${TANDOOR_POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${TANDOOR_DB_PASSWORD}
     labels:
       # - autoheal=true
       - traefik.enable=true
