@@ -22,13 +22,14 @@ services:
       KOPIA_PASSWORD: ${KOPIA_REPOSITORY_PASSWORD}
       USER: ${USERNAME}
     volumes:
+      # CUSTOM
+      - /root/.config/rclone:/app/rclone:ro # IMPORTANT: Mapped to local rclone config
+      - /data:/data:ro # IMPORTANT: Mapped to local folder
       # Mount local folders needed by kopia
       - ${CONFIG_DIR}/kopia:/app/config
-      - /root/.config/rclone:/app/rclone:ro # IMPORTANT: Mapped to local rclone config
       - ${VOLUME_DIR}/kopia/cache:/app/cache
       - ${VOLUME_DIR}/kopia/logs:/app/logs
       # Mount local folders to snapshot
-      - /data:/data:ro # IMPORTANT: Mapped to local folder
       # Mount repository location
       - ${VOLUME_DIR}/kopia/repository:/repository
       # Mount path for browsing mounted snapshots
