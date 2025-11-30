@@ -1,0 +1,49 @@
+version: '3.7'
+services:
+  kopia:
+    image: kopia/kopia:latest
+    hostname: ${HOSTNAME}
+    container_name: kopia
+    restart: unless-stopped
+    # ports:
+        # - 51515:51515
+    networks:
+      - traefik
+    # Setup the server that provides the web gui
+    command:
+      - server
+      - start
+      - --disable-csrf-token-checks
+      - --insecure
+      - --address=0.0.0.0:51515
+      - --server-username=${USERNAME}
+      - --server-password=${KOPIA_SERVER_PASSWORD}
+    environment:
+      # Set repository password
+      KOPIA_PASSWORD: ${KOPIA_REPOSITORY_PASSWORD}
+      USER: ${USERNAME}
+    volumes:
+      # Mount local folders needed by kopia
+      - ${CONFIG_DIR}/kopia:/app/config
+      - ${VOLUME_DIR}/kopia/cache:/app/cache
+      - ${VOLUME_DIR}/kopia/logs:/app/logs
+      # Mount local folders to snapshot
+      - ${VOLUME_DIR}/kopia/data:/data:ro
+      # Mount repository location
+      - ${VOLUME_DIR}/kopia/repository:/repository
+      # Mount path for browsing mounted snapshots
+      - ${VOLUME_DIR}/kopia/mounts:/tmp:shared
+    labels:
+      # - autoheal=true
+      - traefik.enable=true
+      ## HTTP Routers
+      - traefik.http.routers.kopia-rtr.entrypoints=websecure
+      - traefik.http.routers.kopia-rtr.rule=Host(`kopia.$FQDN`)
+      - traefik.http.routers.kopia-rtr.tls=true
+      ## Middlewares
+      - traefik.http.routers.kopia-rtr.middlewares=chain-no-auth@file # No Authentication
+      # - traefik.http.routers.kopia-rtr.middlewares=chain-basic-auth@file # Basic Authentication
+      # - traefik.http.routers.kopia-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
+      ## HTTP Services
+      - traefik.http.routers.kopia-rtr.service=kopia-svc
+      - traefik.http.services.kopia-svc.loadbalancer.server.port=51515
