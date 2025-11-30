@@ -24,11 +24,11 @@ services:
     volumes:
       # Mount local folders needed by kopia
       - ${CONFIG_DIR}/kopia:/app/config
-      - /root/.config/rclone:/app/rclone:ro # Mapped to local rclone config
+      - /root/.config/rclone:/app/rclone:ro # IMPORTANT: Mapped to local rclone config
       - ${VOLUME_DIR}/kopia/cache:/app/cache
       - ${VOLUME_DIR}/kopia/logs:/app/logs
       # Mount local folders to snapshot
-      - ${VOLUME_DIR}/kopia/data:/data:ro
+      - /data:/data:ro # IMPORTANT: Mapped to local folder
       # Mount repository location
       - ${VOLUME_DIR}/kopia/repository:/repository
       # Mount path for browsing mounted snapshots
