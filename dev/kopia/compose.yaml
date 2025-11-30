@@ -1,4 +1,3 @@
-version: '3.7'
 services:
   kopia:
     image: kopia/kopia:latest
@@ -47,3 +46,9 @@ services:
       ## HTTP Services
       - traefik.http.routers.kopia-rtr.service=kopia-svc
       - traefik.http.services.kopia-svc.loadbalancer.server.port=51515
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
