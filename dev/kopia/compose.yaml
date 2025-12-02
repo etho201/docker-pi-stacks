@@ -17,6 +17,7 @@ services:
       - --address=0.0.0.0:51515
       - --server-username=${USERNAME}
       - --server-password=${KOPIA_SERVER_PASSWORD}
+      - --enable-actions
     environment:
       # Set repository password
       KOPIA_PASSWORD: ${KOPIA_REPOSITORY_PASSWORD}
@@ -25,7 +26,9 @@ services:
       # CUSTOM
       - /root/.config/rclone:/app/rclone:ro # IMPORTANT: Mapped to local rclone config
       - /data:/data:ro # IMPORTANT: Mapped to local folder
-      - ${USER_GIT_DIRECTORY}:/data/git:ro # IMPORTANT: Mapped to local git directory for access to pre-snapshot scripts
+      - ${USER_GIT_DIRECTORY}:${USER_GIT_DIRECTORY}:ro # IMPORTANT: Mapped to local git directory for access to pre-snapshot scripts
+      - ${DOCKER_SOCK}:/var/run/docker.sock:ro # Required if actions need to use Docker
+      - /usr/bin/docker:/usr/bin/docker # Required if actions need to use Docker
       # Mount local folders needed by kopia
       - ${CONFIG_DIR}/kopia:/app/config
       - ${VOLUME_DIR}/kopia/cache:/app/cache
