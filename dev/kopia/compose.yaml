@@ -25,6 +25,7 @@ services:
       # CUSTOM
       - /root/.config/rclone:/app/rclone:ro # IMPORTANT: Mapped to local rclone config
       - /data:/data:ro # IMPORTANT: Mapped to local folder
+      - ${USER_GIT_DIRECTORY}:/data/git:ro # IMPORTANT: Mapped to local git directory for access to pre-snapshot scripts
       # Mount local folders needed by kopia
       - ${CONFIG_DIR}/kopia:/app/config
       - ${VOLUME_DIR}/kopia/cache:/app/cache
