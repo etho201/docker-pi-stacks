@@ -46,9 +46,9 @@ services:
       - traefik.http.routers.kopia-rtr.rule=Host(`kopia.$FQDN`)
       - traefik.http.routers.kopia-rtr.tls=true
       ## Middlewares
-      - traefik.http.routers.kopia-rtr.middlewares=chain-no-auth@file # No Authentication
+      # - traefik.http.routers.kopia-rtr.middlewares=chain-no-auth@file # No Authentication
       # - traefik.http.routers.kopia-rtr.middlewares=chain-basic-auth@file # Basic Authentication
-      # - traefik.http.routers.kopia-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
+      - traefik.http.routers.kopia-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
       ## HTTP Services
       - traefik.http.routers.kopia-rtr.service=kopia-svc
       - traefik.http.services.kopia-svc.loadbalancer.server.port=51515
