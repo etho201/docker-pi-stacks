@@ -47,6 +47,18 @@ services:
     networks:
       - traefik
 
+  # pgadmin:
+  #   image: dpage/pgadmin4:latest
+  #   container_name: pgadmin
+  #   restart: no
+  #   networks:
+  #     - traefik
+  #   ports:
+  #     - 8081:80
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: ${EMAIL}
+  #     PGADMIN_DEFAULT_PASSWORD: ${JOPLIN_DB_PASS}
+
 networks:
   traefik:
     name: traefik
