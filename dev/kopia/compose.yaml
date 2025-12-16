@@ -8,6 +8,10 @@ services:
         # - 51515:51515
     networks:
       - traefik
+    cap_add:
+      - SYS_ADMIN
+    devices:
+      - "/dev/fuse:/dev/fuse"
     # Setup the server that provides the web gui
     command:
       - server
