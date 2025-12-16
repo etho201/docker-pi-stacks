@@ -9,10 +9,9 @@ services:
     networks:
       - traefik
     cap_add:
-      - SYS_ADMIN
+      - SYS_ADMIN # Required for mounting snapshots
     devices:
-      - "/dev/fuse:/dev/fuse"
-    # Setup the server that provides the web gui
+      - "/dev/fuse:/dev/fuse" # Required for mounting snapshots
     command:
       - server
       - start
@@ -29,7 +28,7 @@ services:
       USER: ${USERNAME}
     volumes:
       # CUSTOM
-      - /root/.config/rclone:/app/rclone:ro # IMPORTANT: Mapped to local rclone config
+      - /root/.config/rclone:/app/rclone # IMPORTANT: Mapped to local rclone config (must have write so the token can be refreshed)
       - /data:/data:ro # IMPORTANT: Mapped to local folder
       - ${USER_GIT_DIRECTORY}:${USER_GIT_DIRECTORY}:ro # IMPORTANT: Mapped to local git directory for access to pre-snapshot scripts
       - ${DOCKER_SOCK}:/var/run/docker.sock:ro # Required if actions need to use Docker
@@ -38,7 +37,6 @@ services:
       - ${CONFIG_DIR}/kopia:/app/config
       - ${VOLUME_DIR}/kopia/cache:/app/cache
       - ${VOLUME_DIR}/kopia/logs:/app/logs
-      # Mount local folders to snapshot
       # Mount repository location
       - ${VOLUME_DIR}/kopia/repository:/repository
       # Mount path for browsing mounted snapshots
