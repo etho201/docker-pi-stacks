@@ -19,6 +19,7 @@ services:
       - --disable-csrf-token-checks
       - --insecure
       - --address=0.0.0.0:51515
+      - --without-password
       - --server-username=${USERNAME}
       - --server-password=${KOPIA_SERVER_PASSWORD}
       - --enable-actions
