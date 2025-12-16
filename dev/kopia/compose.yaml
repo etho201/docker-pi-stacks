@@ -29,8 +29,8 @@ services:
     volumes:
       # CUSTOM
       - /root/.config/rclone:/app/rclone # IMPORTANT: Mapped to local rclone config (must have write so the token can be refreshed)
-      - /data:/data:ro # IMPORTANT: Mapped to local folder
-      - ${USER_GIT_DIRECTORY}:${USER_GIT_DIRECTORY}:ro # IMPORTANT: Mapped to local git directory for access to pre-snapshot scripts
+      - /data/docker:/data/docker # IMPORTANT: Mapped to local folder
+      - ${USER_GIT_DIRECTORY}:${USER_GIT_DIRECTORY}:ro # IMPORTANT: Mapped to local git directory for access to snapshot action scripts
       - ${DOCKER_SOCK}:/var/run/docker.sock:ro # Required if actions need to use Docker
       - /usr/bin/docker:/usr/bin/docker # Required if actions need to use Docker
       # Mount local folders needed by kopia
