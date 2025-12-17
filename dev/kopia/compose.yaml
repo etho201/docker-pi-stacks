@@ -23,7 +23,7 @@ services:
       - --server-password=${KOPIA_SERVER_PASSWORD}
       - --enable-actions
     environment:
-      # Set repository password
+      TZ: ${TZ}
       KOPIA_PASSWORD: ${KOPIA_REPOSITORY_PASSWORD}
       USER: ${USERNAME}
     volumes:
