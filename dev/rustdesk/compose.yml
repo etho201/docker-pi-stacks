@@ -18,6 +18,8 @@ services:
     depends_on:
       - rustdesk-relay
     restart: unless-stopped
+    # environment:
+      # - ALWAYS_USE_RELAY=Y
     labels:
       - "traefik.enable=true"
       ## TCP Routers
@@ -87,9 +89,9 @@ services:
       - traefik
     restart: unless-stopped
     environment:
-      - SINGLE_BANDWIDTH: 256 # max bandwidth for a single connection
-      - TOTAL_BANDWIDTH: 2048 # max bandwidth for all concurrent connections
-      - LIMIT_SPEED: 64 # limit file transfer speed of a single connection
+      SINGLE_BANDWIDTH: 256 # max bandwidth for a single connection
+      TOTAL_BANDWIDTH: 2048 # max bandwidth for all concurrent connections
+      LIMIT_SPEED: 64 # limit file transfer speed of a single connection
     labels:
       - "traefik.enable=true"
       ## TCP Routers
