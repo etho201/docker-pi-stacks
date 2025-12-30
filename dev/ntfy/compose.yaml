@@ -6,6 +6,8 @@ services:
       - serve
     environment:
       - TZ=${TZ}    # optional: set desired timezone
+      - NTFY_AUTH_FILE='/var/lib/ntfy/user.db'
+      - NTFY_AUTH_DEFAULT_ACCESS='deny-all'
     # user: UID:GID # optional: replace with your own user/group or uid/gid
     volumes:
       - ${VOLUME_DIR}/ntfy:/var/cache/ntfy
