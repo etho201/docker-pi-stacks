@@ -8,8 +8,8 @@ services:
       - TZ=${TZ}    # optional: set desired timezone
     # user: UID:GID # optional: replace with your own user/group or uid/gid
     volumes:
-      - ${ntfy}/ntfy:/var/cache/ntfy
-      - ${ntfy}/ntfy:/etc/ntfy
+      - ${VOLUME_DIR}/ntfy:/var/cache/ntfy
+      - ${CONFIG_DIR}/ntfy:/etc/ntfy
     # ports:
     #   - 80:80
     networks:
