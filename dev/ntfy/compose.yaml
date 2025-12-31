@@ -18,6 +18,7 @@ services:
     volumes:
       - ${VOLUME_DIR}/ntfy:/var/cache/ntfy
       - ${CONFIG_DIR}/ntfy:/etc/ntfy
+      - ${CONFIG_DIR}/ntfy/db:/var/lib/ntfy
     # ports:
     #   - 80:80
     networks:
