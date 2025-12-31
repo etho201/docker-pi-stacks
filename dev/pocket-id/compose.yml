@@ -15,7 +15,7 @@ services:
     # ports:
     #   - 1411:1411
     volumes:
-      - ${VOLUME_DIR}/pocket-id:/app/data
+      - ${CONFIG_DIR}/pocket-id:/app/data
     networks:
       - traefik
     # Optional healthcheck
