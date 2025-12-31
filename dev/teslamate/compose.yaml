@@ -38,7 +38,7 @@ services:
       - traefik.http.services.teslamate-svc.loadbalancer.server.port=4000
 
   teslamate-db:
-    image: postgres:16
+    image: postgres:18
     container_name: teslamate-db
     restart: always
     environment:
