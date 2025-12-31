@@ -46,7 +46,7 @@ services:
       - POSTGRES_PASSWORD=${TESLAMATE_DATABASE_PASSWORD} #insert your secure database password!
       - POSTGRES_DB=teslamate
     volumes:
-      - ${VOLUME_DIR}/teslamate/db:/var/lib/postgresql/data
+      - ${VOLUME_DIR}/teslamate/db:/var/lib/postgresql
     networks:
       - traefik
 
