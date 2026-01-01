@@ -77,6 +77,12 @@ services:
         read_only: true
         bind:
           create_host_path: false
+      - source: ./config/nginx/laravel.conf
+        target: /etc/nginx/conf.d/laravel.conf
+        type: bind
+        read_only: true
+        bind:
+          create_host_path: false
       - ${VOLUME_DIR}/invoiceninja/public:/var/www/html/public:ro
       - ${VOLUME_DIR}/invoiceninja/storage:/var/www/html/storage:ro
     networks:
