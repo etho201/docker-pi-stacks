@@ -54,24 +54,6 @@ services:
       SCOUT_DRIVER: null
       #SNAPPDF_CHROMIUM_PATH: /usr/bin/google-chrome-stable
     volumes:
-      - type: bind
-        source: ./config/php/php.ini
-        target: /usr/local/etc/php/conf.d/invoiceninja.ini
-        read_only: true
-        bind:
-          create_host_path: false
-      - type: bind
-        source: ./config/php/php-fpm.conf
-        target: /usr/local/etc/php-fpm.d/invoiceninja.conf
-        read_only: true
-        bind:
-          create_host_path: false
-      - type: bind
-        source: ./config/supervisor/supervisord.conf
-        target: /etc/supervisor/conf.d/supervisord.conf
-        read_only: true
-        bind:
-          create_host_path: false
       - ${VOLUME_DIR}/invoiceninja/public:/var/www/html/public
       - ${VOLUME_DIR}/invoiceninja/storage:/var/www/html/storage
     networks:
@@ -91,12 +73,6 @@ services:
     volumes:
       - source: ./config/nginx/invoiceninja.conf
         target: /etc/nginx/conf.d/nginx.conf
-        type: bind
-        read_only: true
-        bind:
-          create_host_path: false
-      - source: ./config/nginx/laravel.conf
-        target: /etc/nginx/conf.d/laravel.conf
         type: bind
         read_only: true
         bind:
