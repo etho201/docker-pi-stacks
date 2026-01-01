@@ -1,12 +1,6 @@
 ---
 name: invoiceninja
 
-x-logging: &default-logging
-  options:
-    max-size: "10m"
-    max-file: "3"
-  driver: json-file
-
 services:
   invoiceninja:
     image: invoiceninja/invoiceninja-debian:latest
@@ -87,7 +81,6 @@ services:
         condition: service_healthy
       invoiceninja-redis:
         condition: service_healthy
-    logging: *default-logging
 
   invoiceninja-nginx:
     image: nginx:alpine
@@ -113,8 +106,8 @@ services:
     networks:
       - traefik
     depends_on:
-      - invoiceninja
-    logging: *default-logging
+      invoiceninja:
+        condition: service_healthy
     healthcheck:
       test: curl --fail http://invoiceninja-nginx/public/images/blank.png || exit 1
       interval: 30s
@@ -152,11 +145,6 @@ services:
       - traefik
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
-      start_period: 5s
-      interval: 5s
-      timeout: 5s
-      retries: 55
-    logging: *default-logging
 
   invoiceninja-redis:
     image: redis:alpine
@@ -168,10 +156,6 @@ services:
       - traefik
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    logging: *default-logging
 
 networks:
   traefik:
