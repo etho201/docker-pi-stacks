@@ -9,6 +9,7 @@ services:
     environment:
       APP_URL: https://pocket-id.${FQDN}
       TRUST_PROXY: true
+      ENCRYPTION_KEY: ${POCKETID_ENCRYPTION_KEY}
       MAXMIND_LICENSE_KEY: ${MAXMIND_LICENSE_KEY}
       PUID: ${PUID}
       PGID: ${PGID}
