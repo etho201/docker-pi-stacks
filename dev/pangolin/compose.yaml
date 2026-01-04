@@ -1,0 +1,47 @@
+---
+name: pangolin
+services:
+
+  pangolin:
+    image: fosrl/pangolin:latest # https://github.com/fosrl/pangolin/releases
+    container_name: pangolin
+    restart: unless-stopped
+    volumes:
+      - ${CONFIG_DIR}/pangolin:/app/config
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/v1/"]
+      interval: "3s"
+      timeout: "3s"
+      retries: 15
+    networks:
+      - traefik
+
+  gerbil:
+    image: fosrl/gerbil:latest # https://github.com/fosrl/gerbil/releases
+    container_name: gerbil
+    restart: unless-stopped
+    depends_on:
+      pangolin:
+        condition: service_healthy
+    command:
+      - --reachableAt=http://gerbil:3004
+      - --generateAndSaveKeyTo=/var/config/key
+      - --remoteConfig=http://pangolin:3001/api/v1/
+    volumes:
+      - ${CONFIG_DIR}/pangolin:/var/config
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    ports:
+      - 51820:51820/udp
+      - 21820:21820/udp
+      - 443:443 # Port for traefik because of the network_mode
+      - 80:80 # Port for traefik because of the network_mode
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
