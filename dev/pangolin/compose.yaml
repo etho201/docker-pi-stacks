@@ -15,6 +15,20 @@ services:
       retries: 15
     networks:
       - traefik
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.pangolin-rtr.entrypoints=websecure"
+      - "traefik.http.routers.pangolin-rtr.rule=Host(`pangolin.$FQDN`)"
+      - "traefik.http.routers.pangolin-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.pangolin-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.pangolin-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.pangolin-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.pangolin-rtr.service=pangolin-svc"
+      - "traefik.http.services.pangolin-svc.loadbalancer.server.port=3001"
+
 
   gerbil:
     image: fosrl/gerbil:latest # https://github.com/fosrl/gerbil/releases
