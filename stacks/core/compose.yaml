@@ -175,7 +175,7 @@ services:
 ########################################################################################
 
   traefik:
-    image: traefik:chabichou # the chabichou tag refers to v3.5.x
+    image: traefik:ramequin # the ramequin tag refers to v3.6.x
     container_name: traefik
     restart: always
     command: # CLI arguments
