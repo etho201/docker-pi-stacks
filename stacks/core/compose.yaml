@@ -483,6 +483,37 @@ services:
       - "traefik.http.routers.heimdall-rtr.service=heimdall-svc"
       - "traefik.http.services.heimdall-svc.loadbalancer.server.port=80"
 
+  arcane:
+    image: ghcr.io/getarcaneapp/arcane:latest
+    container_name: arcane
+    # ports:
+    #   - '3552:3552'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${CONFIG_DIR}/arcane:/app/data
+    environment:
+      - APP_URL=https://arcane.${FQDN}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - ENCRYPTION_KEY=${ARCANE_ENCRYPTION_KEY}
+      - JWT_SECRET=${ARCANE_JWT_SECRET}
+    restart: unless-stopped
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.arcane-rtr.entrypoints=websecure"
+      - "traefik.http.routers.arcane-rtr.rule=Host(`arcane.$FQDN`)"
+      - "traefik.http.routers.arcane-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.arcane-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.arcane-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.arcane-rtr.middlewares=chain-oauth2-proxy@file" # Google OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.arcane-rtr.service=arcane-svc"
+      - "traefik.http.services.arcane-svc.loadbalancer.server.port=3552"
+
 ########################################################################################
 # Portainer
 # https://hub.docker.com/r/portainer/portainer
