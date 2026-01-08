@@ -122,6 +122,7 @@ services:
       - MYSQL_DATABASE=ninja
       - MYSQL_ROOT_HOST=invoiceninja.traefik
     volumes:
+      - ./data:/docker-entrypoint-initdb.d
       - ${VOLUME_DIR}/invoiceninja/db:/var/lib/mysql
     networks:
       - traefik
