@@ -678,6 +678,9 @@ services:
       - type: bind
         source: ${CONFIG_DIR}/healthchecks/database/my.cnf
         target: /etc/my.cnf
+        bind:
+          create_host_path: false
+      - ./data:/docker-entrypoint-initdb.d # Place sql files here to restore from backup during initialization
       - ${VOLUME_DIR}/healthchecks/database:/var/lib/mysql # If permissions issues occur, run `sudo chown 27:sudo ${VOLUME_DIR}/healthchecks/database`
     environment:
       - MYSQL_DATABASE=hc
