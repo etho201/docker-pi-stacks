@@ -60,7 +60,7 @@ services:
   watchtower: # https://github.com/containrrr/watchtower
     container_name: watchtower
     restart: always
-    image: containrrr/watchtower:latest
+    image: nickfedor/watchtower:latest
     environment:
       - TZ=${TZ}
       - WATCHTOWER_NOTIFICATIONS=gotify
