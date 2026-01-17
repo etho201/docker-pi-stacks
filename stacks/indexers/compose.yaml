@@ -222,6 +222,23 @@ services:
       - "traefik.http.routers.prowlarr-rtr.service=prowlarr-svc"
       - "traefik.http.services.prowlarr-svc.loadbalancer.server.port=9696"
 
+  sqlitebrowser:
+    image: lscr.io/linuxserver/sqlitebrowser:latest
+    container_name: sqlitebrowser
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_DIR}/sqlitebrowser:/config
+    ports:
+      - 3000:3000
+      - 3001:3001
+    restart: never
+    networks:
+      - traefik
+    shm_size: '1gb'
+
 networks:
   traefik:
     name: traefik
