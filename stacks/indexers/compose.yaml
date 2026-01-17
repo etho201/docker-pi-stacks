@@ -234,7 +234,7 @@ services:
     ports:
       - 3000:3000
       - 3001:3001
-    restart: never
+    restart: no
     networks:
       - traefik
     shm_size: '1gb'
