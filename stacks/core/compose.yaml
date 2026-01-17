@@ -94,7 +94,7 @@ services:
       - "--cookie-secure=true"
       - "--email-domain=*"
       # - "--github-org=${GITHUB_ORG}"
-      - "--github-user=${GITHUB_USER}" # allow logins by username, separated by a comma
+      - "--github-user=${GITHUB_USERS}" # allow logins by username, separated by a comma
       - "--http-address=0.0.0.0:4180"
       - "--reverse-proxy=true"
       - "--provider=github"
