@@ -9,6 +9,8 @@ services:
     container_name: docuseal
     # ports:
     #   - 3000:3000
+    networks:
+      - traefik
     volumes:
       - ${VOLUME_DIR}/docuseal/data:/data/docuseal
     environment:
@@ -32,6 +34,8 @@ services:
   docuseal-db:
     image: postgres:18
     container_name: docuseal-db 
+    networks:
+      - traefik
     volumes:
       - ${VOLUME_DIR}/docuseal/db:/var/lib/postgresql/18/docker
     environment:
