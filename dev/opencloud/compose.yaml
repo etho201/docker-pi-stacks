@@ -1,0 +1,60 @@
+---
+name: opencloud
+services:
+  opencloud:
+    image: opencloudeu/opencloud:latest
+    container_name: opencloud
+    volumes:
+      - source: ${CONFIG_DIR}/opencloud/opencloud.yaml
+        target: /etc/opencloud/opencloud.yaml
+        type: bind
+        bind:
+          create_host_path: false
+      - source: ${CONFIG_DIR}/opencloud/csp.yaml
+        target: /etc/opencloud/csp.yaml
+        type: bind
+        bind:
+          create_host_path: false
+      - ${VOLUME_DIR}/opencloud:/var/lib/opencloud
+    environment:
+      OC_INSECURE: false
+      PROXY_TLS: false
+      OC_URL: https://opencloud.${FQDN}
+      OC_LOG_LEVEL: info
+      PROXY_AUTOPROVISION_ACCOUNTS: false
+      PROXY_ROLE_ASSIGNMENT_DRIVER: oidc
+      OC_OIDC_ISSUER: https://pocket-id.${FQDN}
+      PROXY_OIDC_REWRITE_WELLKNOWN: true
+      WEB_OIDC_CLIENT_ID: ${POCKETID_OPENCLOUD_CLIENT_ID}
+      PROXY_OIDC_ACCESS_TOKEN_VERIFY_METHOD: none
+      PROXY_USER_OIDC_CLAIM: preferred_username
+      OC_EXCLUDE_RUN_SERVICES: idp
+      PROXY_CSP_CONFIG_FILE_LOCATION: /etc/opencloud/csp.yaml
+      PROXY_ENABLE_APP_AUTH: true # Required for APP TOKENS for use with 3rd party applications like RCLONE
+      START_ADDITIONAL_SERVICES: auth-app # Required for APP TOKENS for use with 3rd party applications like RCLONE
+    logging:
+      driver: local
+    networks:
+      - traefik
+    # ports:
+    #   - 9200:9200
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.opencloud-rtr.entrypoints=websecure"
+      - "traefik.http.routers.opencloud-rtr.rule=Host(`opencloud.$FQDN`)"
+      - "traefik.http.routers.opencloud-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.opencloud-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.opencloud-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.opencloud-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.opencloud-rtr.service=opencloud-svc"
+      - "traefik.http.services.opencloud-svc.loadbalancer.server.port=9200"
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
