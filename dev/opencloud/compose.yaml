@@ -16,6 +16,12 @@ services:
         bind:
           create_host_path: false
       - ${VOLUME_DIR}/opencloud:/var/lib/opencloud
+    entrypoint:
+      - /bin/sh
+    # run opencloud init to initialize a configuration file with random secrets
+    # it will fail on subsequent runs, because the config file already exists
+    # therefore we ignore the error and then start the opencloud server
+    command: ["-c", "opencloud init || true; opencloud server"]
     environment:
       OC_INSECURE: false
       PROXY_TLS: false
