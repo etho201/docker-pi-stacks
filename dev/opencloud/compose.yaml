@@ -4,6 +4,7 @@ services:
   opencloud:
     image: opencloudeu/opencloud-rolling:latest
     container_name: opencloud
+    user: "${PUID:-1000}:${PGID:-1000}"
     volumes:
       - source: ${CONFIG_DIR}/opencloud/opencloud.yaml
         target: /etc/opencloud/opencloud.yaml
