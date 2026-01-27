@@ -2,7 +2,7 @@
 name: opencloud
 services:
   opencloud:
-    image: opencloudeu/opencloud:latest
+    image: opencloudeu/opencloud-rolling:latest
     container_name: opencloud
     volumes:
       - source: ${CONFIG_DIR}/opencloud/opencloud.yaml
