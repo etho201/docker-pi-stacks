@@ -133,10 +133,10 @@ services:
       - TZ=${TZ}
     volumes:
       - ${CONFIG_DIR}/sqlitebrowser:/config
-      - ${VOLUME_DIR}/rustdesk:/root
+      - ${VOLUME_DIR}/rustdesk:/config/import
     ports:
-      - 3000:3000
-      - 3001:3001
+      - 3002:3000
+      - 3003:3001
     restart: no
     networks:
       - traefik
