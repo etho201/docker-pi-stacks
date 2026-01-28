@@ -124,23 +124,23 @@ services:
 # For use with troubleshooting
 ########################################
 
-  sqlitebrowser:
-    image: lscr.io/linuxserver/sqlitebrowser:latest
-    container_name: sqlitebrowser
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    volumes:
-      - ${CONFIG_DIR}/sqlitebrowser:/config
-      - ${VOLUME_DIR}/rustdesk:/config/import
-    ports:
-      - 3002:3000
-      - 3003:3001
-    restart: no
-    networks:
-      - traefik
-    shm_size: '1gb'
+  # sqlitebrowser:
+  #   image: lscr.io/linuxserver/sqlitebrowser:latest
+  #   container_name: sqlitebrowser
+  #   environment:
+  #     - PUID=${PUID}
+  #     - PGID=${PGID}
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ${CONFIG_DIR}/sqlitebrowser:/config
+  #     - ${VOLUME_DIR}/rustdesk:/config/import
+  #   ports:
+  #     - 3002:3000
+  #     - 3003:3001
+  #   restart: no
+  #   networks:
+  #     - traefik
+  #   shm_size: '1gb'
 
 networks:
   traefik:
