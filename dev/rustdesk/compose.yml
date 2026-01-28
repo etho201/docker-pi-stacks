@@ -120,6 +120,28 @@ services:
       - "traefik.tcp.routers.rustdesk-relay2-rtr.service=rustdesk-relay2-svc"
       - "traefik.tcp.services.rustdesk-relay2-svc.loadbalancer.server.port=21119"
 
+########################################
+# For use with troubleshooting
+########################################
+
+  sqlitebrowser:
+    image: lscr.io/linuxserver/sqlitebrowser:latest
+    container_name: sqlitebrowser
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_DIR}/sqlitebrowser:/config
+      - ${VOLUME_DIR}/rustdesk:/root
+    ports:
+      - 3000:3000
+      - 3001:3001
+    restart: no
+    networks:
+      - traefik
+    shm_size: '1gb'
+
 networks:
   traefik:
     name: traefik
