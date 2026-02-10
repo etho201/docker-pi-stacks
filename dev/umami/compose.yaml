@@ -10,7 +10,7 @@ services:
     networks:
       - traefik
     environment:
-      DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD}@db:5432/umami
+      DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD}@umami-db:5432/umami
       APP_SECRET: ${UMAMI_APP_SECRET}
     depends_on:
       umami-db:
@@ -32,10 +32,19 @@ services:
       ## Middlewares
       # - traefik.http.routers.umami-rtr.middlewares=chain-no-auth@file # No Authentication
       # - traefik.http.routers.umami-rtr.middlewares=chain-basic-auth@file # Basic Authentication
-      - traefik.http.routers.umami-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
+      # - traefik.http.routers.umami-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
       ## HTTP Services
       - traefik.http.routers.umami-rtr.service=umami-svc
       - traefik.http.services.umami-svc.loadbalancer.server.port=3000
+      ## CORS
+      # Define the CORS middleware
+      - traefik.http.middlewares.umami-cors.headers.accessControlAllowOriginList=*
+      - traefik.http.middlewares.umami-cors.headers.accessControlAllowMethods=[GET,POST,OPTIONS]
+      - traefik.http.middlewares.umami-cors.headers.accessControlAllowHeaders=[Content-Type,Authorization]
+      - traefik.http.middlewares.umami-cors.headers.accessControlMaxAge=100
+      - traefik.http.middlewares.umami-cors.headers.addVaryHeader=true
+      # Apply it to your router
+      - traefik.http.routers.umami.middlewares=umami-cors
 
   umami-db:
     image: postgres:18
