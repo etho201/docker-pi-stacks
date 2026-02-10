@@ -13,7 +13,7 @@ services:
       DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD}@db:5432/umami
       APP_SECRET: ${UMAMI_APP_SECRET}
     depends_on:
-      db:
+      umami-db:
         condition: service_healthy
     init: true
     restart: always
