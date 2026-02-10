@@ -33,7 +33,7 @@ services:
       POSTGRES_USER: umami
       POSTGRES_PASSWORD: ${UMAMI_DB_PASSWORD}
     volumes:
-      - ${VOLUME_DIR}/umami/db:/var/lib/postgresql/data
+      - ${VOLUME_DIR}/umami/db:/var/lib/postgresql
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
