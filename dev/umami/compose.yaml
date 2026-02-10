@@ -36,8 +36,6 @@ services:
       ## HTTP Services
       - traefik.http.routers.umami-rtr.service=umami-svc
       - traefik.http.services.umami-svc.loadbalancer.server.port=3000
-    networks:
-      - traefik
 
   umami-db:
     image: postgres:18
