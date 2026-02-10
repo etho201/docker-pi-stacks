@@ -22,6 +22,22 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    labels:
+      # - autoheal=true
+      - traefik.enable=true
+      ## HTTP Routers
+      - traefik.http.routers.umami-rtr.entrypoints=websecure
+      - traefik.http.routers.umami-rtr.rule=Host(`umami.$FQDN`)
+      - traefik.http.routers.umami-rtr.tls=true
+      ## Middlewares
+      # - traefik.http.routers.umami-rtr.middlewares=chain-no-auth@file # No Authentication
+      # - traefik.http.routers.umami-rtr.middlewares=chain-basic-auth@file # Basic Authentication
+      - traefik.http.routers.umami-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
+      ## HTTP Services
+      - traefik.http.routers.umami-rtr.service=umami-svc
+      - traefik.http.services.umami-svc.loadbalancer.server.port=3000
+    networks:
+      - traefik
 
   umami-db:
     image: postgres:18
