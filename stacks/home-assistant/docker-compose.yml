@@ -120,24 +120,6 @@ services:
       - TRUSTED_DEVICE_NAME=${EUFY_TRUSTED_DEVICE}
       - PORT=3001
 
-  mediamtx:
-    container_name: mediamtx
-    restart: always
-    image: bluenviron/mediamtx:latest
-    # networks:
-      # - traefik
-    network_mode: host
-    # ports:
-      # - 8554:8554
-      # - 1935:1935
-      # - 8888:8888
-      # - 8889:8889
-      # - 8890:8890/udp
-      # - 8189:8189/udp
-    environment:                       
-      - MTX_RTSPTRANSPORTS=tcp
-      - MTX_WEBRTCADDITIONALHOSTS=192.168.1.10
-
   govee2mqtt:
     image: ghcr.io/wez/govee2mqtt:latest
     container_name: govee2mqtt
