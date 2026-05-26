@@ -92,6 +92,7 @@ services:
       - ./nginx/html:/tmp/templates/html:ro
       #- ./nginx/default.conf:/etc/nginx/conf.d/nginx.conf:ro
     environment:
+      - FQDN=${FQDN}
       - COMPANY_NAME=${COMPANY_NAME}
       - WEBSITE_TOKEN=${CHATWOOT_WEBSITE_TOKEN}
     entrypoint: >
