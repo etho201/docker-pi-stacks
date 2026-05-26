@@ -5,7 +5,7 @@ services:
   base: &base
     image: chatwoot/chatwoot:latest-ce
     container_name: chatwoot-app
-    env_file: .env ## Change this file for customized env variables
+    env_file: chatwoot.env ## Change this file for customized env variables
     volumes:
       - ${VOLUME_DIR}/chatwoot/app:/app/storage
     networks:
@@ -13,6 +13,7 @@ services:
   rails:
     <<: *base
     container_name: chatwoot-rails
+    env_file: chatwoot.env
     depends_on:
       - chatwoot-db
       - chatwoot-redis
@@ -44,6 +45,7 @@ services:
   sidekiq:
     <<: *base
     container_name: chatwoot-sidekiq
+    env_file: chatwoot.env
     depends_on:
       - chatwoot-db
       - chatwoot-redis
@@ -58,7 +60,8 @@ services:
 
   chatwoot-db:
     image: pgvector/pgvector:pg16
-    container_name: chatwood-db
+    container_name: chatwoot-db
+    env_file: chatwoot.env
     restart: always
     # ports:
     #   - '127.0.0.1:5432:5432'
@@ -75,15 +78,50 @@ services:
   chatwoot-redis:
     image: redis:alpine
     container_name: chatwoot-redis
+    env_file: chatwoot.env
     restart: always
     command: ["sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\""]
-    env_file: .env
     volumes:
       - ${VOLUME_DIR}/chatwoot/redis:/data
     # ports:
     #   - '127.0.0.1:6379:6379'
     networks:
       - traefik
+
+  chatwoot-chat-widget:
+    image: nginxinc/nginx-unprivileged:alpine
+    container_name: chatwoot-chat-widget
+    env_file: chatwoot.env
+    restart: unless-stopped
+    volumes:
+      - ./nginx/html:/tmp/templates/html:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    environment:
+      - COMPANY_NAME=${COMPANY_NAME}
+      - WEBSITE_TOKEN=${CHATWOOT_WEBSITE_TOKEN}
+    entrypoint: >
+      /bin/sh -c "
+      mkdir -p /usr/share/nginx/html;
+      envsubst '$$COMPANY_NAME $$FQDN $$WEBSITE_TOKEN' < /tmp/templates/html/chat.html.template > /usr/share/nginx/html/chat.html;
+      exec nginx -g 'daemon off;'
+      "
+    # expose:
+    #   - "8080"
+    networks:
+      - traefik
+    labels:
+      - traefik.enable=true
+      ## HTTP Routers
+      - traefik.http.routers.support-rtr.entrypoints=websecure
+      - traefik.http.routers.support-rtr.rule=Host(`support.$FQDN`)
+      - traefik.http.routers.support-rtr.tls=true
+      ## Middlewares
+      - traefik.http.routers.support-rtr.middlewares=chain-no-auth@file # No Authentication
+      # - traefik.http.routers.support-rtr.middlewares=chain-basic-auth@file # Basic Authentication
+      # - traefik.http.routers.support-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
+      ## HTTP Services
+      - traefik.http.routers.support-rtr.service=support-svc
+      - traefik.http.services.support-svc.loadbalancer.server.port=8080
 
 networks:
   traefik:
