@@ -43,7 +43,7 @@ window.chatwootSettings = {
   g.onload = function() {
 
     window.chatwootSDK.run({
-      websiteToken: "{WEBSITE_TOKEN}",
+      websiteToken: "${WEBSITE_TOKEN}",
       baseUrl: "https://support.${FQDN}"
     });
 
