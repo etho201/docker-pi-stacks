@@ -44,7 +44,7 @@ window.chatwootSettings = {
 
     window.chatwootSDK.run({
       websiteToken: "${WEBSITE_TOKEN}",
-      baseUrl: "https://support.${FQDN}"
+      baseUrl: "https://chatwoot.${FQDN}"
     });
 
     setTimeout(() => {
