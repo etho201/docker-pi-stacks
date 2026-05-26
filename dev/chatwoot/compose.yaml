@@ -5,7 +5,6 @@ services:
   base: &base
     image: chatwoot/chatwoot:latest-ce
     container_name: chatwoot-app
-    env_file: chatwoot.env ## Change this file for customized env variables
     volumes:
       - ${VOLUME_DIR}/chatwoot/app:/app/storage
     networks:
@@ -13,7 +12,6 @@ services:
   rails:
     <<: *base
     container_name: chatwoot-rails
-    env_file: chatwoot.env
     depends_on:
       - chatwoot-db
       - chatwoot-redis
@@ -45,7 +43,6 @@ services:
   sidekiq:
     <<: *base
     container_name: chatwoot-sidekiq
-    env_file: chatwoot.env
     depends_on:
       - chatwoot-db
       - chatwoot-redis
@@ -61,7 +58,6 @@ services:
   chatwoot-db:
     image: pgvector/pgvector:pg16
     container_name: chatwoot-db
-    env_file: chatwoot.env
     restart: always
     # ports:
     #   - '127.0.0.1:5432:5432'
@@ -78,7 +74,6 @@ services:
   chatwoot-redis:
     image: redis:alpine
     container_name: chatwoot-redis
-    env_file: chatwoot.env
     restart: always
     command: ["sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\""]
     volumes:
@@ -91,7 +86,6 @@ services:
   chatwoot-chat-widget:
     image: nginxinc/nginx-unprivileged:alpine
     container_name: chatwoot-chat-widget
-    env_file: chatwoot.env
     restart: unless-stopped
     volumes:
       - ./nginx/html:/tmp/templates/html:ro
