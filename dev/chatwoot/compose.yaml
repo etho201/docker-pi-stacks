@@ -86,10 +86,11 @@ services:
   chatwoot-chat-widget:
     image: nginxinc/nginx-unprivileged:alpine
     container_name: chatwoot-chat-widget
+    user: root
     restart: unless-stopped
     volumes:
       - ./nginx/html:/tmp/templates/html:ro
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      #- ./nginx/default.conf:/etc/nginx/conf.d/nginx.conf:ro
     environment:
       - COMPANY_NAME=${COMPANY_NAME}
       - WEBSITE_TOKEN=${CHATWOOT_WEBSITE_TOKEN}
