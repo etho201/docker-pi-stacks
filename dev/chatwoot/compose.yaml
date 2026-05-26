@@ -90,7 +90,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./nginx/html:/tmp/templates/html:ro
-      #- ./nginx/default.conf:/etc/nginx/conf.d/nginx.conf:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
     environment:
       - FQDN=${FQDN}
       - COMPANY_NAME=${COMPANY_NAME}
