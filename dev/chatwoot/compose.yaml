@@ -6,6 +6,8 @@ services:
     env_file: .env ## Change this file for customized env variables
     volumes:
       - ${VOLUME_DIR}/chatwoot/app:/app/storage
+    networks:
+      - traefik
   rails:
     <<: *base
     depends_on:
