@@ -5,7 +5,8 @@
 <title>${COMPANY_NAME} Support Chat</title>
 
 <style>
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -14,11 +15,13 @@ html, body {
   background: transparent;
 }
 
+/* Hide launcher bubble */
 .woot-widget-bubble {
   display: none !important;
 }
 
-.woot--close {
+/* Hide floating launcher buttons */
+.woot-widget-holder > button {
   display: none !important;
 }
 </style>
@@ -26,22 +29,31 @@ html, body {
 
 <body>
 
-<script>
+<script data-cfasync="false">
 // https://www.chatwoot.com/hc/user-guide/articles/1677587234-how-to-send-additional-user-information-to-chatwoot-using-sdk
+
 window.chatwootSettings = {
   position: "right",
-  showUnreadMessagesDialog: false, // Disable the unread message dialog
-  enableEndConversation: false, // Let users end the conversation
+
   type: "standard",
-  launcherTitle: ""
+
+  launcherTitle: "",
+
+  hideMessageBubble: true,
+
+  showUnreadMessagesDialog: false,
+
+  enableEndConversation: false
 };
 
-(function(d,t) {
+(function(d, t) {
 
-  var g = d.createElement(t),
-      s = d.getElementsByTagName(t)[0];
+  const BASE_URL = "https://chatwoot.${FQDN}";
 
-  g.src = "https://chatwoot.${FQDN}/packs/js/sdk.js";
+  const g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+
+  g.src = BASE_URL + "/packs/js/sdk.js";
 
   g.async = true;
 
@@ -51,17 +63,21 @@ window.chatwootSettings = {
 
     window.chatwootSDK.run({
       websiteToken: "${WEBSITE_TOKEN}",
-      baseUrl: "https://chatwoot.${FQDN}"
+      baseUrl: BASE_URL
     });
 
-    setTimeout(() => {
+    window.addEventListener("chatwoot:ready", function() {
+
       if (window.$chatwoot) {
         window.$chatwoot.toggle("open");
       }
-    }, 1000);
+
+    });
+
   };
 
-})(document,"script");
+})(document, "script");
+
 </script>
 
 </body>
