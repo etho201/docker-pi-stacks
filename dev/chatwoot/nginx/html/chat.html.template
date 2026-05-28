@@ -27,7 +27,7 @@ html, body {
 window.chatwootSettings = {
   position: "right",
   showUnreadMessagesDialog: false, // Disable the unread message dialog
-  enableEndConversation: true, // Let users end the conversation
+  enableEndConversation: false, // Let users end the conversation
   type: "standard",
   launcherTitle: ""
 };
