@@ -23,8 +23,11 @@ html, body {
 <body>
 
 <script>
+// https://www.chatwoot.com/hc/user-guide/articles/1677587234-how-to-send-additional-user-information-to-chatwoot-using-sdk
 window.chatwootSettings = {
   position: "right",
+  showUnreadMessagesDialog: false, // Disable the unread message dialog
+  enableEndConversation: true, // Let users end the conversation
   type: "standard",
   launcherTitle: ""
 };
