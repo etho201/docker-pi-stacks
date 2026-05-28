@@ -17,6 +17,10 @@ html, body {
 .woot-widget-bubble {
   display: none !important;
 }
+
+.woot--close {
+  display: none !important;
+}
 </style>
 </head>
 
