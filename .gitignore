@@ -3,3 +3,4 @@
 *.ovpn
 stacks/core/data/
 dev/invoiceninja/data/
+dev/chatwoot/nginx/html/favicon.ico
