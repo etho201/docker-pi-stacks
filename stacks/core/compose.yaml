@@ -175,7 +175,7 @@ services:
 ########################################################################################
 
   traefik:
-    image: traefik:ramequin # the ramequin tag refers to v3.6.x
+    image: traefik:v3.7
     container_name: traefik
     restart: always
     command: # CLI arguments
