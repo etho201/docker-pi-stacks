@@ -121,6 +121,54 @@ services:
       - traefik.http.routers.support-rtr.service=support-svc
       - traefik.http.services.support-svc.loadbalancer.server.port=8080
 
+
+  gomodel:
+    image: enterpilot/gomodel:latest
+    container_name: gomodel
+    # ports:
+    #   - "4000:4000"                       # Chatwoot target API uplink port
+    #   - "8080:8080"                       # (unused) dashboard port from older layout
+    networks:
+      - traefik
+    environment:
+      # 1. Base Server Config
+      - PORT=4000
+      - GOMODEL_MASTER_KEY=${GOMODEL_MASTER_KEY}   # Protects your proxy admin UI
+
+      # 2. Ollama Cloud Mapping Config
+      - OLLAMA_BASE_URL=https://ollama.com/v1                # Target destination (OpenAI-compatible /v1)
+      - OLLAMA_API_KEY=${OLLAMA_API_KEY}           # Your bearer auth credential
+    configs:
+      - source: gomodel_config
+        target: /app/config.yaml
+    restart: always
+    labels:
+      - traefik.enable=true
+      ## HTTP Routers
+      - traefik.http.routers.gomodel-rtr.entrypoints=websecure
+      - traefik.http.routers.gomodel-rtr.rule=Host(`gomodel.$FQDN`)
+      - traefik.http.routers.gomodel-rtr.tls=true
+      ## Middlewares
+      # - traefik.http.routers.gomodel-rtr.middlewares=chain-no-auth@file # No Authentication
+      # - traefik.http.routers.gomodel-rtr.middlewares=chain-basic-auth@file # Basic Authentication
+      - traefik.http.routers.gomodel-rtr.middlewares=gomodel-redirect@docker,chain-oauth2-proxy@file # OAuth 2.0 (root -> /admin/dashboard redirect)
+      ## Redirect root to dashboard
+      - traefik.http.middlewares.gomodel-redirect.redirectregex.regex=^https?://[^/]+/?$
+      - traefik.http.middlewares.gomodel-redirect.redirectregex.replacement=https://gomodel.$FQDN/admin/dashboard
+      - traefik.http.middlewares.gomodel-redirect.redirectregex.permanent=false
+      ## HTTP Services
+      - traefik.http.routers.gomodel-rtr.service=gomodel-svc
+      - traefik.http.services.gomodel-svc.loadbalancer.server.port=4000
+
+configs:
+  gomodel_config:
+    content: |
+      server:
+        port: 4000
+      virtual_models:
+        - source: "gpt-4.1-mini"
+          target: "ollama/deepseek-v4-flash"
+
 networks:
   traefik:
     name: traefik
