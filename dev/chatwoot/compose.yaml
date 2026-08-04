@@ -26,8 +26,18 @@ services:
       - INSTALLATION_ENV=docker
     entrypoint: docker/entrypoints/rails.sh
     command: ['bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0']
+    volumes:
+      - ${VOLUME_DIR}/chatwoot/app:/app/storage
+      - ./initializers/actioncable_boot.rb:/app/config/initializers/actioncable_boot.rb:ro
+    healthcheck:
+      test: ["CMD-SHELL", "bundle exec ruby -r redis -e 'r = Redis.new(url: ENV[\"REDIS_URL\"] || \"redis://chatwoot-redis:6379\", password: ENV[\"REDIS_PASSWORD\"]); exit 1 unless r.pubsub(\"channels\").include?(\"_action_cable_internal\")'"]
+      interval: 30s
+      retries: 3
+      start_period: 60s
+      timeout: 10s
     restart: always
     labels:
+      - autoheal=true
       - traefik.enable=true
       ## HTTP Routers
       - traefik.http.routers.chatwoot-rtr.entrypoints=websecure
