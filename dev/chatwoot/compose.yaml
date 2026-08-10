@@ -148,9 +148,8 @@ services:
       # 2. Ollama Cloud Mapping Config
       - OLLAMA_BASE_URL=https://ollama.com/v1                # Target destination (OpenAI-compatible /v1)
       - OLLAMA_API_KEY=${OLLAMA_API_KEY}           # Your bearer auth credential
-    configs:
-      - source: gomodel_config
-        target: /app/config.yaml
+    volumes:
+      - ./gomodel/config.yaml:/app/config.yaml:ro
     restart: always
     labels:
       - traefik.enable=true
@@ -169,15 +168,6 @@ services:
       ## HTTP Services
       - traefik.http.routers.gomodel-rtr.service=gomodel-svc
       - traefik.http.services.gomodel-svc.loadbalancer.server.port=4000
-
-configs:
-  gomodel_config:
-    content: |
-      server:
-        port: 4000
-      virtual_models:
-        - source: "gpt-4.1-mini"
-          target: "ollama/deepseek-v4-flash"
 
 networks:
   traefik:
