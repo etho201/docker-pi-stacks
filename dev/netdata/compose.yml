@@ -43,6 +43,7 @@ services:
       retries: 24 # 24 retries * 5s = Waits up to 2 minutes for Cloudflare DNS propagation
     volumes:
       - ${VOLUME_DIR}/netdata/letsencrypt:/etc/letsencrypt
+      - ${CONFIG_DIR}/certbot/cloudflare.ini:/etc/cloudflare-creds/cloudflare.ini:ro
 
 # networks:
 #   traefik:
