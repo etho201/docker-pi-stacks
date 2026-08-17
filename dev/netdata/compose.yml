@@ -23,6 +23,10 @@ services:
       - /bin/sh
       - -c
       - |
+        # 1. Dynamically write the environment token to a secure file inside the container
+        echo "dns_cloudflare_api_token = ${CLOUDFLARE_API_TOKEN}" > /tmp/cloudflare.ini
+        chmod 600 /tmp/cloudflare.ini
+
         if [ ! -d "/etc/letsencrypt/live/netdata.${FQDN}" ]; then
           echo "=== Initializing Let's Encrypt Cert ==="
           certbot certonly --dns-cloudflare --dns-cloudflare-credentials /dev/null --non-interactive --agree-tos -m erik@coretechonomy.com -d netdata.${FQDN}
