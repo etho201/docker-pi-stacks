@@ -25,14 +25,14 @@ services:
       - |
         if [ ! -d "/etc/letsencrypt/live/netdata.${FQDN}" ]; then
           echo "=== Initializing Let's Encrypt Cert ==="
-          certbot certonly --dns-cloudflare --dns-cloudflare-credentials /dev/null --non-interactive --agree-tos -m ${EMAIL} -d netdata.${FQDN}
+          certbot certonly --dns-cloudflare --dns-cloudflare-credentials /etc/cloudflare-creds/cloudflare.ini --non-interactive --agree-tos -m ${EMAIL} -d netdata.${FQDN}
         else
           echo "=== Cert already exists, skipping initial setup ==="
         fi
 
         trap exit TERM
         while :; do
-          certbot renew
+          certbot renew --dns-cloudflare-credentials /etc/cloudflare-creds/cloudflare.ini
           sleep 12h & wait $$!
         done
     # Healthcheck: Pass once the fullchain certificate is successfully written to disk
