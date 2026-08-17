@@ -39,6 +39,21 @@ services:
           certbot renew
           sleep 12h & wait $$!
         done
+
+      - |
+        echo "dns_cloudflare_api_token = $$CLOUDFLARE_API_TOKEN" > /tmp/cloudflare.ini &&
+        chmod 600 /tmp/cloudflare.ini &&
+        if [ ! -d "/etc/letsencrypt/live/netdata.${FQDN}" ]; then
+          echo "=== Initializing Let's Encrypt Cert ===";
+          certbot certonly --dns-cloudflare --dns-cloudflare-credentials /tmp/cloudflare.ini --non-interactive --agree-tos -m admin@${FQDN} -d netdata.${FQDN};
+        else
+          echo "=== Cert already exists, skipping initial setup ===";
+        fi &&
+        trap exit TERM;
+        while :; do
+          certbot renew --dns-cloudflare-credentials /tmp/cloudflare.ini;
+          sleep 12h & wait $$!;
+        done
     # Healthcheck: Pass once the fullchain certificate is successfully written to disk
     healthcheck:
       test: ["CMD", "sh", "-c", "test -f /etc/letsencrypt/live/netdata.${FQDN}/fullchain.pem"]
