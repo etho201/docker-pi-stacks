@@ -23,13 +23,9 @@ services:
       - /bin/sh
       - -c
       - |
-        # 1. Dynamically write the environment token to a secure file inside the container
-        echo "dns_cloudflare_api_token = ${CLOUDFLARE_API_TOKEN}" > /tmp/cloudflare.ini
-        chmod 600 /tmp/cloudflare.ini
-
         if [ ! -d "/etc/letsencrypt/live/netdata.${FQDN}" ]; then
           echo "=== Initializing Let's Encrypt Cert ==="
-          certbot certonly --dns-cloudflare --dns-cloudflare-credentials /dev/null --non-interactive --agree-tos -m erik@coretechonomy.com -d netdata.${FQDN}
+          certbot certonly --dns-cloudflare --dns-cloudflare-credentials /dev/null --non-interactive --agree-tos -m ${EMAIL} -d netdata.${FQDN}
         else
           echo "=== Cert already exists, skipping initial setup ==="
         fi
@@ -39,29 +35,12 @@ services:
           certbot renew
           sleep 12h & wait $$!
         done
-
-      - |
-        echo "dns_cloudflare_api_token = $$CLOUDFLARE_API_TOKEN" > /tmp/cloudflare.ini &&
-        chmod 600 /tmp/cloudflare.ini &&
-        if [ ! -d "/etc/letsencrypt/live/netdata.${FQDN}" ]; then
-          echo "=== Initializing Let's Encrypt Cert ===";
-          certbot certonly --dns-cloudflare --dns-cloudflare-credentials /tmp/cloudflare.ini --non-interactive --agree-tos -m admin@${FQDN} -d netdata.${FQDN};
-        else
-          echo "=== Cert already exists, skipping initial setup ===";
-        fi &&
-        trap exit TERM;
-        while :; do
-          certbot renew --dns-cloudflare-credentials /tmp/cloudflare.ini;
-          sleep 12h & wait $$!;
-        done
     # Healthcheck: Pass once the fullchain certificate is successfully written to disk
     healthcheck:
       test: ["CMD", "sh", "-c", "test -f /etc/letsencrypt/live/netdata.${FQDN}/fullchain.pem"]
       interval: 5s
       timeout: 2s
       retries: 24 # 24 retries * 5s = Waits up to 2 minutes for Cloudflare DNS propagation
-    environment:
-      - CLOUDFLARE_API_TOKEN=${CERTBOT_NETDATA_TOKEN}
     volumes:
       - ${VOLUME_DIR}/netdata/letsencrypt:/etc/letsencrypt
 
