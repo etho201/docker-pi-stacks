@@ -12,6 +12,7 @@ services:
       - EVENTS=1 # Allow access to events
       - INFO=1 # List system information
       - POST=0 # Disallow any POST operations (effectively read-only)
+      - ALLOW_LOGS=1 # Allow access to /containers/{id}/logs (required for dozzle)
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     # ports:
