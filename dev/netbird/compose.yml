@@ -46,7 +46,7 @@ services:
     #   - 5432:5432
     volumes:
       - ${VOLUME_DIR}/netbird/db:/var/lib/postgresql/data
-      - ${CONFIG_DIR}/netbird/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
     environment:
       - POSTGRES_USER=netbird
       - POSTGRES_PASSWORD=${NETBIRD_DB_PASSWORD}
