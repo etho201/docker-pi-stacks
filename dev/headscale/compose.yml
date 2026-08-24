@@ -1,0 +1,35 @@
+services:
+  headscale:
+    image: docker.io/headscale/headscale:latest
+    restart: unless-stopped
+    container_name: headscale
+    read_only: true
+    tmpfs:
+      - /var/run/headscale
+    networks:
+      - traefik
+    volumes:
+      # Please set <HEADSCALE_PATH> to the absolute path
+      # of the previously created headscale directory.
+      - ${CONFIG_DIR}/headscale:/etc/headscale:ro
+      - ${VOLUME_DIR}/headscale:/var/lib/headscale
+    command: serve
+    healthcheck:
+        test: ["CMD", "headscale", "health"]
+    labels:
+      - traefik.enable=true
+      ## HTTP Routers
+      - traefik.http.routers.headscale-rtr.entrypoints=websecure
+      - traefik.http.routers.headscale-rtr.rule=Host(`headscale.${FQDN}`)
+      - traefik.http.routers.headscale-rtr.tls=true
+      - traefik.http.routers.headscale-rtr.tls.certresolver=cloudflare
+      ## Middlewares
+      - traefik.http.routers.headscale-rtr.middlewares=chain-no-auth@file # No Authentication
+      ## HTTP Services
+      - traefik.http.routers.headscale-rtr.service=headscale-svc
+      - traefik.http.services.headscale-svc.loadbalancer.server.port=8080
+
+networks:
+  traefik:
+    name: traefik
+    external: true
