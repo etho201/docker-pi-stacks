@@ -21,7 +21,8 @@ services:
       - traefik
     # Optional healthcheck
     healthcheck:
-      test: "curl -f http://localhost:1411/healthz"
+      # Note: the pocket-id image does not ship `curl`; use `wget` (present in the image).
+      test: "wget -q -O /dev/null http://localhost:1411/healthz"
       interval: 1m30s
       timeout: 5s
       retries: 2
