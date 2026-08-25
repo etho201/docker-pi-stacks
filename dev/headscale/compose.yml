@@ -29,6 +29,17 @@ services:
       - traefik.http.routers.headscale-rtr.service=headscale-svc
       - traefik.http.services.headscale-svc.loadbalancer.server.port=8080
 
+  tailscale-exporter:
+    image: adinhodovic/tailscale-exporter:latest
+    restart: unless-stopped
+    container_name: tailscale-exporter
+    networks:
+      - traefik
+    environment:
+      HEADSCALE_ADDRESS: "headscale:50443"
+      HEADSCALE_API_KEY: "${HEADSCALE_API_KEY}"
+      HEADSCALE_INSECURE: "true"   # headscale gRPC here is plaintext (no TLS)
+
 networks:
   traefik:
     name: traefik
