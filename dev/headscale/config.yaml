@@ -1,0 +1,82 @@
+# Headscale configuration for serving behind the existing Traefik reverse proxy.
+# Place this file at ${CONFIG_DIR}/headscale/config.yaml so it mounts as /etc/headscale/config.yaml.
+
+# Publicly reachable URL that Tailscale clients connect to.
+# Traefik terminates TLS, so this is https even though headscale itself listens on plain HTTP.
+server_url: https://headscale.${FQDN}
+
+# Listen on all interfaces so the Traefik container (on the shared network) can reach it.
+listen_addr: 0.0.0.0:8080
+
+# Metrics are NOT exposed publicly; keep them local for Prometheus on the internal network.
+metrics_listen_addr: 0.0.0.0:9090
+
+# gRPC API used by the tailscale-exporter (and the headscale CLI). Bind to all
+# interfaces so the exporter container on the shared 'traefik' network can reach it.
+grpc_listen_addr: 0.0.0.0:50443
+
+# The reverse proxy (Traefik) connects from the Docker 'traefik' network subnet.
+# trusted_proxies = CIDR(s) headscale trusts for X-Forwarded-For, so access logs show
+# the real client IP instead of Traefik's container IP. Traefik was observed at 172.18.0.49,
+# so the network is 172.18.0.0/16. Verify with:
+#   docker network inspect traefik --format '{{range .IPAM.Config}}{{.Subnet}}{{end}}'
+trusted_proxies:
+  - 172.18.0.0/16
+
+# TS2021 Noise protocol (required by the Tailscale v2 client protocol).
+# Key is auto-generated on first start and persisted in the data volume.
+noise:
+  private_key_path: /var/lib/headscale/noise_private.key
+
+# IP ranges to allocate client addresses from (Tailscale CGNAT / ULA ranges).
+prefixes:
+  v4: 100.64.0.0/10
+  v6: fd7a:115c:a1e0::/48
+
+# DERP relays are used for NAT traversal fallback when peers can't connect directly.
+# Simplest option: use Tailscale's public DERP relays (no extra infra/ports needed).
+# DERP only carries traffic when direct peer-to-peer WireGuard is impossible; regular
+# traffic flows P2P once NAT is traversed.
+derp:
+  urls:
+    - https://controlplane.tailscale.com/derpmap/default
+  auto_update_enabled: true
+  update_frequency: 3h
+
+# TLS is terminated by Traefik - leave these empty.
+tls_cert_path: ""
+tls_key_path: ""
+
+# Node lifecycle: explicitly disable node expiry so registered nodes never expire.
+# (Headscale defaults to 0 = no expiry; this makes it explicit. Tailscale SaaS uses 180d,
+#  which is NOT headscale's default. Tagged nodes are exempt regardless.)
+node:
+  expiry: 0
+
+# Database. 'sqlite' is the recommended backend (headscale actively develops SQLite;
+# Postgres is legacy-only). Use 'sqlite' - 'sqlite3' is a legacy alias for the same engine.
+database:
+  type: sqlite
+  sqlite:
+    path: /var/lib/headscale/db.sqlite
+    write_ahead_log: true
+    wal_autocheckpoint: 1000
+
+# Access control policy: restricts which nodes can talk to each other.
+# Enforces an admin-only model - see acl.hujson. Reload with `headscale policy set` or SIGHUP.
+policy:
+  mode: file
+  path: /etc/headscale/acl.hujson
+
+dns:
+  magic_dns: true
+  # base_domain must be a FQDN and must NOT equal the server_url domain.
+  # Single shared instance across all clients: MagicDNS names become <node>.internal
+  # (e.g. gt-server.internal). Keep node names globally unique across clients.
+  base_domain: internal
+  override_local_dns: true
+  nameservers:
+    global:
+      - 1.1.1.1
+      - 1.0.0.1
+    split: {}
