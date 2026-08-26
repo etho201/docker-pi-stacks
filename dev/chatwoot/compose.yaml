@@ -8,6 +8,7 @@ services:
     env_file: .env
     volumes:
       - ${VOLUME_DIR}/chatwoot/app:/app/storage
+      - ./entrypoint/rails.sh:/app/docker/entrypoints/rails.sh:ro
     networks:
       - traefik
   rails:
@@ -29,6 +30,7 @@ services:
     volumes:
       - ${VOLUME_DIR}/chatwoot/app:/app/storage
       - ./initializers/actioncable_boot.rb:/app/config/initializers/actioncable_boot.rb:ro
+      - ./entrypoint/rails.sh:/app/docker/entrypoints/rails.sh:ro
     healthcheck:
       test: ["CMD-SHELL", "bundle exec ruby -r redis -e 'r = Redis.new(url: ENV[\"REDIS_URL\"] || \"redis://chatwoot-redis:6379\", password: ENV[\"REDIS_PASSWORD\"]); exit 1 unless r.pubsub(\"channels\").include?(\"_action_cable_internal\")'"]
       interval: 30s

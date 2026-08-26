@@ -141,28 +141,6 @@ services:
       - "traefik.http.routers.sabnzbd-rtr.service=sabnzbd-svc"
       - "traefik.http.services.sabnzbd-svc.loadbalancer.server.port=8080"
 
-  ofelia:
-    image: mcuadros/ofelia:latest
-    container_name: ofelia
-    depends_on:
-      - wireguard
-    entrypoint: []
-    command: |
-      sh -c '
-      apk add docker-cli-compose;
-      /usr/bin/ofelia daemon --docker
-      '
-    restart: always
-    networks:
-      - traefik
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./:/tmp
-    working_dir: /tmp
-    labels:
-      ofelia.job-local.fix-downloaders.schedule: "@every 5m"
-      ofelia.job-local.fix-downloaders.command: "sh healthcheck.sh -t ${GOTIFY_HEALTHCHECK}"
-
   soulseek:
     image: slskd/slskd
     container_name: soulseek
