@@ -81,6 +81,28 @@ services:
     command: --schedule "0 30 3 * * *" --cleanup
     # Checks for new container images everyday at 3:30am
 
+  ofelia: # https://github.com/mcuadros/ofelia - cron scheduler in a container
+    image: mcuadros/ofelia:latest
+    container_name: ofelia
+    entrypoint: []
+    command: |
+      sh -c '
+      apk add docker-cli-compose;
+      /usr/bin/ofelia daemon --docker
+      '
+    restart: always
+    networks:
+      - traefik
+    volumes:
+      - ${DOCKER_SOCK}:/var/run/docker.sock:ro
+      - ${USER_GIT_DIRECTORY}/docker-pi-stacks/stacks/downloaders:/downloaders:ro
+      - ${USER_GIT_DIRECTORY}/docker-pi-stacks/dev/chatwoot:/chatwoot:ro
+    labels:
+      ofelia.job-local.fix-downloaders.schedule: "@every 5m"
+      ofelia.job-local.fix-downloaders.command: "sh /downloaders/healthcheck.sh -t ${GOTIFY_HEALTHCHECK}"
+      ofelia.job-local.check-chatwoot-migrations.schedule: "0 0 4 * * *"
+      ofelia.job-local.check-chatwoot-migrations.command: "sh /chatwoot/check-migrations.sh -t ${GOTIFY_HEALTHCHECK}"
+
 ########################################################################################
 # oauth2
 ########################################################################################

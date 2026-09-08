@@ -5,7 +5,9 @@ services:
     container_name: autoheal
     environment:
       - AUTOHEAL_CONTAINER_LABEL=autoheal
-      - APPRISE_URL=http://apprise:8000/notify/${APPRISE_CONFIG_ID_HEALTHCHECKS}
+      # - APPRISE_URL=http://apprise:8000/notify/${APPRISE_CONFIG_ID_HEALTHCHECKS} # disabling due to large amount of RAM consumed by apprise
+      - WEBHOOK_JSON_KEY=message
+      - WEBHOOK_URL=http://gotify:80/message?token=${GOTIFY_HEALTHCHECK}
     #network_mode: none
     networks:
       - traefik
