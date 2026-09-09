@@ -1,0 +1,43 @@
+services:
+  backrest:
+    image: ghcr.io/garethgeorge/backrest:latest
+    container_name: backrest
+    hostname: backrest
+    volumes:
+      - ${VOLUME_DIR}/backrest/data:/data
+      - ${CONFIG_DIR}/backrest:/config
+      - ${VOLUME_DIR}/backrest/cache:/cache
+      - ${VOLUME_DIR}/backrest/tmp:/tmp
+      - ${DOCKER_SOCK}:/var/run/docker.sock:ro # Required if actions need to use Docker
+      - /mnt/backup-hdd/restic-repo:/mnt/backup-hdd/restic-repo # Mount local repos (optional for remote storage)
+    environment:
+      - BACKREST_DATA=/data
+      - BACKREST_CONFIG=/config/config.json
+      - XDG_CACHE_HOME=/cache
+      - TMPDIR=/tmp
+      - TZ=${TZ}
+    # ports:
+      # - "9898:9898"
+    networks:
+      - traefik
+    restart: unless-stopped
+    labels:
+      # - autoheal=true
+      - traefik.enable=true
+      ## HTTP Routers
+      - traefik.http.routers.backrest-rtr.entrypoints=websecure
+      - traefik.http.routers.backrest-rtr.rule=Host(`backrest.$FQDN`)
+      - traefik.http.routers.backrest-rtr.tls=true
+      ## Middlewares
+      # - traefik.http.routers.backrest-rtr.middlewares=chain-no-auth@file # No Authentication
+      # - traefik.http.routers.backrest-rtr.middlewares=chain-basic-auth@file # Basic Authentication
+      - traefik.http.routers.backrest-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
+      ## HTTP Services
+      - traefik.http.routers.backrest-rtr.service=backrest-svc
+      - traefik.http.services.backrest-svc.loadbalancer.server.port=9898
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+    #run: docker network create traefik
