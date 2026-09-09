@@ -8,6 +8,7 @@ services:
       - ${CONFIG_DIR}/backrest:/config
       - ${VOLUME_DIR}/backrest/cache:/cache
       - ${VOLUME_DIR}/backrest/tmp:/tmp
+      - ./root/.config/rclone:/root/.config/rclone # Mount for rclone config (needed when using rclone remotes)
       - ${DOCKER_SOCK}:/var/run/docker.sock:ro # Required if actions need to use Docker
       - /mnt/backup-hdd/restic-repo:/mnt/backup-hdd/restic-repo # Mount local repos (optional for remote storage)
     environment:
