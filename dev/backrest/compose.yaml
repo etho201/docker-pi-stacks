@@ -32,7 +32,6 @@ services:
       - traefik.http.routers.backrest-sync.entrypoints=websecure
       - traefik.http.routers.backrest-sync.rule=Host(`backrest.$FQDN`) && PathPrefix(`/v1sync.BackrestSyncService/`)
       - traefik.http.routers.backrest-sync.tls=true
-      - traefik.http.routers.backrest-sync.priority=100
       - traefik.http.routers.backrest-sync.service=backrest-sync-svc
       
       ## FIX: Apply your file-defined rate limit and secure headers here
@@ -48,7 +47,6 @@ services:
       - traefik.http.routers.backrest-ui.entrypoints=websecure
       - traefik.http.routers.backrest-ui.rule=Host(`backrest.$FQDN`)
       - traefik.http.routers.backrest-ui.tls=true
-      - traefik.http.routers.backrest-ui.priority=10
       - traefik.http.routers.backrest-ui.middlewares=chain-oauth2-proxy@file
       - traefik.http.routers.backrest-ui.service=backrest-ui-svc
 
