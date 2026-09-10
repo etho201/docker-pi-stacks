@@ -26,18 +26,35 @@ services:
     restart: unless-stopped
     labels:
       # - autoheal=true
-      - traefik.enable=true
-      ## HTTP Routers
-      - traefik.http.routers.backrest-rtr.entrypoints=websecure
-      - traefik.http.routers.backrest-rtr.rule=Host(`backrest.$FQDN`)
-      - traefik.http.routers.backrest-rtr.tls=true
-      ## Middlewares
-      # - traefik.http.routers.backrest-rtr.middlewares=chain-no-auth@file # No Authentication
-      # - traefik.http.routers.backrest-rtr.middlewares=chain-basic-auth@file # Basic Authentication
-      - traefik.http.routers.backrest-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
-      ## HTTP Services
-      - traefik.http.routers.backrest-rtr.service=backrest-svc
-      - traefik.http.services.backrest-svc.loadbalancer.server.port=9898
+      ## ==========================================================
+      ## ROUTER 1: Public gRPC Sync Path (Remote Clients)
+      ## ==========================================================
+      - traefik.http.routers.backrest-sync.entrypoints=websecure
+      - traefik.http.routers.backrest-sync.rule=Host(`backrest.$FQDN`) && PathPrefix(`/v1sync.BackrestSyncService/`)
+      - traefik.http.routers.backrest-sync.tls=true
+      - traefik.http.routers.backrest-sync.priority=100
+      - traefik.http.routers.backrest-sync.service=backrest-sync-svc
+      
+      ## FIX: Apply your file-defined rate limit and secure headers here
+      - traefik.http.routers.backrest-sync.middlewares=middlewares-rate-limit@file,middlewares-secure-headers@file
+
+      ## Service 1: Forces h2c (HTTP/2 cleartext) to the upstream container
+      - traefik.http.services.backrest-sync-svc.loadbalancer.server.port=9898
+      - traefik.http.services.backrest-sync-svc.loadbalancer.server.scheme=h2c
+
+      ## ==========================================================
+      ## ROUTER 2: Private UI / Admin API
+      ## ==========================================================
+      - traefik.http.routers.backrest-ui.entrypoints=websecure
+      - traefik.http.routers.backrest-ui.rule=Host(`backrest.$FQDN`)
+      - traefik.http.routers.backrest-ui.tls=true
+      - traefik.http.routers.backrest-ui.priority=10
+      - traefik.http.routers.backrest-ui.middlewares=chain-oauth2-proxy@file
+      - traefik.http.routers.backrest-ui.service=backrest-ui-svc
+
+      ## Service 2: Standard HTTP for the web interface
+      - traefik.http.services.backrest-ui-svc.loadbalancer.server.port=9898
+
 
 networks:
   traefik:
