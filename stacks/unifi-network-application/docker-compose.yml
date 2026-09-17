@@ -17,6 +17,11 @@ services:
         type: bind
         bind:
           create_host_path: false
+    command: mongod --wiredTigerCacheSizeGB 0.25
+    deploy:
+      resources:
+        limits:
+          memory: 400M    # Hard Docker barrier for the DB container
     restart: unless-stopped
     networks:
       - traefik
@@ -33,12 +38,16 @@ services:
       - MONGO_HOST=unifi-db
       - MONGO_PORT=27017
       - MONGO_DBNAME=unifi
-      - MEM_LIMIT=1024 #optional
-      - MEM_STARTUP=1024 #optional
+      - MEM_LIMIT=512 #optional
+      - MEM_STARTUP=256 #optional
       # - MONGO_TLS= #optional
       # - MONGO_AUTHSOURCE= #optional
     volumes:
       - ${CONFIG_DIR}/unifi-network-application:/config #Config
+    deploy:
+      resources:
+        limits:
+          memory: 768M    # Hard Docker barrier for the app container
     ports:
       # - 8443:8443
       - 3478:3478/udp # For STUN
