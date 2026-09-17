@@ -8,7 +8,7 @@ services:
 ########################################################################################
 
   unifi-db:
-    image: docker.io/mongo:7.0
+    image: docker.io/mongo:7
     container_name: unifi-db
     volumes:
       - ${VOLUME_DIR}/unifi-network-application/db:/data/db #Data dir grows to 250MB+
