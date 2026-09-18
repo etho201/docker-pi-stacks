@@ -16,7 +16,7 @@ services:
       umami-db:
         condition: service_healthy
     init: true
-    restart: always
+    restart: no
     healthcheck:
       test: ["CMD-SHELL", "curl http://localhost:3000/api/heartbeat"]
       interval: 5s
