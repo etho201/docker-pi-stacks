@@ -40,6 +40,36 @@ services:
       HEADSCALE_API_KEY: "${HEADSCALE_API_KEY}"
       HEADSCALE_INSECURE: "true"   # headscale gRPC here is plaintext (no TLS)
 
+  headplane:
+    image: ghcr.io/tale/headplane:latest
+    container_name: headplane
+    restart: no
+    # ports:
+    #   - "3000:3000"
+    volumes:
+      - "${CONFIG_DIR}/headplane/config.yaml:/etc/headplane/config.yaml"
+      - "${VOLUME_DIR}/headplane:/var/lib/headplane"
+    healthcheck:
+      test: ["/bin/hp_healthcheck"]
+      interval: 30s
+      timeout: 5s
+      start_period: 5s
+      retries: 3
+    labels:
+      # - autoheal=true
+      - traefik.enable=true
+      ## HTTP Routers
+      - traefik.http.routers.headplane-rtr.entrypoints=websecure
+      - traefik.http.routers.headplane-rtr.rule=Host(`headplane.$FQDN`)
+      - traefik.http.routers.headplane-rtr.tls=true
+      ## Middlewares
+      # - traefik.http.routers.headplane-rtr.middlewares=chain-no-auth@file # No Authentication
+      # - traefik.http.routers.headplane-rtr.middlewares=chain-basic-auth@file # Basic Authentication
+      - traefik.http.routers.headplane-rtr.middlewares=chain-oauth2-proxy@file # OAuth 2.0
+      ## HTTP Services
+      - traefik.http.routers.headplane-rtr.service=headplane-svc
+      - traefik.http.services.headplane-svc.loadbalancer.server.port=3000
+
 networks:
   traefik:
     name: traefik
