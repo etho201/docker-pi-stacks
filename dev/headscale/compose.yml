@@ -49,7 +49,8 @@ services:
     networks:
       - traefik
     volumes:
-      - "${CONFIG_DIR}/headscale/config.yaml:/etc/headplane/config.yaml"
+      - "${CONFIG_DIR}/headscale/config.yaml:/etc/headscale/config.yaml"
+      - "${CONFIG_DIR}/headplane/config.yaml:/etc/headplane/config.yaml"
       - "${VOLUME_DIR}/headplane:/var/lib/headplane"
     healthcheck:
       test: ["CMD", "/bin/hp_healthcheck"]
