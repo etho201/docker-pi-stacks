@@ -46,6 +46,8 @@ services:
     restart: no
     # ports:
     #   - "3000:3000"
+    networks:
+      - traefik
     volumes:
       - "${CONFIG_DIR}/headplane/config.yaml:/etc/headplane/config.yaml"
       - "${VOLUME_DIR}/headplane:/var/lib/headplane"
