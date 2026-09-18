@@ -4,7 +4,7 @@ services:
   glances:
     image: nicolargo/glances:latest
     container_name: glances
-    restart: always
+    restart: no
     pid: "host"
     privileged: true
     network_mode: "host"
