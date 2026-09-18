@@ -152,7 +152,7 @@ services:
       - SLSKD_REMOTE_CONFIGURATION=true
     volumes:
       - ${EXTHDD_DIR}/downloads/soulseek:/app
-    restart: always
+    restart: no
     network_mode: service:wireguard
     #ports:
       # - 443:443
