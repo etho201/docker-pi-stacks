@@ -57,7 +57,7 @@ services:
       POSTGRES_PASSWORD: ${UMAMI_DB_PASSWORD}
     volumes:
       - ${VOLUME_DIR}/umami/db:/var/lib/postgresql
-    restart: always
+    restart: no
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
