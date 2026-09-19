@@ -5,3 +5,5 @@ stacks/core/data/
 dev/invoiceninja/data/
 dev/chatwoot/nginx/html/favicon.ico
 .DS_Store
+/dev/netbird/config.yaml
+compose.private.yaml
