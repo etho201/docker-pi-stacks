@@ -1,0 +1,32 @@
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:slim
+    container_name: open-webui
+    # ports:
+    #   - "3000:8080"
+    networks:
+      - traefik
+    volumes:
+      - ${VOLUME_DIR}/open-webui:/app/backend/data
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    environment:
+      - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY}
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.open-webui-rtr.entrypoints=websecure"
+      - "traefik.http.routers.open-webui-rtr.rule=Host(`open-webui.$FQDN`)"
+      - "traefik.http.routers.open-webui-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.open-webui-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.open-webui-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.open-webui-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.open-webui-rtr.service=open-webui-svc"
+      - "traefik.http.services.open-webui-svc.loadbalancer.server.port=8080"
+
+networks:
+  traefik:
+    name: traefik
