@@ -27,6 +27,44 @@ services:
       - "traefik.http.routers.open-webui-rtr.service=open-webui-svc"
       - "traefik.http.services.open-webui-svc.loadbalancer.server.port=8080"
 
+  oikb:
+    image: ghcr.io/open-webui/oikb:latest
+    container_name: oikb
+    environment:
+      - OPEN_WEBUI_URL=http://open-webui:8080
+      - OPEN_WEBUI_API_KEY=${WEBUI_API_KEY}
+      - OIKB_API_KEY=${OIKB_API_KEY}
+      - LOG_FORMAT=json
+    volumes:
+      - ${VOLUME_DIR}/oikb:/data/.oikb.yaml:ro
+    command: daemon
+    # ports:
+    #   - "8080:8080"
+    networks:
+      - traefik
+    depends_on:
+      - open-webui
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/health/ready"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.oikb-rtr.entrypoints=websecure"
+      - "traefik.http.routers.oikb-rtr.rule=Host(`oikb.$FQDN`)"
+      - "traefik.http.routers.oikb-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.oikb-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.oikb-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.oikb-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.oikb-rtr.service=oikb-svc"
+      - "traefik.http.services.oikb-svc.loadbalancer.server.port=8080"
+
 networks:
   traefik:
     name: traefik
