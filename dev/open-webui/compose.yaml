@@ -34,6 +34,7 @@ services:
       - OPEN_WEBUI_URL=http://open-webui:8080
       - OPEN_WEBUI_API_KEY=${WEBUI_API_KEY}
       - OIKB_API_KEY=${OIKB_API_KEY}
+      - GITHUB_TOKEN=${OIKB_GITHUB_TOKEN}
       - LOG_FORMAT=json
     volumes:
       - ${VOLUME_DIR}/oikb/.oikb.yaml:/app/.oikb.yaml:ro
