@@ -1,6 +1,6 @@
 services:
   open-webui:
-    image: ghcr.io/open-webui/open-webui:slim
+    image: ghcr.io/open-webui/open-webui:slim # options are: main, slim
     container_name: open-webui
     # ports:
     #   - "3000:8080"
@@ -37,7 +37,7 @@ services:
       - GITHUB_TOKEN=${OIKB_GITHUB_TOKEN}
       - LOG_FORMAT=json
     volumes:
-      - ${VOLUME_DIR}/oikb/.oikb.yaml:/app/.oikb.yaml:ro
+      - ${CONFIG_DIR}/oikb/.oikb.yaml:/app/.oikb.yaml:ro
     command: daemon
     # ports:
     #   - "8080:8080"
@@ -47,7 +47,7 @@ services:
       - open-webui
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/health/ready"]
+      test: ["CMD", "python", "-c", "import sys,httpx;sys.exit(0 if httpx.get('http://127.0.0.1:8080/health/ready',timeout=3).status_code==200 else 1)"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -59,9 +59,9 @@ services:
       - "traefik.http.routers.oikb-rtr.rule=Host(`oikb.$FQDN`)"
       - "traefik.http.routers.oikb-rtr.tls=true"
       ## Middlewares
-      - "traefik.http.routers.oikb-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.oikb-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.oikb-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      # - "traefik.http.routers.oikb-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
+      - "traefik.http.routers.oikb-rtr.middlewares=chain-oauth2-proxy@file" # OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.oikb-rtr.service=oikb-svc"
       - "traefik.http.services.oikb-svc.loadbalancer.server.port=8080"
