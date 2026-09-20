@@ -20,7 +20,7 @@ services:
       - OAUTH_PROVIDER_NAME="Pocket ID"
       - OPENID_PROVIDER_URL=https://pocket-id.${FQDN}/.well-known/openid-configuration
       - OAUTH_MERGE_ACCOUNTS_BY_EMAIL=true
-- 
+      
       # For group management, you can use the following variables:
       - ENABLE_OAUTH_ROLE_MANAGEMENT=true
       - ENABLE_OAUTH_GROUP_MANAGEMENT=true
