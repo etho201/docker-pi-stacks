@@ -14,7 +14,6 @@ services:
       - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY}
 
       # Pocket ID
-      - ENABLE_OAUTH_SIGNUP=false
       - OAUTH_CLIENT_ID=${WEBUI_POCKETID_CLIENT_ID}
       - OAUTH_CLIENT_SECRET=${WEBUI_POCKETID_CLIENT_SECRET}
       - OAUTH_PROVIDER_NAME="Pocket ID"
@@ -26,18 +25,18 @@ services:
       - ENABLE_OAUTH_GROUP_MANAGEMENT=true
       - ENABLE_OAUTH_GROUP_CREATION=true
       # Make sure those match the ones you set up before in Pocket-ID
-      - OAUTH_ALLOWED_ROLES="user, admin"
-      - OAUTH_ADMIN_ROLES=admins
+      - OAUTH_ALLOWED_ROLES="user,admin"
+      - OAUTH_ADMIN_ROLES=admin
       - OAUTH_ROLES_CLAIM=groups
-      - OAUTH_SCOPES="openid email profile groups"
-
-      # Optional but useful variables:
+      - OAUTH_SCOPES="openid email profile"
 
       # So users are immediately added instead of being "pending"
       - DEFAULT_USER_ROLE=user
       # Make Pocket-ID the only auth method
-      # comment out if you need access via password
+      # Auto redirect to Pocket-ID. If you need to login with password, navigate to /auth?form=true
+      - ENABLE_OAUTH_SIGNUP=true
       - ENABLE_LOGIN_FORM=false
+      - OAUTH_AUTO_REDIRECT=true
       # Make Pocket-ID the source of truth for the profile pictures
       - OAUTH_UPDATE_PICTURE_ON_LOGIN=true
     restart: unless-stopped
