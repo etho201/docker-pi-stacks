@@ -44,7 +44,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.open-webui-rtr.entrypoints=websecure"
-      - "traefik.http.routers.open-webui-rtr.rule=Host(`open-webui.$FQDN`)"
+      - "traefik.http.routers.open-webui-rtr.rule=Host(`openwebui.$FQDN`)"
       - "traefik.http.routers.open-webui-rtr.tls=true"
       ## Middlewares
       - "traefik.http.routers.open-webui-rtr.middlewares=chain-no-auth@file" # No Authentication
