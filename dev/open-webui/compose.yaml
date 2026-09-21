@@ -26,7 +26,7 @@ services:
       - ENABLE_OAUTH_GROUP_MANAGEMENT=true
       - ENABLE_OAUTH_GROUP_CREATION=true
       # Make sure those match the ones you set up before in Pocket-ID
-      - OAUTH_ALLOWED_ROLES="users, admins"
+      - OAUTH_ALLOWED_ROLES="user, admin"
       - OAUTH_ADMIN_ROLES=admins
       - OAUTH_ROLES_CLAIM=groups
       - OAUTH_SCOPES="openid email profile groups"
