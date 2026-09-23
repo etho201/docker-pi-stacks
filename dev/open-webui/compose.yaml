@@ -13,6 +13,18 @@ services:
     environment:
       - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY}
 
+      # Vector database: pgvector instead of the bundled ChromaDB
+      - VECTOR_DB=pgvector
+      - PGVECTOR_DB_URL=postgresql://${WEBUI_PGVECTOR_USER}:${WEBUI_PGVECTOR_PASSWORD}@open-webui-pgvector:5432/${WEBUI_PGVECTOR_DB}
+      # Must match your embedding model's output size. Fixed once the table exists.
+      - PGVECTOR_INITIALIZE_MAX_VECTOR_LENGTH=1536
+      # halfvec halves the stored/indexed vector size; HNSW builds its index as data arrives
+      - PGVECTOR_USE_HALFVEC=true
+      - PGVECTOR_INDEX_METHOD=hnsw
+      # Keep the connection pool small on a RAM-constrained host
+      - PGVECTOR_POOL_SIZE=2
+      - PGVECTOR_POOL_MAX_OVERFLOW=2
+
       # Pocket ID
       - OAUTH_CLIENT_ID=${WEBUI_POCKETID_CLIENT_ID}
       - OAUTH_CLIENT_SECRET=${WEBUI_POCKETID_CLIENT_SECRET}
@@ -39,6 +51,9 @@ services:
       - OAUTH_AUTO_REDIRECT=true
       # Make Pocket-ID the source of truth for the profile pictures
       - OAUTH_UPDATE_PICTURE_ON_LOGIN=true
+    depends_on:
+      open-webui-pgvector:
+        condition: service_healthy
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -53,6 +68,43 @@ services:
       ## HTTP Services
       - "traefik.http.routers.open-webui-rtr.service=open-webui-svc"
       - "traefik.http.services.open-webui-svc.loadbalancer.server.port=8080"
+
+  # Postgres + pgvector for Open WebUI RAG embeddings.
+  # Not published to Traefik; reachable only by other containers on the traefik network.
+  open-webui-pgvector:
+    image: pgvector/pgvector:0.8.6-pg18
+    container_name: open-webui-pgvector
+    environment:
+      - POSTGRES_DB=openwebui
+      - POSTGRES_USER=openwebui
+      - POSTGRES_PASSWORD=${WEBUI_PGVECTOR_PASSWORD}
+    # Small, explicit footprint for a shared 16GB host
+    command:
+      - postgres
+      - -c
+      - shared_buffers=128MB
+      - -c
+      - work_mem=8MB
+      - -c
+      - maintenance_work_mem=128MB
+      - -c
+      - effective_cache_size=512MB
+      - -c
+      - max_connections=30
+    volumes:
+      # PostgreSQL 18+ keeps the cluster in /var/lib/postgresql/<major>/docker
+      - ${VOLUME_DIR}/open-webui-pgvector:/var/lib/postgresql
+    # Must be at least maintenance_work_mem or parallel HNSW builds fail
+    shm_size: 256mb
+    networks:
+      - traefik
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   oikb:
     image: ghcr.io/open-webui/oikb:latest
