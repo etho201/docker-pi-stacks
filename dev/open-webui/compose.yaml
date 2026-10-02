@@ -1,6 +1,6 @@
 services:
   open-webui:
-    image: ghcr.io/open-webui/open-webui:slim # options are: main, slim
+    image: ghcr.io/open-webui/open-webui:main
     container_name: open-webui
     # ports:
     #   - "3000:8080"
@@ -11,13 +11,16 @@ services:
     extra_hosts:
       - host.docker.internal:host-gateway
     environment:
-      - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY}
+      #- RESET_CONFIG_ON_START=true
 
+      - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY}
+      
       # Vector database: pgvector instead of the bundled ChromaDB
       - VECTOR_DB=pgvector
-      - PGVECTOR_DB_URL=postgresql://${WEBUI_PGVECTOR_USER}:${WEBUI_PGVECTOR_PASSWORD}@open-webui-pgvector:5432/${WEBUI_PGVECTOR_DB}
+      - DATABASE_URL=postgresql://openwebui:${WEBUI_PGVECTOR_PASSWORD}@open-webui-pgvector:5432/openwebui
+      - PGVECTOR_DB_URL=postgresql://openwebui:${WEBUI_PGVECTOR_PASSWORD}@open-webui-pgvector:5432/openwebui
       # Must match your embedding model's output size. Fixed once the table exists.
-      - PGVECTOR_INITIALIZE_MAX_VECTOR_LENGTH=1536
+      - PGVECTOR_INITIALIZE_MAX_VECTOR_LENGTH=384
       # halfvec halves the stored/indexed vector size; HNSW builds its index as data arrives
       - PGVECTOR_USE_HALFVEC=true
       - PGVECTOR_INDEX_METHOD=hnsw
@@ -93,7 +96,7 @@ services:
       - max_connections=30
     volumes:
       # PostgreSQL 18+ keeps the cluster in /var/lib/postgresql/<major>/docker
-      - ${VOLUME_DIR}/open-webui-pgvector:/var/lib/postgresql
+      - ${VOLUME_DIR}/open-webui/pgvector:/var/lib/postgresql
     # Must be at least maintenance_work_mem or parallel HNSW builds fail
     shm_size: 256mb
     networks:
@@ -144,6 +147,12 @@ services:
       ## HTTP Services
       - "traefik.http.routers.oikb-rtr.service=oikb-svc"
       - "traefik.http.services.oikb-svc.loadbalancer.server.port=8080"
+      ## The sync endpoint must bypass the OAuth gate.
+      - "traefik.http.routers.oikb-sync-rtr.entrypoints=websecure"
+      - "traefik.http.routers.oikb-sync-rtr.rule=Host(`oikb.$FQDN`) && (PathPrefix(`/sync/`) || Path(`/sync`))"
+      - "traefik.http.routers.oikb-sync-rtr.tls=true"
+      - "traefik.http.routers.oikb-sync-rtr.priority=100"
+      - "traefik.http.routers.oikb-sync-rtr.service=oikb-svc"
 
 networks:
   traefik:
