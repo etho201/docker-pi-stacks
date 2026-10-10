@@ -5,6 +5,10 @@ services:
     image: teslamate/teslamate:latest
     container_name: teslamate
     restart: always
+    extra_hosts:
+      # Reach the host-networked mosquitto broker without hardcoding a LAN IP,
+      # so the stack survives subnet changes. Use MQTT_HOST=host.docker.internal.
+      - "host.docker.internal:host-gateway"
     environment:
       - ENCRYPTION_KEY=${TESLAMATE_ENCRYPTION_KEY} #replace with a secure key to encrypt your Tesla API tokens
       - DATABASE_USER=teslamate
