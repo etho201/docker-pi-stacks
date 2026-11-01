@@ -7,12 +7,18 @@ services:
     container_name: chatwoot-app
     env_file: .env
     extra_hosts:
-      # Reach the host-networked Home Assistant by name rather than a LAN IP.
-      # HA runs network_mode: host, so it has no Docker DNS entry and cannot be
-      # resolved by container name. host-gateway points at the bridge gateway,
-      # which reaches the host's network stack where HA listens on 8123.
-      # Keeps the webhook URL stable across LAN subnet changes.
-      - "homeassistant:host-gateway"
+      # Reach the host-networked Home Assistant by a stable name instead of a
+      # LAN IP. HA runs network_mode: host, so it has no Docker DNS entry and
+      # cannot be resolved by container name; host-gateway points at the bridge
+      # gateway, which reaches the host's network stack where HA listens on 8123.
+      #
+      # The name MUST contain a dot. Chatwoot's webhook form validates with
+      # vuelidate's `url` rule, which requires a dotted host and rejects private
+      # IPs (10/8, 172.16/12, 192.168/16) outright. So neither
+      # http://homeassistant:8123 nor http://10.88.5.10:8123 can be saved in the
+      # UI, even though the backend accepts both. `.internal` is reserved by
+      # ICANN for private use.
+      - "homeassistant.internal:host-gateway"
     volumes:
       - ${VOLUME_DIR}/chatwoot/app:/app/storage
       - ./entrypoint/rails.sh:/app/docker/entrypoints/rails.sh:ro
