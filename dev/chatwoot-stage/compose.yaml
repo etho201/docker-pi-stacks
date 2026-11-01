@@ -21,6 +21,14 @@ services:
   base: &base
     image: chatwoot/chatwoot@sha256:3623f60b8fa1e773a41ee16d7523815922e8e45876f9777a2e5de3040c44f0ad
     env_file: .env
+    extra_hosts:
+      # Reach the host-networked Home Assistant from the staging stack, same as
+      # production (dev/chatwoot/compose.yaml). The name must be dotted:
+      # Chatwoot's webhook form (vuelidate's `url` rule) rejects bare hostnames
+      # and private IPs, so http://homeassistant.internal:8123 is the only form
+      # that both saves in the UI and resolves at delivery time.
+      # See ../../1uplogic-ai-gateway/documentations/staging.md
+      - "homeassistant.internal:host-gateway"
     volumes:
       - ${VOLUME_DIR}/chatwoot-stage/app:/app/storage
       - ./entrypoint/rails.sh:/app/docker/entrypoints/rails.sh:ro
